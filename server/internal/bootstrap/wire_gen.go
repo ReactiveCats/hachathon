@@ -9,6 +9,7 @@ package bootstrap
 import (
 	"context"
 	"server/internal/config"
+	"server/internal/domain/user"
 )
 
 // Injectors from wire.go:
@@ -18,6 +19,11 @@ func Up(ctx context.Context) (Dependencies, error) {
 	if err != nil {
 		return Dependencies{}, err
 	}
-	dependencies := NewDependencies(configConfig)
+	client, err := NewEntClient(configConfig)
+	if err != nil {
+		return Dependencies{}, err
+	}
+	service := user.NewService(client, configConfig)
+	dependencies := NewDependencies(configConfig, client, service)
 	return dependencies, nil
 }
