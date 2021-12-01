@@ -1,0 +1,24 @@
+{
+  "name": "client",
+  "private": true,
+  "scripts": {
+    "dev": "node ./src/server.js",
+    "build": "next build",
+    "start": "cross-env NODE_ENV=production node ./src/server.js",
+    "lint": "next lint",
+    "swagger:generate": "openapi-generator-cli generate -i \"http://localhost:8080/swagger\" -g typescript-fetch -o  ./swagger"
+  },
+  "dependencies": {
+    "cross-env": "7.0.3",
+    "fastify": "3.24.1",
+    "next": "12.0.4",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.4.18",
+    "eslint": "7.32.0",
+    "eslint-config-next": "12.0.4",
+    "prettier": "^2.5.0"
+  }
+}
