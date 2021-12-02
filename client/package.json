@@ -6,6 +6,7 @@
     "build": "next build",
     "start": "cross-env NODE_ENV=production node ./src/server.js",
     "lint": "next lint",
+    "format": "prettier --write \"src/**/*.{ts,js}\"",
     "swagger:generate": "openapi-generator-cli generate -i \"http://localhost:8080/swagger\" -g typescript-fetch -o  ./swagger"
   },
   "dependencies": {
