@@ -18,9 +18,7 @@ package main
 import (
 	"context"
 	"github.com/sirupsen/logrus"
-	"math/rand"
 	"server/internal/bootstrap"
-	"time"
 )
 
 func main() {
@@ -36,8 +34,4 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func init() {
-	rand.Seed(time.Now().UTC().UnixNano())
 }
