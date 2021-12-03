@@ -43,42 +43,39 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 			dto.Estimated = &parsedEstimated
 		}
 
-		complexity, ok := ctx.Get("complexity")
+		complexity, ok := ctx.GetQuery("complexity")
 		if ok {
-			parsedComplexity := complexity.(string)
-			dto.Complexity = &parsedComplexity
+			dto.Complexity = &complexity
 		}
 
-		priority, ok := ctx.Get("priority")
+		priority, ok := ctx.GetQuery("priority")
 		if ok {
-			parsedPriority := priority.(string)
-			dto.Priority = &parsedPriority
+			dto.Priority = &priority
 		}
 
-		order, ok := ctx.Get("order")
+		order, ok := ctx.GetQuery("order")
 		if ok {
-			parsedOrder := order.(string)
-			dto.Order = &parsedOrder
+			dto.Order = &order
 		}
 
-		orderBy, ok := ctx.Get("order_by")
+		orderBy, ok := ctx.GetQuery("order_by")
 		if ok {
-			parsedOrderBy := orderBy.(string)
-			dto.OrderBy = &parsedOrderBy
+			dto.OrderBy = &orderBy
 		}
 
 		err := binding.Validator.ValidateStruct(&dto)
 		if err != nil {
-			platform.GinErrResponse(ctx, platform.Conflict("Invalid data"))
+			platform.GinErrResponse(ctx, platform.UnprocessableEntity("Invalid data"))
 			return
 		}
 
-		tasks, err := service.Fetch(ctx, dto)
+		tasks, err := service.Fetch(ctx.Request.Context(), dto)
 		if err != nil {
+			platform.GinErrResponse(ctx, err)
 			return
 		}
 
-		ctx.JSON(http.StatusOK, tasks)
+		platform.GinOkResponse(ctx, http.StatusOK, tasks)
 	}
 }
 
