@@ -225,7 +225,7 @@ var doc = `{
                     "enum": [
                         "very_low",
                         "low",
-                        "mid",
+                        "medium",
                         "high",
                         "very_high"
                     ]
@@ -247,7 +247,7 @@ var doc = `{
                     "enum": [
                         "very_low",
                         "low",
-                        "mid",
+                        "medium",
                         "high",
                         "very_high"
                     ]

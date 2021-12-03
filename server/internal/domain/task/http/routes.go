@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"net/http"
 	"server/internal/domain"
 	"server/internal/platform"
@@ -26,9 +27,56 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 // @Produce  	json
 // @Success 	200 {array} domain.Task
 // @Router 		/task [get]
-func getTasks(domain.TaskService) func(ctx *gin.Context) {
+func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		user := ctx.Value(platform.UserCtxKey).(*domain.User)
+		dto := domain.GetTaskDTO{
+			UserID: user.ID,
+		}
 
+		estimated, ok := ctx.Get("estimated")
+		if ok {
+			parsedEstimated, err := strconv.Atoi(estimated.(string))
+			if err != nil {
+				platform.GinErrResponse(ctx, platform.Conflict("Invalid data"))
+				return
+			}
+			dto.Estimated = &parsedEstimated
+		}
+
+		complexity, ok := ctx.GetQuery("complexity")
+		if ok {
+			dto.Complexity = &complexity
+		}
+
+		priority, ok := ctx.GetQuery("priority")
+		if ok {
+			dto.Priority = &priority
+		}
+
+		order, ok := ctx.GetQuery("order")
+		if ok {
+			dto.Order = &order
+		}
+
+		orderBy, ok := ctx.GetQuery("order_by")
+		if ok {
+			dto.OrderBy = &orderBy
+		}
+
+		err := binding.Validator.ValidateStruct(&dto)
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.UnprocessableEntity("Invalid data"))
+			return
+		}
+
+		tasks, err := service.Fetch(ctx.Request.Context(), dto)
+		if err != nil {
+			platform.GinErrResponse(ctx, err)
+			return
+		}
+
+		platform.GinOkResponse(ctx, http.StatusOK, tasks)
 	}
 }
 

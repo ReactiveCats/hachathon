@@ -27,7 +27,7 @@ definitions:
         enum:
         - very_low
         - low
-        - mid
+        - medium
         - high
         - very_high
         type: string
@@ -43,7 +43,7 @@ definitions:
         enum:
         - very_low
         - low
-        - mid
+        - medium
         - high
         - very_high
         type: string

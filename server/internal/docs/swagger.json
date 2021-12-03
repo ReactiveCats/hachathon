@@ -214,7 +214,7 @@
                     "enum": [
                         "very_low",
                         "low",
-                        "mid",
+                        "medium",
                         "high",
                         "very_high"
                     ]
@@ -236,7 +236,7 @@
                     "enum": [
                         "very_low",
                         "low",
-                        "mid",
+                        "medium",
                         "high",
                         "very_high"
                     ]
