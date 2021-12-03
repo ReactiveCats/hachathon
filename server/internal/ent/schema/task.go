@@ -4,6 +4,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"server/internal/consts"
+	"time"
 )
 
 // Task holds the schema definition for the Task entity.
@@ -14,19 +16,40 @@ type Task struct {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
+		field.Time("created_at").Default(time.Now),
+		field.Int("icon").Default(0),
 		field.String("title"),
 		field.String("description").Optional(),
-		field.String("priority").Default("5"),
-		field.String("complexity").Default("5"),
-		field.String("hard_deadline").Optional(),
-		field.String("soft_deadline").Optional(),
-		field.String("status").Default("123"),
+		field.Time("deadline").Optional(),
+		field.Int("estimated").Optional(),
+		field.Enum("complexity").
+			Values(
+				consts.ComplexityVeryLow,
+				consts.ComplexityLow,
+				consts.ComplexityMid,
+				consts.ComplexityHigh,
+				consts.ComplexityVeryHigh,
+			).
+			Default(consts.ComplexityMid),
+		field.Enum("priority").
+			Values(
+				consts.PriorityVeryLow,
+				consts.PriorityLow,
+				consts.PriorityMid,
+				consts.PriorityHigh,
+				consts.PriorityVeryHigh,
+			).
+			Default(consts.PriorityMid),
+		field.Int("creator_id"),
 	}
 }
 
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("creator", User.Type),
+		edge.From("creator", User.Type).
+			Ref("tasks").
+			Field("creator_id").Required().
+			Unique(),
 	}
 }

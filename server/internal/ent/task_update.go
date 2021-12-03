@@ -4,10 +4,12 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"server/internal/ent/predicate"
 	"server/internal/ent/task"
 	"server/internal/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,6 +26,41 @@ type TaskUpdate struct {
 // Where appends a list predicates to the TaskUpdate builder.
 func (tu *TaskUpdate) Where(ps ...predicate.Task) *TaskUpdate {
 	tu.mutation.Where(ps...)
+	return tu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tu *TaskUpdate) SetCreatedAt(t time.Time) *TaskUpdate {
+	tu.mutation.SetCreatedAt(t)
+	return tu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableCreatedAt(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetCreatedAt(*t)
+	}
+	return tu
+}
+
+// SetIcon sets the "icon" field.
+func (tu *TaskUpdate) SetIcon(i int) *TaskUpdate {
+	tu.mutation.ResetIcon()
+	tu.mutation.SetIcon(i)
+	return tu
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableIcon(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetIcon(*i)
+	}
+	return tu
+}
+
+// AddIcon adds i to the "icon" field.
+func (tu *TaskUpdate) AddIcon(i int) *TaskUpdate {
+	tu.mutation.AddIcon(i)
 	return tu
 }
 
@@ -53,101 +90,90 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 	return tu
 }
 
-// SetPriority sets the "priority" field.
-func (tu *TaskUpdate) SetPriority(s string) *TaskUpdate {
-	tu.mutation.SetPriority(s)
+// SetDeadline sets the "deadline" field.
+func (tu *TaskUpdate) SetDeadline(t time.Time) *TaskUpdate {
+	tu.mutation.SetDeadline(t)
 	return tu
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillablePriority(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetPriority(*s)
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableDeadline(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetDeadline(*t)
 	}
+	return tu
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (tu *TaskUpdate) ClearDeadline() *TaskUpdate {
+	tu.mutation.ClearDeadline()
+	return tu
+}
+
+// SetEstimated sets the "estimated" field.
+func (tu *TaskUpdate) SetEstimated(i int) *TaskUpdate {
+	tu.mutation.ResetEstimated()
+	tu.mutation.SetEstimated(i)
+	return tu
+}
+
+// SetNillableEstimated sets the "estimated" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableEstimated(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetEstimated(*i)
+	}
+	return tu
+}
+
+// AddEstimated adds i to the "estimated" field.
+func (tu *TaskUpdate) AddEstimated(i int) *TaskUpdate {
+	tu.mutation.AddEstimated(i)
+	return tu
+}
+
+// ClearEstimated clears the value of the "estimated" field.
+func (tu *TaskUpdate) ClearEstimated() *TaskUpdate {
+	tu.mutation.ClearEstimated()
 	return tu
 }
 
 // SetComplexity sets the "complexity" field.
-func (tu *TaskUpdate) SetComplexity(s string) *TaskUpdate {
-	tu.mutation.SetComplexity(s)
+func (tu *TaskUpdate) SetComplexity(t task.Complexity) *TaskUpdate {
+	tu.mutation.SetComplexity(t)
 	return tu
 }
 
 // SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableComplexity(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetComplexity(*s)
+func (tu *TaskUpdate) SetNillableComplexity(t *task.Complexity) *TaskUpdate {
+	if t != nil {
+		tu.SetComplexity(*t)
 	}
 	return tu
 }
 
-// SetHardDeadline sets the "hard_deadline" field.
-func (tu *TaskUpdate) SetHardDeadline(s string) *TaskUpdate {
-	tu.mutation.SetHardDeadline(s)
+// SetPriority sets the "priority" field.
+func (tu *TaskUpdate) SetPriority(t task.Priority) *TaskUpdate {
+	tu.mutation.SetPriority(t)
 	return tu
 }
 
-// SetNillableHardDeadline sets the "hard_deadline" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableHardDeadline(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetHardDeadline(*s)
+// SetNillablePriority sets the "priority" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillablePriority(t *task.Priority) *TaskUpdate {
+	if t != nil {
+		tu.SetPriority(*t)
 	}
 	return tu
 }
 
-// ClearHardDeadline clears the value of the "hard_deadline" field.
-func (tu *TaskUpdate) ClearHardDeadline() *TaskUpdate {
-	tu.mutation.ClearHardDeadline()
+// SetCreatorID sets the "creator_id" field.
+func (tu *TaskUpdate) SetCreatorID(i int) *TaskUpdate {
+	tu.mutation.SetCreatorID(i)
 	return tu
 }
 
-// SetSoftDeadline sets the "soft_deadline" field.
-func (tu *TaskUpdate) SetSoftDeadline(s string) *TaskUpdate {
-	tu.mutation.SetSoftDeadline(s)
-	return tu
-}
-
-// SetNillableSoftDeadline sets the "soft_deadline" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableSoftDeadline(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetSoftDeadline(*s)
-	}
-	return tu
-}
-
-// ClearSoftDeadline clears the value of the "soft_deadline" field.
-func (tu *TaskUpdate) ClearSoftDeadline() *TaskUpdate {
-	tu.mutation.ClearSoftDeadline()
-	return tu
-}
-
-// SetStatus sets the "status" field.
-func (tu *TaskUpdate) SetStatus(s string) *TaskUpdate {
-	tu.mutation.SetStatus(s)
-	return tu
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableStatus(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetStatus(*s)
-	}
-	return tu
-}
-
-// AddCreatorIDs adds the "creator" edge to the User entity by IDs.
-func (tu *TaskUpdate) AddCreatorIDs(ids ...int) *TaskUpdate {
-	tu.mutation.AddCreatorIDs(ids...)
-	return tu
-}
-
-// AddCreator adds the "creator" edges to the User entity.
-func (tu *TaskUpdate) AddCreator(u ...*User) *TaskUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tu.AddCreatorIDs(ids...)
+// SetCreator sets the "creator" edge to the User entity.
+func (tu *TaskUpdate) SetCreator(u *User) *TaskUpdate {
+	return tu.SetCreatorID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -155,25 +181,10 @@ func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
 }
 
-// ClearCreator clears all "creator" edges to the User entity.
+// ClearCreator clears the "creator" edge to the User entity.
 func (tu *TaskUpdate) ClearCreator() *TaskUpdate {
 	tu.mutation.ClearCreator()
 	return tu
-}
-
-// RemoveCreatorIDs removes the "creator" edge to User entities by IDs.
-func (tu *TaskUpdate) RemoveCreatorIDs(ids ...int) *TaskUpdate {
-	tu.mutation.RemoveCreatorIDs(ids...)
-	return tu
-}
-
-// RemoveCreator removes "creator" edges to User entities.
-func (tu *TaskUpdate) RemoveCreator(u ...*User) *TaskUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tu.RemoveCreatorIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -183,12 +194,18 @@ func (tu *TaskUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(tu.hooks) == 0 {
+		if err = tu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = tu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tu.check(); err != nil {
+				return 0, err
 			}
 			tu.mutation = mutation
 			affected, err = tu.sqlSave(ctx)
@@ -230,6 +247,24 @@ func (tu *TaskUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tu *TaskUpdate) check() error {
+	if v, ok := tu.mutation.Complexity(); ok {
+		if err := task.ComplexityValidator(v); err != nil {
+			return &ValidationError{Name: "complexity", err: fmt.Errorf("ent: validator failed for field \"complexity\": %w", err)}
+		}
+	}
+	if v, ok := tu.mutation.Priority(); ok {
+		if err := task.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := tu.mutation.CreatorID(); tu.mutation.CreatorCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"creator\"")
+	}
+	return nil
+}
+
 func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -247,6 +282,27 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tu.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: task.FieldCreatedAt,
+		})
+	}
+	if value, ok := tu.mutation.Icon(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldIcon,
+		})
+	}
+	if value, ok := tu.mutation.AddedIcon(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldIcon,
+		})
 	}
 	if value, ok := tu.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -268,59 +324,59 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: task.FieldDescription,
 		})
 	}
-	if value, ok := tu.mutation.Priority(); ok {
+	if value, ok := tu.mutation.Deadline(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
-			Column: task.FieldPriority,
+			Column: task.FieldDeadline,
+		})
+	}
+	if tu.mutation.DeadlineCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: task.FieldDeadline,
+		})
+	}
+	if value, ok := tu.mutation.Estimated(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldEstimated,
+		})
+	}
+	if value, ok := tu.mutation.AddedEstimated(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldEstimated,
+		})
+	}
+	if tu.mutation.EstimatedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: task.FieldEstimated,
 		})
 	}
 	if value, ok := tu.mutation.Complexity(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: task.FieldComplexity,
 		})
 	}
-	if value, ok := tu.mutation.HardDeadline(); ok {
+	if value, ok := tu.mutation.Priority(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
-			Column: task.FieldHardDeadline,
-		})
-	}
-	if tu.mutation.HardDeadlineCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: task.FieldHardDeadline,
-		})
-	}
-	if value, ok := tu.mutation.SoftDeadline(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: task.FieldSoftDeadline,
-		})
-	}
-	if tu.mutation.SoftDeadlineCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: task.FieldSoftDeadline,
-		})
-	}
-	if value, ok := tu.mutation.Status(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: task.FieldStatus,
+			Column: task.FieldPriority,
 		})
 	}
 	if tu.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -328,34 +384,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.RemovedCreatorIDs(); len(nodes) > 0 && !tu.mutation.CreatorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tu.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -388,6 +425,41 @@ type TaskUpdateOne struct {
 	mutation *TaskMutation
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (tuo *TaskUpdateOne) SetCreatedAt(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetCreatedAt(t)
+	return tuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableCreatedAt(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetCreatedAt(*t)
+	}
+	return tuo
+}
+
+// SetIcon sets the "icon" field.
+func (tuo *TaskUpdateOne) SetIcon(i int) *TaskUpdateOne {
+	tuo.mutation.ResetIcon()
+	tuo.mutation.SetIcon(i)
+	return tuo
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableIcon(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetIcon(*i)
+	}
+	return tuo
+}
+
+// AddIcon adds i to the "icon" field.
+func (tuo *TaskUpdateOne) AddIcon(i int) *TaskUpdateOne {
+	tuo.mutation.AddIcon(i)
+	return tuo
+}
+
 // SetTitle sets the "title" field.
 func (tuo *TaskUpdateOne) SetTitle(s string) *TaskUpdateOne {
 	tuo.mutation.SetTitle(s)
@@ -414,101 +486,90 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 	return tuo
 }
 
-// SetPriority sets the "priority" field.
-func (tuo *TaskUpdateOne) SetPriority(s string) *TaskUpdateOne {
-	tuo.mutation.SetPriority(s)
+// SetDeadline sets the "deadline" field.
+func (tuo *TaskUpdateOne) SetDeadline(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetDeadline(t)
 	return tuo
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillablePriority(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetPriority(*s)
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableDeadline(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetDeadline(*t)
 	}
+	return tuo
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (tuo *TaskUpdateOne) ClearDeadline() *TaskUpdateOne {
+	tuo.mutation.ClearDeadline()
+	return tuo
+}
+
+// SetEstimated sets the "estimated" field.
+func (tuo *TaskUpdateOne) SetEstimated(i int) *TaskUpdateOne {
+	tuo.mutation.ResetEstimated()
+	tuo.mutation.SetEstimated(i)
+	return tuo
+}
+
+// SetNillableEstimated sets the "estimated" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableEstimated(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetEstimated(*i)
+	}
+	return tuo
+}
+
+// AddEstimated adds i to the "estimated" field.
+func (tuo *TaskUpdateOne) AddEstimated(i int) *TaskUpdateOne {
+	tuo.mutation.AddEstimated(i)
+	return tuo
+}
+
+// ClearEstimated clears the value of the "estimated" field.
+func (tuo *TaskUpdateOne) ClearEstimated() *TaskUpdateOne {
+	tuo.mutation.ClearEstimated()
 	return tuo
 }
 
 // SetComplexity sets the "complexity" field.
-func (tuo *TaskUpdateOne) SetComplexity(s string) *TaskUpdateOne {
-	tuo.mutation.SetComplexity(s)
+func (tuo *TaskUpdateOne) SetComplexity(t task.Complexity) *TaskUpdateOne {
+	tuo.mutation.SetComplexity(t)
 	return tuo
 }
 
 // SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableComplexity(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetComplexity(*s)
+func (tuo *TaskUpdateOne) SetNillableComplexity(t *task.Complexity) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetComplexity(*t)
 	}
 	return tuo
 }
 
-// SetHardDeadline sets the "hard_deadline" field.
-func (tuo *TaskUpdateOne) SetHardDeadline(s string) *TaskUpdateOne {
-	tuo.mutation.SetHardDeadline(s)
+// SetPriority sets the "priority" field.
+func (tuo *TaskUpdateOne) SetPriority(t task.Priority) *TaskUpdateOne {
+	tuo.mutation.SetPriority(t)
 	return tuo
 }
 
-// SetNillableHardDeadline sets the "hard_deadline" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableHardDeadline(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetHardDeadline(*s)
+// SetNillablePriority sets the "priority" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillablePriority(t *task.Priority) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetPriority(*t)
 	}
 	return tuo
 }
 
-// ClearHardDeadline clears the value of the "hard_deadline" field.
-func (tuo *TaskUpdateOne) ClearHardDeadline() *TaskUpdateOne {
-	tuo.mutation.ClearHardDeadline()
+// SetCreatorID sets the "creator_id" field.
+func (tuo *TaskUpdateOne) SetCreatorID(i int) *TaskUpdateOne {
+	tuo.mutation.SetCreatorID(i)
 	return tuo
 }
 
-// SetSoftDeadline sets the "soft_deadline" field.
-func (tuo *TaskUpdateOne) SetSoftDeadline(s string) *TaskUpdateOne {
-	tuo.mutation.SetSoftDeadline(s)
-	return tuo
-}
-
-// SetNillableSoftDeadline sets the "soft_deadline" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableSoftDeadline(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetSoftDeadline(*s)
-	}
-	return tuo
-}
-
-// ClearSoftDeadline clears the value of the "soft_deadline" field.
-func (tuo *TaskUpdateOne) ClearSoftDeadline() *TaskUpdateOne {
-	tuo.mutation.ClearSoftDeadline()
-	return tuo
-}
-
-// SetStatus sets the "status" field.
-func (tuo *TaskUpdateOne) SetStatus(s string) *TaskUpdateOne {
-	tuo.mutation.SetStatus(s)
-	return tuo
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableStatus(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetStatus(*s)
-	}
-	return tuo
-}
-
-// AddCreatorIDs adds the "creator" edge to the User entity by IDs.
-func (tuo *TaskUpdateOne) AddCreatorIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.AddCreatorIDs(ids...)
-	return tuo
-}
-
-// AddCreator adds the "creator" edges to the User entity.
-func (tuo *TaskUpdateOne) AddCreator(u ...*User) *TaskUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tuo.AddCreatorIDs(ids...)
+// SetCreator sets the "creator" edge to the User entity.
+func (tuo *TaskUpdateOne) SetCreator(u *User) *TaskUpdateOne {
+	return tuo.SetCreatorID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -516,25 +577,10 @@ func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
 }
 
-// ClearCreator clears all "creator" edges to the User entity.
+// ClearCreator clears the "creator" edge to the User entity.
 func (tuo *TaskUpdateOne) ClearCreator() *TaskUpdateOne {
 	tuo.mutation.ClearCreator()
 	return tuo
-}
-
-// RemoveCreatorIDs removes the "creator" edge to User entities by IDs.
-func (tuo *TaskUpdateOne) RemoveCreatorIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.RemoveCreatorIDs(ids...)
-	return tuo
-}
-
-// RemoveCreator removes "creator" edges to User entities.
-func (tuo *TaskUpdateOne) RemoveCreator(u ...*User) *TaskUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tuo.RemoveCreatorIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -551,12 +597,18 @@ func (tuo *TaskUpdateOne) Save(ctx context.Context) (*Task, error) {
 		node *Task
 	)
 	if len(tuo.hooks) == 0 {
+		if err = tuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = tuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tuo.check(); err != nil {
+				return nil, err
 			}
 			tuo.mutation = mutation
 			node, err = tuo.sqlSave(ctx)
@@ -598,6 +650,24 @@ func (tuo *TaskUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TaskUpdateOne) check() error {
+	if v, ok := tuo.mutation.Complexity(); ok {
+		if err := task.ComplexityValidator(v); err != nil {
+			return &ValidationError{Name: "complexity", err: fmt.Errorf("ent: validator failed for field \"complexity\": %w", err)}
+		}
+	}
+	if v, ok := tuo.mutation.Priority(); ok {
+		if err := task.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := tuo.mutation.CreatorID(); tuo.mutation.CreatorCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"creator\"")
+	}
+	return nil
+}
+
 func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -633,6 +703,27 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			}
 		}
 	}
+	if value, ok := tuo.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: task.FieldCreatedAt,
+		})
+	}
+	if value, ok := tuo.mutation.Icon(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldIcon,
+		})
+	}
+	if value, ok := tuo.mutation.AddedIcon(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldIcon,
+		})
+	}
 	if value, ok := tuo.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -653,59 +744,59 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Column: task.FieldDescription,
 		})
 	}
-	if value, ok := tuo.mutation.Priority(); ok {
+	if value, ok := tuo.mutation.Deadline(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
-			Column: task.FieldPriority,
+			Column: task.FieldDeadline,
+		})
+	}
+	if tuo.mutation.DeadlineCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: task.FieldDeadline,
+		})
+	}
+	if value, ok := tuo.mutation.Estimated(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldEstimated,
+		})
+	}
+	if value, ok := tuo.mutation.AddedEstimated(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldEstimated,
+		})
+	}
+	if tuo.mutation.EstimatedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: task.FieldEstimated,
 		})
 	}
 	if value, ok := tuo.mutation.Complexity(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: task.FieldComplexity,
 		})
 	}
-	if value, ok := tuo.mutation.HardDeadline(); ok {
+	if value, ok := tuo.mutation.Priority(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
-			Column: task.FieldHardDeadline,
-		})
-	}
-	if tuo.mutation.HardDeadlineCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: task.FieldHardDeadline,
-		})
-	}
-	if value, ok := tuo.mutation.SoftDeadline(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: task.FieldSoftDeadline,
-		})
-	}
-	if tuo.mutation.SoftDeadlineCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: task.FieldSoftDeadline,
-		})
-	}
-	if value, ok := tuo.mutation.Status(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: task.FieldStatus,
+			Column: task.FieldPriority,
 		})
 	}
 	if tuo.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -713,34 +804,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.RemovedCreatorIDs(); len(nodes) > 0 && !tuo.mutation.CreatorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tuo.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

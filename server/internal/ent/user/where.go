@@ -216,7 +216,7 @@ func HasTasks() predicate.User {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(TasksTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, TasksTable, TasksPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, TasksTable, TasksColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -228,7 +228,7 @@ func HasTasksWith(preds ...predicate.Task) predicate.User {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(TasksInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, TasksTable, TasksPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, TasksTable, TasksColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

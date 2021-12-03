@@ -6,7 +6,6 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
-	_ "server/internal/docs"
 	"server/internal/domain"
 	authHTTP "server/internal/domain/auth/http"
 	taskHTTP "server/internal/domain/task/http"

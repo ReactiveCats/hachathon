@@ -51,7 +51,7 @@ func (s Service) Signup(ctx context.Context, username, password string) (string,
 	panic("implement me")
 }
 
-func (s Service) Login(ctx context.Context, username, password string) (string, error) {
+func (s Service) Login(ctx context.Context, userID int) (string, error) {
 	panic("implement me")
 }
 

@@ -31,20 +31,33 @@ func getTasks(domain.TaskService) func(ctx *gin.Context) {
 	}
 }
 
-// getTaskById godoc
+// getTaskByID godoc
 // @Summary 	Get task by id
 // @Description Get task by id
 //// @Security 	ApiKeyAuth
 // @Tags 		tasks
 // @ID 			get_task_by_id
-// @Param 		task_id 	path 	string		true 	"task id"
+// @Param 		task_id 	path 	int		true 	"task id"
 // @Produce  	json
 // @Success 	200 {object} domain.Task
 // @Router 		/task/{task_id} [get]
-func getTaskByID(domain.TaskService) func(ctx *gin.Context) {
+func getTaskByID(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		taskID, err := strconv.Atoi(ctx.Param("task_id"))
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.NotFound("Task is not found"))
+			return
+		}
 
+		task, err := service.ByID(ctx.Request.Context(), taskID)
+		if err != nil {
+			platform.GinErrResponse(ctx, err)
+			return
+		}
+
+		platform.GinOkResponse(ctx, http.StatusOK, task)
 	}
+
 }
 
 // putTask godoc
@@ -53,11 +66,12 @@ func getTaskByID(domain.TaskService) func(ctx *gin.Context) {
 //// @Security 	ApiKeyAuth
 // @Tags 		tasks
 // @ID 			put_task
-// @Param 		task_id 	path 	string		true 	"task id"
+// @Param 		task_id 	path 	string				true 	"task id"
+// @Param 		task 		body 	domain.TaskPutDTO	true 	"task object"
 // @Produce  	json
 // @Success 	200 {object} domain.Task
-// @Router 		/tasks/{task_id} [put]
-func putTask(domain.TaskService) func(ctx *gin.Context) {
+// @Router 		/task/{task_id} [put]
+func putTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 	}
 }
@@ -70,7 +84,7 @@ func putTask(domain.TaskService) func(ctx *gin.Context) {
 // @ID 			post_task
 // @Produce  	json
 // @Success 	200 {object} domain.Task
-// @Router 		/tasks [post]
+// @Router 		/task [post]
 func postTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 	}
@@ -85,7 +99,7 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 // @Param 		task_id 	path 	string		true 	"task id"
 // @Produce  	json
 // @Success 	204
-// @Router 		/tasks/{task_id} [delete]
+// @Router 		/task/{task_id} [delete]
 func deleteTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		taskID, err := strconv.Atoi(ctx.Param("task_id"))

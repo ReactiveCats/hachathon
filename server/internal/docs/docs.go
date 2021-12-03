@@ -50,44 +50,7 @@ var doc = `{
                         }
                     }
                 }
-            }
-        },
-        "/task/{task_id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get task by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Get task by id",
-                "operationId": "get_task_by_id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "task id",
-                        "name": "task_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
-                    }
-                }
-            }
-        },
-        "/tasks": {
+            },
             "post": {
                 "security": [
                     {
@@ -113,7 +76,40 @@ var doc = `{
                 }
             }
         },
-        "/tasks/{task_id}": {
+        "/task/{task_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get task by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Get task by id",
+                "operationId": "get_task_by_id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Task"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -134,7 +130,7 @@ var doc = `{
                         "type": "string",
                         "description": "task id",
                         "name": "task_id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -167,7 +163,7 @@ var doc = `{
                         "type": "string",
                         "description": "task id",
                         "name": "task_id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],

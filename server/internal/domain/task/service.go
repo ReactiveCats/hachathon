@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"server/internal/config"
+	"server/internal/domain"
 	"server/internal/ent"
 	taskent "server/internal/ent/task"
 	"server/internal/platform"
@@ -18,6 +19,26 @@ func NewService(client *ent.Client, config config.Config) *Service {
 		client:    client.Task,
 		jwtConfig: config.Jwt,
 	}
+}
+
+func (s Service) ByID(ctx context.Context, taskID int) (*domain.Task, error) {
+	task, err := s.client.Query().
+		Where(taskent.ID(taskID)).
+		WithCreator().
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, platform.NotFound("Task is not found")
+		}
+		return nil, platform.WrapInternal(err)
+	}
+
+	return domain.TaskFromEnt(task), nil
+}
+
+func (s Service) Update(ctx context.Context, taskID int) (*domain.Task, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (s Service) Delete(ctx context.Context, taskID int) error {

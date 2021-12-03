@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"server/internal/ent/task"
 	"server/internal/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +19,34 @@ type TaskCreate struct {
 	config
 	mutation *TaskMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tc *TaskCreate) SetCreatedAt(t time.Time) *TaskCreate {
+	tc.mutation.SetCreatedAt(t)
+	return tc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableCreatedAt(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetCreatedAt(*t)
+	}
+	return tc
+}
+
+// SetIcon sets the "icon" field.
+func (tc *TaskCreate) SetIcon(i int) *TaskCreate {
+	tc.mutation.SetIcon(i)
+	return tc
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableIcon(i *int) *TaskCreate {
+	if i != nil {
+		tc.SetIcon(*i)
+	}
+	return tc
 }
 
 // SetTitle sets the "title" field.
@@ -40,89 +69,71 @@ func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
 	return tc
 }
 
-// SetPriority sets the "priority" field.
-func (tc *TaskCreate) SetPriority(s string) *TaskCreate {
-	tc.mutation.SetPriority(s)
+// SetDeadline sets the "deadline" field.
+func (tc *TaskCreate) SetDeadline(t time.Time) *TaskCreate {
+	tc.mutation.SetDeadline(t)
 	return tc
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tc *TaskCreate) SetNillablePriority(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetPriority(*s)
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableDeadline(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetDeadline(*t)
+	}
+	return tc
+}
+
+// SetEstimated sets the "estimated" field.
+func (tc *TaskCreate) SetEstimated(i int) *TaskCreate {
+	tc.mutation.SetEstimated(i)
+	return tc
+}
+
+// SetNillableEstimated sets the "estimated" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableEstimated(i *int) *TaskCreate {
+	if i != nil {
+		tc.SetEstimated(*i)
 	}
 	return tc
 }
 
 // SetComplexity sets the "complexity" field.
-func (tc *TaskCreate) SetComplexity(s string) *TaskCreate {
-	tc.mutation.SetComplexity(s)
+func (tc *TaskCreate) SetComplexity(t task.Complexity) *TaskCreate {
+	tc.mutation.SetComplexity(t)
 	return tc
 }
 
 // SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableComplexity(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetComplexity(*s)
+func (tc *TaskCreate) SetNillableComplexity(t *task.Complexity) *TaskCreate {
+	if t != nil {
+		tc.SetComplexity(*t)
 	}
 	return tc
 }
 
-// SetHardDeadline sets the "hard_deadline" field.
-func (tc *TaskCreate) SetHardDeadline(s string) *TaskCreate {
-	tc.mutation.SetHardDeadline(s)
+// SetPriority sets the "priority" field.
+func (tc *TaskCreate) SetPriority(t task.Priority) *TaskCreate {
+	tc.mutation.SetPriority(t)
 	return tc
 }
 
-// SetNillableHardDeadline sets the "hard_deadline" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableHardDeadline(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetHardDeadline(*s)
+// SetNillablePriority sets the "priority" field if the given value is not nil.
+func (tc *TaskCreate) SetNillablePriority(t *task.Priority) *TaskCreate {
+	if t != nil {
+		tc.SetPriority(*t)
 	}
 	return tc
 }
 
-// SetSoftDeadline sets the "soft_deadline" field.
-func (tc *TaskCreate) SetSoftDeadline(s string) *TaskCreate {
-	tc.mutation.SetSoftDeadline(s)
+// SetCreatorID sets the "creator_id" field.
+func (tc *TaskCreate) SetCreatorID(i int) *TaskCreate {
+	tc.mutation.SetCreatorID(i)
 	return tc
 }
 
-// SetNillableSoftDeadline sets the "soft_deadline" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableSoftDeadline(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetSoftDeadline(*s)
-	}
-	return tc
-}
-
-// SetStatus sets the "status" field.
-func (tc *TaskCreate) SetStatus(s string) *TaskCreate {
-	tc.mutation.SetStatus(s)
-	return tc
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableStatus(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetStatus(*s)
-	}
-	return tc
-}
-
-// AddCreatorIDs adds the "creator" edge to the User entity by IDs.
-func (tc *TaskCreate) AddCreatorIDs(ids ...int) *TaskCreate {
-	tc.mutation.AddCreatorIDs(ids...)
-	return tc
-}
-
-// AddCreator adds the "creator" edges to the User entity.
-func (tc *TaskCreate) AddCreator(u ...*User) *TaskCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tc.AddCreatorIDs(ids...)
+// SetCreator sets the "creator" edge to the User entity.
+func (tc *TaskCreate) SetCreator(u *User) *TaskCreate {
+	return tc.SetCreatorID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -196,33 +207,56 @@ func (tc *TaskCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TaskCreate) defaults() {
-	if _, ok := tc.mutation.Priority(); !ok {
-		v := task.DefaultPriority
-		tc.mutation.SetPriority(v)
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		v := task.DefaultCreatedAt()
+		tc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := tc.mutation.Icon(); !ok {
+		v := task.DefaultIcon
+		tc.mutation.SetIcon(v)
 	}
 	if _, ok := tc.mutation.Complexity(); !ok {
 		v := task.DefaultComplexity
 		tc.mutation.SetComplexity(v)
 	}
-	if _, ok := tc.mutation.Status(); !ok {
-		v := task.DefaultStatus
-		tc.mutation.SetStatus(v)
+	if _, ok := tc.mutation.Priority(); !ok {
+		v := task.DefaultPriority
+		tc.mutation.SetPriority(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TaskCreate) check() error {
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+	}
+	if _, ok := tc.mutation.Icon(); !ok {
+		return &ValidationError{Name: "icon", err: errors.New(`ent: missing required field "icon"`)}
+	}
 	if _, ok := tc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
-	}
-	if _, ok := tc.mutation.Priority(); !ok {
-		return &ValidationError{Name: "priority", err: errors.New(`ent: missing required field "priority"`)}
 	}
 	if _, ok := tc.mutation.Complexity(); !ok {
 		return &ValidationError{Name: "complexity", err: errors.New(`ent: missing required field "complexity"`)}
 	}
-	if _, ok := tc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "status"`)}
+	if v, ok := tc.mutation.Complexity(); ok {
+		if err := task.ComplexityValidator(v); err != nil {
+			return &ValidationError{Name: "complexity", err: fmt.Errorf(`ent: validator failed for field "complexity": %w`, err)}
+		}
+	}
+	if _, ok := tc.mutation.Priority(); !ok {
+		return &ValidationError{Name: "priority", err: errors.New(`ent: missing required field "priority"`)}
+	}
+	if v, ok := tc.mutation.Priority(); ok {
+		if err := task.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf(`ent: validator failed for field "priority": %w`, err)}
+		}
+	}
+	if _, ok := tc.mutation.CreatorID(); !ok {
+		return &ValidationError{Name: "creator_id", err: errors.New(`ent: missing required field "creator_id"`)}
+	}
+	if _, ok := tc.mutation.CreatorID(); !ok {
+		return &ValidationError{Name: "creator", err: errors.New("ent: missing required edge \"creator\"")}
 	}
 	return nil
 }
@@ -251,6 +285,22 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
+	if value, ok := tc.mutation.CreatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: task.FieldCreatedAt,
+		})
+		_node.CreatedAt = value
+	}
+	if value, ok := tc.mutation.Icon(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldIcon,
+		})
+		_node.Icon = value
+	}
 	if value, ok := tc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -267,52 +317,44 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		})
 		_node.Description = value
 	}
-	if value, ok := tc.mutation.Priority(); ok {
+	if value, ok := tc.mutation.Deadline(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
-			Column: task.FieldPriority,
+			Column: task.FieldDeadline,
 		})
-		_node.Priority = value
+		_node.Deadline = value
+	}
+	if value, ok := tc.mutation.Estimated(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: task.FieldEstimated,
+		})
+		_node.Estimated = value
 	}
 	if value, ok := tc.mutation.Complexity(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: task.FieldComplexity,
 		})
 		_node.Complexity = value
 	}
-	if value, ok := tc.mutation.HardDeadline(); ok {
+	if value, ok := tc.mutation.Priority(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
-			Column: task.FieldHardDeadline,
+			Column: task.FieldPriority,
 		})
-		_node.HardDeadline = value
-	}
-	if value, ok := tc.mutation.SoftDeadline(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: task.FieldSoftDeadline,
-		})
-		_node.SoftDeadline = value
-	}
-	if value, ok := tc.mutation.Status(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: task.FieldStatus,
-		})
-		_node.Status = value
+		_node.Priority = value
 	}
 	if nodes := tc.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -324,6 +366,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.CreatorID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

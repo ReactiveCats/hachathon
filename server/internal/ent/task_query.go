@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -78,7 +77,7 @@ func (tq *TaskQuery) QueryCreator() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, task.CreatorTable, task.CreatorPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.CreatorTable, task.CreatorColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -291,12 +290,12 @@ func (tq *TaskQuery) WithCreator(opts ...func(*UserQuery)) *TaskQuery {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		GroupBy(task.FieldTitle).
+//		GroupBy(task.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -318,11 +317,11 @@ func (tq *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		Select(task.FieldTitle).
+//		Select(task.FieldCreatedAt).
 //		Scan(ctx, &v)
 //
 func (tq *TaskQuery) Select(fields ...string) *TaskSelect {
@@ -375,66 +374,27 @@ func (tq *TaskQuery) sqlAll(ctx context.Context) ([]*Task, error) {
 	}
 
 	if query := tq.withCreator; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		ids := make(map[int]*Task, len(nodes))
-		for _, node := range nodes {
-			ids[node.ID] = node
-			fks = append(fks, node.ID)
-			node.Edges.Creator = []*User{}
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Task)
+		for i := range nodes {
+			fk := nodes[i].CreatorID
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
 		}
-		var (
-			edgeids []int
-			edges   = make(map[int][]*Task)
-		)
-		_spec := &sqlgraph.EdgeQuerySpec{
-			Edge: &sqlgraph.EdgeSpec{
-				Inverse: false,
-				Table:   task.CreatorTable,
-				Columns: task.CreatorPrimaryKey,
-			},
-			Predicate: func(s *sql.Selector) {
-				s.Where(sql.InValues(task.CreatorPrimaryKey[0], fks...))
-			},
-			ScanValues: func() [2]interface{} {
-				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
-			},
-			Assign: func(out, in interface{}) error {
-				eout, ok := out.(*sql.NullInt64)
-				if !ok || eout == nil {
-					return fmt.Errorf("unexpected id value for edge-out")
-				}
-				ein, ok := in.(*sql.NullInt64)
-				if !ok || ein == nil {
-					return fmt.Errorf("unexpected id value for edge-in")
-				}
-				outValue := int(eout.Int64)
-				inValue := int(ein.Int64)
-				node, ok := ids[outValue]
-				if !ok {
-					return fmt.Errorf("unexpected node id in edges: %v", outValue)
-				}
-				if _, ok := edges[inValue]; !ok {
-					edgeids = append(edgeids, inValue)
-				}
-				edges[inValue] = append(edges[inValue], node)
-				return nil
-			},
-		}
-		if err := sqlgraph.QueryEdges(ctx, tq.driver, _spec); err != nil {
-			return nil, fmt.Errorf(`query edges "creator": %w`, err)
-		}
-		query.Where(user.IDIn(edgeids...))
+		query.Where(user.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			nodes, ok := edges[n.ID]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected "creator" node returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "creator_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Creator = append(nodes[i].Edges.Creator, n)
+				nodes[i].Edges.Creator = n
 			}
 		}
 	}

@@ -2,53 +2,60 @@
 
 package task
 
+import (
+	"fmt"
+	"time"
+)
+
 const (
 	// Label holds the string label denoting the task type in the database.
 	Label = "task"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldIcon holds the string denoting the icon field in the database.
+	FieldIcon = "icon"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldPriority holds the string denoting the priority field in the database.
-	FieldPriority = "priority"
+	// FieldDeadline holds the string denoting the deadline field in the database.
+	FieldDeadline = "deadline"
+	// FieldEstimated holds the string denoting the estimated field in the database.
+	FieldEstimated = "estimated"
 	// FieldComplexity holds the string denoting the complexity field in the database.
 	FieldComplexity = "complexity"
-	// FieldHardDeadline holds the string denoting the hard_deadline field in the database.
-	FieldHardDeadline = "hard_deadline"
-	// FieldSoftDeadline holds the string denoting the soft_deadline field in the database.
-	FieldSoftDeadline = "soft_deadline"
-	// FieldStatus holds the string denoting the status field in the database.
-	FieldStatus = "status"
+	// FieldPriority holds the string denoting the priority field in the database.
+	FieldPriority = "priority"
+	// FieldCreatorID holds the string denoting the creator_id field in the database.
+	FieldCreatorID = "creator_id"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
 	EdgeCreator = "creator"
 	// Table holds the table name of the task in the database.
 	Table = "tasks"
-	// CreatorTable is the table that holds the creator relation/edge. The primary key declared below.
-	CreatorTable = "task_creator"
+	// CreatorTable is the table that holds the creator relation/edge.
+	CreatorTable = "tasks"
 	// CreatorInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	CreatorInverseTable = "users"
+	// CreatorColumn is the table column denoting the creator relation/edge.
+	CreatorColumn = "creator_id"
 )
 
 // Columns holds all SQL columns for task fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldIcon,
 	FieldTitle,
 	FieldDescription,
-	FieldPriority,
+	FieldDeadline,
+	FieldEstimated,
 	FieldComplexity,
-	FieldHardDeadline,
-	FieldSoftDeadline,
-	FieldStatus,
+	FieldPriority,
+	FieldCreatorID,
 }
-
-var (
-	// CreatorPrimaryKey and CreatorColumn2 are the table columns denoting the
-	// primary key for the creator relation (M2M).
-	CreatorPrimaryKey = []string{"task_id", "user_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -61,10 +68,62 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultPriority holds the default value on creation for the "priority" field.
-	DefaultPriority string
-	// DefaultComplexity holds the default value on creation for the "complexity" field.
-	DefaultComplexity string
-	// DefaultStatus holds the default value on creation for the "status" field.
-	DefaultStatus string
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultIcon holds the default value on creation for the "icon" field.
+	DefaultIcon int
 )
+
+// Complexity defines the type for the "complexity" enum field.
+type Complexity string
+
+// ComplexityMid is the default value of the Complexity enum.
+const DefaultComplexity = ComplexityMid
+
+// Complexity values.
+const (
+	ComplexityLow  Complexity = "low"
+	ComplexityMid  Complexity = "mid"
+	ComplexityHigh Complexity = "high"
+)
+
+func (c Complexity) String() string {
+	return string(c)
+}
+
+// ComplexityValidator is a validator for the "complexity" field enum values. It is called by the builders before save.
+func ComplexityValidator(c Complexity) error {
+	switch c {
+	case ComplexityLow, ComplexityMid, ComplexityHigh:
+		return nil
+	default:
+		return fmt.Errorf("task: invalid enum value for complexity field: %q", c)
+	}
+}
+
+// Priority defines the type for the "priority" enum field.
+type Priority string
+
+// PriorityMid is the default value of the Priority enum.
+const DefaultPriority = PriorityMid
+
+// Priority values.
+const (
+	PriorityLow  Priority = "low"
+	PriorityMid  Priority = "mid"
+	PriorityHigh Priority = "high"
+)
+
+func (pr Priority) String() string {
+	return string(pr)
+}
+
+// PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
+func PriorityValidator(pr Priority) error {
+	switch pr {
+	case PriorityLow, PriorityMid, PriorityHigh:
+		return nil
+	default:
+		return fmt.Errorf("task: invalid enum value for priority field: %q", pr)
+	}
+}
