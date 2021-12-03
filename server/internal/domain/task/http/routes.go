@@ -1,12 +1,15 @@
 package http
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"server/internal/domain"
 	"server/internal/platform"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -171,6 +174,29 @@ func putTask(service domain.TaskService) func(ctx *gin.Context) {
 // @Router 		/task [post]
 func postTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		user := ctx.Value(platform.UserCtxKey).(*domain.User)
+
+		var taskDTO domain.CreateTaskDTO
+		err := ctx.ShouldBind(&taskDTO)
+		if err != nil {
+			var sb strings.Builder
+			sb.WriteString("Error: Field validation failed for: ")
+			for _, fieldErr := range err.(validator.ValidationErrors) {
+				sb.WriteString(fmt.Sprintf("%s, ", fieldErr.Field()))
+			}
+			platform.GinErrResponse(ctx, platform.UnprocessableEntity(sb.String()))
+			return
+		}
+
+		taskDTO.UserID = user.ID
+
+		err = service.Create(ctx.Request.Context(), taskDTO)
+		if err != nil {
+			platform.GinErrResponse(ctx, err)
+			return
+		}
+
+		platform.GinOkResponse(ctx, http.StatusCreated)
 	}
 }
 

@@ -50,6 +50,8 @@ type TaskService interface {
 	ByID(ctx context.Context, taskID int) (*Task, error)
 	Fetch(ctx context.Context, dto GetTaskDTO) ([]*Task, error)
 
+	Create(ctx context.Context, task CreateTaskDTO) error
+
 	Update(ctx context.Context, dto TaskPutDTO) (*Task, error)
 
 	Delete(ctx context.Context, taskID int) error
@@ -62,6 +64,17 @@ type GetTaskDTO struct {
 	Priority   *string `json:"priority" binding:"omitempty,oneof=very_low low medium high very_high"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
 	OrderBy    *string `json:"order_by" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
+}
+
+type CreateTaskDTO struct {
+	UserID      int        `json:"-"`
+	Icon        *int       `json:"icon"`
+	Title       string     `json:"title" binding:"required"`
+	Description *string    `json:"description,omitempty"`
+	Deadline    *time.Time `json:"deadline"`
+	Estimated   *int       `json:"estimated,omitempty"`
+	Complexity  *string    `json:"complexity" binding:"omitempty,oneof=very_low low medium high very_high"`
+	Priority    *string    `json:"priority" binding:"omitempty,oneof=very_low low medium high very_high"`
 }
 
 type TaskPutDTO struct {
