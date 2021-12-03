@@ -1,11 +1,7 @@
-import Head from 'next/head';
-
 function Home() {
   return (
     <>
-      <Head>
-        <title>Hackathon</title>
-      </Head>
+      <header></header>
 
       <main></main>
 
