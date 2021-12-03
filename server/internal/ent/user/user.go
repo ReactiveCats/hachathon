@@ -13,11 +13,13 @@ const (
 	EdgeTasks = "tasks"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// TasksTable is the table that holds the tasks relation/edge. The primary key declared below.
-	TasksTable = "task_creator"
+	// TasksTable is the table that holds the tasks relation/edge.
+	TasksTable = "tasks"
 	// TasksInverseTable is the table name for the Task entity.
 	// It exists in this package in order to avoid circular dependency with the "task" package.
 	TasksInverseTable = "tasks"
+	// TasksColumn is the table column denoting the tasks relation/edge.
+	TasksColumn = "creator_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -25,12 +27,6 @@ var Columns = []string{
 	FieldID,
 	FieldUsername,
 }
-
-var (
-	// TasksPrimaryKey and TasksColumn2 are the table columns denoting the
-	// primary key for the tasks relation (M2M).
-	TasksPrimaryKey = []string{"task_id", "user_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

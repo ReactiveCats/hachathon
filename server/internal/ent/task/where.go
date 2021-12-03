@@ -4,6 +4,7 @@ package task
 
 import (
 	"server/internal/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -92,6 +93,13 @@ func IDLTE(id int) predicate.Task {
 	})
 }
 
+// CreatorID applies equality check predicate on the "creator_id" field. It's identical to CreatorIDEQ.
+func CreatorID(v int) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCreatorID), v))
+	})
+}
+
 // Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
 func Title(v string) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
@@ -121,14 +129,14 @@ func Complexity(v string) predicate.Task {
 }
 
 // HardDeadline applies equality check predicate on the "hard_deadline" field. It's identical to HardDeadlineEQ.
-func HardDeadline(v string) predicate.Task {
+func HardDeadline(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldHardDeadline), v))
 	})
 }
 
 // SoftDeadline applies equality check predicate on the "soft_deadline" field. It's identical to SoftDeadlineEQ.
-func SoftDeadline(v string) predicate.Task {
+func SoftDeadline(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSoftDeadline), v))
 	})
@@ -138,6 +146,54 @@ func SoftDeadline(v string) predicate.Task {
 func Status(v string) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
+// CreatorIDEQ applies the EQ predicate on the "creator_id" field.
+func CreatorIDEQ(v int) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCreatorID), v))
+	})
+}
+
+// CreatorIDNEQ applies the NEQ predicate on the "creator_id" field.
+func CreatorIDNEQ(v int) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCreatorID), v))
+	})
+}
+
+// CreatorIDIn applies the In predicate on the "creator_id" field.
+func CreatorIDIn(vs ...int) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCreatorID), v...))
+	})
+}
+
+// CreatorIDNotIn applies the NotIn predicate on the "creator_id" field.
+func CreatorIDNotIn(vs ...int) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCreatorID), v...))
 	})
 }
 
@@ -600,21 +656,21 @@ func ComplexityContainsFold(v string) predicate.Task {
 }
 
 // HardDeadlineEQ applies the EQ predicate on the "hard_deadline" field.
-func HardDeadlineEQ(v string) predicate.Task {
+func HardDeadlineEQ(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldHardDeadline), v))
 	})
 }
 
 // HardDeadlineNEQ applies the NEQ predicate on the "hard_deadline" field.
-func HardDeadlineNEQ(v string) predicate.Task {
+func HardDeadlineNEQ(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldHardDeadline), v))
 	})
 }
 
 // HardDeadlineIn applies the In predicate on the "hard_deadline" field.
-func HardDeadlineIn(vs ...string) predicate.Task {
+func HardDeadlineIn(vs ...time.Time) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -631,7 +687,7 @@ func HardDeadlineIn(vs ...string) predicate.Task {
 }
 
 // HardDeadlineNotIn applies the NotIn predicate on the "hard_deadline" field.
-func HardDeadlineNotIn(vs ...string) predicate.Task {
+func HardDeadlineNotIn(vs ...time.Time) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -648,51 +704,30 @@ func HardDeadlineNotIn(vs ...string) predicate.Task {
 }
 
 // HardDeadlineGT applies the GT predicate on the "hard_deadline" field.
-func HardDeadlineGT(v string) predicate.Task {
+func HardDeadlineGT(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldHardDeadline), v))
 	})
 }
 
 // HardDeadlineGTE applies the GTE predicate on the "hard_deadline" field.
-func HardDeadlineGTE(v string) predicate.Task {
+func HardDeadlineGTE(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldHardDeadline), v))
 	})
 }
 
 // HardDeadlineLT applies the LT predicate on the "hard_deadline" field.
-func HardDeadlineLT(v string) predicate.Task {
+func HardDeadlineLT(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldHardDeadline), v))
 	})
 }
 
 // HardDeadlineLTE applies the LTE predicate on the "hard_deadline" field.
-func HardDeadlineLTE(v string) predicate.Task {
+func HardDeadlineLTE(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldHardDeadline), v))
-	})
-}
-
-// HardDeadlineContains applies the Contains predicate on the "hard_deadline" field.
-func HardDeadlineContains(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldHardDeadline), v))
-	})
-}
-
-// HardDeadlineHasPrefix applies the HasPrefix predicate on the "hard_deadline" field.
-func HardDeadlineHasPrefix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldHardDeadline), v))
-	})
-}
-
-// HardDeadlineHasSuffix applies the HasSuffix predicate on the "hard_deadline" field.
-func HardDeadlineHasSuffix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldHardDeadline), v))
 	})
 }
 
@@ -710,36 +745,22 @@ func HardDeadlineNotNil() predicate.Task {
 	})
 }
 
-// HardDeadlineEqualFold applies the EqualFold predicate on the "hard_deadline" field.
-func HardDeadlineEqualFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldHardDeadline), v))
-	})
-}
-
-// HardDeadlineContainsFold applies the ContainsFold predicate on the "hard_deadline" field.
-func HardDeadlineContainsFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldHardDeadline), v))
-	})
-}
-
 // SoftDeadlineEQ applies the EQ predicate on the "soft_deadline" field.
-func SoftDeadlineEQ(v string) predicate.Task {
+func SoftDeadlineEQ(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSoftDeadline), v))
 	})
 }
 
 // SoftDeadlineNEQ applies the NEQ predicate on the "soft_deadline" field.
-func SoftDeadlineNEQ(v string) predicate.Task {
+func SoftDeadlineNEQ(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldSoftDeadline), v))
 	})
 }
 
 // SoftDeadlineIn applies the In predicate on the "soft_deadline" field.
-func SoftDeadlineIn(vs ...string) predicate.Task {
+func SoftDeadlineIn(vs ...time.Time) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -756,7 +777,7 @@ func SoftDeadlineIn(vs ...string) predicate.Task {
 }
 
 // SoftDeadlineNotIn applies the NotIn predicate on the "soft_deadline" field.
-func SoftDeadlineNotIn(vs ...string) predicate.Task {
+func SoftDeadlineNotIn(vs ...time.Time) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -773,51 +794,30 @@ func SoftDeadlineNotIn(vs ...string) predicate.Task {
 }
 
 // SoftDeadlineGT applies the GT predicate on the "soft_deadline" field.
-func SoftDeadlineGT(v string) predicate.Task {
+func SoftDeadlineGT(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldSoftDeadline), v))
 	})
 }
 
 // SoftDeadlineGTE applies the GTE predicate on the "soft_deadline" field.
-func SoftDeadlineGTE(v string) predicate.Task {
+func SoftDeadlineGTE(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldSoftDeadline), v))
 	})
 }
 
 // SoftDeadlineLT applies the LT predicate on the "soft_deadline" field.
-func SoftDeadlineLT(v string) predicate.Task {
+func SoftDeadlineLT(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldSoftDeadline), v))
 	})
 }
 
 // SoftDeadlineLTE applies the LTE predicate on the "soft_deadline" field.
-func SoftDeadlineLTE(v string) predicate.Task {
+func SoftDeadlineLTE(v time.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldSoftDeadline), v))
-	})
-}
-
-// SoftDeadlineContains applies the Contains predicate on the "soft_deadline" field.
-func SoftDeadlineContains(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldSoftDeadline), v))
-	})
-}
-
-// SoftDeadlineHasPrefix applies the HasPrefix predicate on the "soft_deadline" field.
-func SoftDeadlineHasPrefix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldSoftDeadline), v))
-	})
-}
-
-// SoftDeadlineHasSuffix applies the HasSuffix predicate on the "soft_deadline" field.
-func SoftDeadlineHasSuffix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldSoftDeadline), v))
 	})
 }
 
@@ -832,20 +832,6 @@ func SoftDeadlineIsNil() predicate.Task {
 func SoftDeadlineNotNil() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSoftDeadline)))
-	})
-}
-
-// SoftDeadlineEqualFold applies the EqualFold predicate on the "soft_deadline" field.
-func SoftDeadlineEqualFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldSoftDeadline), v))
-	})
-}
-
-// SoftDeadlineContainsFold applies the ContainsFold predicate on the "soft_deadline" field.
-func SoftDeadlineContainsFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldSoftDeadline), v))
 	})
 }
 
@@ -966,7 +952,7 @@ func HasCreator() predicate.Task {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(CreatorTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, CreatorTable, CreatorPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, CreatorTable, CreatorColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -978,7 +964,7 @@ func HasCreatorWith(preds ...predicate.User) predicate.Task {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(CreatorInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, CreatorTable, CreatorPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, CreatorTable, CreatorColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
