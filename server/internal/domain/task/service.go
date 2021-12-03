@@ -56,7 +56,6 @@ func (s Service) Delete(ctx context.Context, taskID int) error {
 }
 
 func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) error {
-	user := ctx.Value(platform.UserCtxKey)
 	err := s.client.Create().
 		SetTitle(taskDTO.Title).
 		SetNillableIcon(taskDTO.Icon).
@@ -65,7 +64,7 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) error
 		SetNillableComplexity((*taskent.Complexity)(taskDTO.Complexity)).
 		SetNillableDeadline(taskDTO.Deadline).
 		SetNillableEstimated(taskDTO.Estimated).
-		SetCreatorID(user.(*domain.User).ID).
+		SetCreatorID(taskDTO.UserID).
 		Exec(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {

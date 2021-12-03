@@ -90,6 +90,8 @@ func putTask(service domain.TaskService) func(ctx *gin.Context) {
 // @Router 		/task [post]
 func postTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		user := ctx.Value(platform.UserCtxKey).(*domain.User)
+
 		var taskDTO domain.CreateTaskDTO
 		err := ctx.ShouldBind(&taskDTO)
 		if err != nil {
@@ -101,6 +103,8 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 			platform.GinErrResponse(ctx, platform.UnprocessableEntity(sb.String()))
 			return
 		}
+
+		taskDTO.UserID = user.ID
 
 		err = service.Create(ctx.Request.Context(), taskDTO)
 		if err != nil {

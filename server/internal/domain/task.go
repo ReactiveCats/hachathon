@@ -54,12 +54,12 @@ type TaskService interface {
 }
 
 type CreateTaskDTO struct {
-	ID          int
+	UserID      int        `json:"-"`
 	Icon        *int       `json:"icon"`
 	Title       string     `json:"title" binding:"required"`
 	Description *string    `json:"description,omitempty"`
 	Deadline    *time.Time `json:"deadline"`
 	Estimated   *int       `json:"estimated,omitempty"`
-	Complexity  *string    `json:"complexity" binding:"omitempty,oneof=very_low low mid high very_high"`
-	Priority    *string    `json:"priority" binding:"omitempty,oneof=very_low low mid high very_high"`
+	Complexity  *string    `json:"complexity" binding:"omitempty,oneof=very_low low medium high very_high"`
+	Priority    *string    `json:"priority" binding:"omitempty,oneof=very_low low medium high very_high"`
 }
