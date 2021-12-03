@@ -9,6 +9,7 @@ import (
 	"server/internal/ent/task"
 	"server/internal/ent/user"
 	"sync"
+	"time"
 
 	"entgo.io/ent"
 )
@@ -36,8 +37,8 @@ type TaskMutation struct {
 	description    *string
 	priority       *string
 	complexity     *string
-	hard_deadline  *string
-	soft_deadline  *string
+	hard_deadline  *time.Time
+	soft_deadline  *time.Time
 	status         *string
 	clearedFields  map[string]struct{}
 	creator        map[int]struct{}
@@ -285,12 +286,12 @@ func (m *TaskMutation) ResetComplexity() {
 }
 
 // SetHardDeadline sets the "hard_deadline" field.
-func (m *TaskMutation) SetHardDeadline(s string) {
-	m.hard_deadline = &s
+func (m *TaskMutation) SetHardDeadline(t time.Time) {
+	m.hard_deadline = &t
 }
 
 // HardDeadline returns the value of the "hard_deadline" field in the mutation.
-func (m *TaskMutation) HardDeadline() (r string, exists bool) {
+func (m *TaskMutation) HardDeadline() (r time.Time, exists bool) {
 	v := m.hard_deadline
 	if v == nil {
 		return
@@ -301,7 +302,7 @@ func (m *TaskMutation) HardDeadline() (r string, exists bool) {
 // OldHardDeadline returns the old "hard_deadline" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldHardDeadline(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldHardDeadline(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldHardDeadline is only allowed on UpdateOne operations")
 	}
@@ -334,12 +335,12 @@ func (m *TaskMutation) ResetHardDeadline() {
 }
 
 // SetSoftDeadline sets the "soft_deadline" field.
-func (m *TaskMutation) SetSoftDeadline(s string) {
-	m.soft_deadline = &s
+func (m *TaskMutation) SetSoftDeadline(t time.Time) {
+	m.soft_deadline = &t
 }
 
 // SoftDeadline returns the value of the "soft_deadline" field in the mutation.
-func (m *TaskMutation) SoftDeadline() (r string, exists bool) {
+func (m *TaskMutation) SoftDeadline() (r time.Time, exists bool) {
 	v := m.soft_deadline
 	if v == nil {
 		return
@@ -350,7 +351,7 @@ func (m *TaskMutation) SoftDeadline() (r string, exists bool) {
 // OldSoftDeadline returns the old "soft_deadline" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldSoftDeadline(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldSoftDeadline(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldSoftDeadline is only allowed on UpdateOne operations")
 	}
@@ -596,14 +597,14 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		m.SetComplexity(v)
 		return nil
 	case task.FieldHardDeadline:
-		v, ok := value.(string)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHardDeadline(v)
 		return nil
 	case task.FieldSoftDeadline:
-		v, ok := value.(string)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

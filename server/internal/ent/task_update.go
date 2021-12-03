@@ -8,6 +8,7 @@ import (
 	"server/internal/ent/predicate"
 	"server/internal/ent/task"
 	"server/internal/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -82,15 +83,15 @@ func (tu *TaskUpdate) SetNillableComplexity(s *string) *TaskUpdate {
 }
 
 // SetHardDeadline sets the "hard_deadline" field.
-func (tu *TaskUpdate) SetHardDeadline(s string) *TaskUpdate {
-	tu.mutation.SetHardDeadline(s)
+func (tu *TaskUpdate) SetHardDeadline(t time.Time) *TaskUpdate {
+	tu.mutation.SetHardDeadline(t)
 	return tu
 }
 
 // SetNillableHardDeadline sets the "hard_deadline" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableHardDeadline(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetHardDeadline(*s)
+func (tu *TaskUpdate) SetNillableHardDeadline(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetHardDeadline(*t)
 	}
 	return tu
 }
@@ -102,15 +103,15 @@ func (tu *TaskUpdate) ClearHardDeadline() *TaskUpdate {
 }
 
 // SetSoftDeadline sets the "soft_deadline" field.
-func (tu *TaskUpdate) SetSoftDeadline(s string) *TaskUpdate {
-	tu.mutation.SetSoftDeadline(s)
+func (tu *TaskUpdate) SetSoftDeadline(t time.Time) *TaskUpdate {
+	tu.mutation.SetSoftDeadline(t)
 	return tu
 }
 
 // SetNillableSoftDeadline sets the "soft_deadline" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableSoftDeadline(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetSoftDeadline(*s)
+func (tu *TaskUpdate) SetNillableSoftDeadline(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetSoftDeadline(*t)
 	}
 	return tu
 }
@@ -284,27 +285,27 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.HardDeadline(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: task.FieldHardDeadline,
 		})
 	}
 	if tu.mutation.HardDeadlineCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Column: task.FieldHardDeadline,
 		})
 	}
 	if value, ok := tu.mutation.SoftDeadline(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: task.FieldSoftDeadline,
 		})
 	}
 	if tu.mutation.SoftDeadlineCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Column: task.FieldSoftDeadline,
 		})
 	}
@@ -443,15 +444,15 @@ func (tuo *TaskUpdateOne) SetNillableComplexity(s *string) *TaskUpdateOne {
 }
 
 // SetHardDeadline sets the "hard_deadline" field.
-func (tuo *TaskUpdateOne) SetHardDeadline(s string) *TaskUpdateOne {
-	tuo.mutation.SetHardDeadline(s)
+func (tuo *TaskUpdateOne) SetHardDeadline(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetHardDeadline(t)
 	return tuo
 }
 
 // SetNillableHardDeadline sets the "hard_deadline" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableHardDeadline(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetHardDeadline(*s)
+func (tuo *TaskUpdateOne) SetNillableHardDeadline(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetHardDeadline(*t)
 	}
 	return tuo
 }
@@ -463,15 +464,15 @@ func (tuo *TaskUpdateOne) ClearHardDeadline() *TaskUpdateOne {
 }
 
 // SetSoftDeadline sets the "soft_deadline" field.
-func (tuo *TaskUpdateOne) SetSoftDeadline(s string) *TaskUpdateOne {
-	tuo.mutation.SetSoftDeadline(s)
+func (tuo *TaskUpdateOne) SetSoftDeadline(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetSoftDeadline(t)
 	return tuo
 }
 
 // SetNillableSoftDeadline sets the "soft_deadline" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableSoftDeadline(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetSoftDeadline(*s)
+func (tuo *TaskUpdateOne) SetNillableSoftDeadline(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetSoftDeadline(*t)
 	}
 	return tuo
 }
@@ -669,27 +670,27 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.HardDeadline(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: task.FieldHardDeadline,
 		})
 	}
 	if tuo.mutation.HardDeadlineCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Column: task.FieldHardDeadline,
 		})
 	}
 	if value, ok := tuo.mutation.SoftDeadline(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: task.FieldSoftDeadline,
 		})
 	}
 	if tuo.mutation.SoftDeadlineCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Column: task.FieldSoftDeadline,
 		})
 	}

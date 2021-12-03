@@ -18,8 +18,8 @@ func (Task) Fields() []ent.Field {
 		field.String("description").Optional(),
 		field.String("priority").Default("5"),
 		field.String("complexity").Default("5"),
-		field.String("hard_deadline").Optional(),
-		field.String("soft_deadline").Optional(),
+		field.Time("hard_deadline").Optional(),
+		field.Time("soft_deadline").Optional(),
 		field.String("status").Default("123"),
 	}
 }

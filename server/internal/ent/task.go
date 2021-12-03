@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"server/internal/ent/task"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -24,9 +25,9 @@ type Task struct {
 	// Complexity holds the value of the "complexity" field.
 	Complexity string `json:"complexity,omitempty"`
 	// HardDeadline holds the value of the "hard_deadline" field.
-	HardDeadline string `json:"hard_deadline,omitempty"`
+	HardDeadline time.Time `json:"hard_deadline,omitempty"`
 	// SoftDeadline holds the value of the "soft_deadline" field.
-	SoftDeadline string `json:"soft_deadline,omitempty"`
+	SoftDeadline time.Time `json:"soft_deadline,omitempty"`
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -59,8 +60,10 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case task.FieldID:
 			values[i] = new(sql.NullInt64)
-		case task.FieldTitle, task.FieldDescription, task.FieldPriority, task.FieldComplexity, task.FieldHardDeadline, task.FieldSoftDeadline, task.FieldStatus:
+		case task.FieldTitle, task.FieldDescription, task.FieldPriority, task.FieldComplexity, task.FieldStatus:
 			values[i] = new(sql.NullString)
+		case task.FieldHardDeadline, task.FieldSoftDeadline:
+			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Task", columns[i])
 		}
@@ -107,16 +110,16 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 				t.Complexity = value.String
 			}
 		case task.FieldHardDeadline:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field hard_deadline", values[i])
 			} else if value.Valid {
-				t.HardDeadline = value.String
+				t.HardDeadline = value.Time
 			}
 		case task.FieldSoftDeadline:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field soft_deadline", values[i])
 			} else if value.Valid {
-				t.SoftDeadline = value.String
+				t.SoftDeadline = value.Time
 			}
 		case task.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -166,9 +169,9 @@ func (t *Task) String() string {
 	builder.WriteString(", complexity=")
 	builder.WriteString(t.Complexity)
 	builder.WriteString(", hard_deadline=")
-	builder.WriteString(t.HardDeadline)
+	builder.WriteString(t.HardDeadline.Format(time.ANSIC))
 	builder.WriteString(", soft_deadline=")
-	builder.WriteString(t.SoftDeadline)
+	builder.WriteString(t.SoftDeadline.Format(time.ANSIC))
 	builder.WriteString(", status=")
 	builder.WriteString(t.Status)
 	builder.WriteByte(')')

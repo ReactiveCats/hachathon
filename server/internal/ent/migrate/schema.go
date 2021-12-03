@@ -15,8 +15,8 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "priority", Type: field.TypeString, Default: "5"},
 		{Name: "complexity", Type: field.TypeString, Default: "5"},
-		{Name: "hard_deadline", Type: field.TypeString, Nullable: true},
-		{Name: "soft_deadline", Type: field.TypeString, Nullable: true},
+		{Name: "hard_deadline", Type: field.TypeTime, Nullable: true},
+		{Name: "soft_deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "status", Type: field.TypeString, Default: "123"},
 	}
 	// TasksTable holds the schema information for the "tasks" table.

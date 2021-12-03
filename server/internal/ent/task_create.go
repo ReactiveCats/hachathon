@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"server/internal/ent/task"
 	"server/internal/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -69,29 +70,29 @@ func (tc *TaskCreate) SetNillableComplexity(s *string) *TaskCreate {
 }
 
 // SetHardDeadline sets the "hard_deadline" field.
-func (tc *TaskCreate) SetHardDeadline(s string) *TaskCreate {
-	tc.mutation.SetHardDeadline(s)
+func (tc *TaskCreate) SetHardDeadline(t time.Time) *TaskCreate {
+	tc.mutation.SetHardDeadline(t)
 	return tc
 }
 
 // SetNillableHardDeadline sets the "hard_deadline" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableHardDeadline(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetHardDeadline(*s)
+func (tc *TaskCreate) SetNillableHardDeadline(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetHardDeadline(*t)
 	}
 	return tc
 }
 
 // SetSoftDeadline sets the "soft_deadline" field.
-func (tc *TaskCreate) SetSoftDeadline(s string) *TaskCreate {
-	tc.mutation.SetSoftDeadline(s)
+func (tc *TaskCreate) SetSoftDeadline(t time.Time) *TaskCreate {
+	tc.mutation.SetSoftDeadline(t)
 	return tc
 }
 
 // SetNillableSoftDeadline sets the "soft_deadline" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableSoftDeadline(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetSoftDeadline(*s)
+func (tc *TaskCreate) SetNillableSoftDeadline(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetSoftDeadline(*t)
 	}
 	return tc
 }
@@ -285,7 +286,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.HardDeadline(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: task.FieldHardDeadline,
 		})
@@ -293,7 +294,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.SoftDeadline(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: task.FieldSoftDeadline,
 		})
