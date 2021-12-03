@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"net/http"
 	"server/internal/domain"
 	"server/internal/platform"
@@ -25,9 +26,59 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 // @Produce  	json
 // @Success 	200 {array} domain.Task
 // @Router 		/task [get]
-func getTasks(domain.TaskService) func(ctx *gin.Context) {
+func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		user := ctx.Value(platform.UserCtxKey).(*domain.User)
+		dto := domain.GetTaskDTO{
+			UserID: user.ID,
+		}
 
+		estimated, ok := ctx.Get("estimated")
+		if ok {
+			parsedEstimated, err := strconv.Atoi(estimated.(string))
+			if err != nil {
+				platform.GinErrResponse(ctx, platform.Conflict("Invalid data"))
+				return
+			}
+			dto.Estimated = &parsedEstimated
+		}
+
+		complexity, ok := ctx.Get("complexity")
+		if ok {
+			parsedComplexity := complexity.(string)
+			dto.Complexity = &parsedComplexity
+		}
+
+		priority, ok := ctx.Get("priority")
+		if ok {
+			parsedPriority := priority.(string)
+			dto.Priority = &parsedPriority
+		}
+
+		order, ok := ctx.Get("order")
+		if ok {
+			parsedOrder := order.(string)
+			dto.Order = &parsedOrder
+		}
+
+		orderBy, ok := ctx.Get("order_by")
+		if ok {
+			parsedOrderBy := orderBy.(string)
+			dto.OrderBy = &parsedOrderBy
+		}
+
+		err := binding.Validator.ValidateStruct(&dto)
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.Conflict("Invalid data"))
+			return
+		}
+
+		tasks, err := service.Fetch(ctx, dto)
+		if err != nil {
+			return
+		}
+
+		ctx.JSON(http.StatusOK, tasks)
 	}
 }
 

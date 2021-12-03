@@ -48,6 +48,16 @@ func TasksFromEnt(slice []*ent.Task) []*Task {
 
 type TaskService interface {
 	ByID(ctx context.Context, taskID int) (*Task, error)
+	Fetch(ctx context.Context, dto GetTaskDTO) ([]*Task, error)
 	Update(ctx context.Context, taskID int) (*Task, error)
 	Delete(ctx context.Context, taskID int) error
+}
+
+type GetTaskDTO struct {
+	UserID     int     `json:"-"`
+	Estimated  *int    `json:"estimated,omitempty"`
+	Complexity *string `json:"complexity" binding:"omitempty,oneof=very_low low mid high very_high"`
+	Priority   *string `json:"priority" binding:"omitempty,oneof=very_low low mid high very_high"`
+	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
+	OrderBy    *string `json:"order_by" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
 }

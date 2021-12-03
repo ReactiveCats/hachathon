@@ -6,6 +6,7 @@ import (
 	"server/internal/domain"
 	"server/internal/ent"
 	taskent "server/internal/ent/task"
+	userent "server/internal/ent/user"
 	"server/internal/platform"
 )
 
@@ -34,6 +35,35 @@ func (s Service) ByID(ctx context.Context, taskID int) (*domain.Task, error) {
 	}
 
 	return domain.TaskFromEnt(task), nil
+}
+
+func (s Service) Fetch(ctx context.Context, dto domain.GetTaskDTO) ([]*domain.Task, error) {
+	query := s.client.Query().Select()
+	if dto.Estimated != nil {
+		query.Where(taskent.Estimated(*dto.Estimated))
+	}
+	if dto.Complexity != nil {
+		query.Where(taskent.ComplexityEQ(taskent.Complexity(*dto.Complexity)))
+	}
+	if dto.Priority != nil {
+		query.Where(taskent.PriorityEQ(taskent.Priority(*dto.Priority)))
+	}
+	if dto.OrderBy != nil && dto.Order != nil {
+		if *dto.Order == "asc" {
+			query.Order(ent.Asc(*dto.OrderBy))
+		} else {
+			query.Order(ent.Desc(*dto.OrderBy))
+		}
+	}
+	query.Where(taskent.HasCreatorWith(userent.ID(dto.UserID)))
+	tasks, err := query.All(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, platform.NotFound("Tasks are not found")
+		}
+		return nil, platform.WrapInternal(err)
+	}
+	return domain.TasksFromEnt(tasks), nil
 }
 
 func (s Service) Update(ctx context.Context, taskID int) (*domain.Task, error) {
