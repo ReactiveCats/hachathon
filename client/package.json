@@ -2,14 +2,19 @@
   "name": "client",
   "private": true,
   "scripts": {
-    "dev": "node ./src/server.js",
+    "dev": "next",
     "build": "next build",
-    "start": "cross-env NODE_ENV=production node ./src/server.js",
+    "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{ts,js}\"",
     "swagger:generate": "openapi-generator-cli generate -i \"http://localhost:8080/swagger\" -g typescript-fetch -o  ./swagger"
   },
   "dependencies": {
+    "@emotion/cache": "^11.6.0",
+    "@emotion/react": "^11.7.0",
+    "@emotion/server": "^11.4.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.2.2",
     "cross-env": "7.0.3",
     "fastify": "3.24.1",
     "next": "12.0.4",
