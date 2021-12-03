@@ -1,10 +1,13 @@
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
+import isEqual from '@tinkoff/utils/is/equal';
 import {
   HIDE_TASK_CARD,
+  UPDATE_TASK_CARD,
   useTaskModalContext,
 } from '../context/task-modal-context';
+import { TaskModalBody } from './task-modal-body-component';
 
 const style = {
   position: 'absolute',
@@ -17,25 +20,52 @@ const style = {
   p: 4,
 };
 
+const taskFromData = (data) => ({
+  title: '',
+  description: '',
+  ...data,
+});
+
 export function TaskModal() {
   const { state, dispatch } = useTaskModalContext();
 
-  const handleClose = () => {
+  if (state.data === null) {
+    return <></>;
+  }
+
+  const close = () => {
     dispatch({ type: HIDE_TASK_CARD });
   };
+
+  const handleSave = (data) => {
+    if (!isEqual(data, state.data)) {
+      dispatch({ type: UPDATE_TASK_CARD, data });
+    }
+
+    close();
+  };
+
+  const handleClose = () => {
+    close();
+  };
+
+  const task = taskFromData(state.data);
 
   return (
     <>
       <Modal
         open={state.open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby={task.title}
+        aria-describedby={task.description}
+        disablePortal
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
+          <TaskModalBody
+            task={task}
+            onClose={handleClose}
+            onSave={handleSave}
+          ></TaskModalBody>
         </Box>
       </Modal>
     </>
