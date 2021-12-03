@@ -6,6 +6,7 @@ import (
 	"server/internal/domain"
 	"server/internal/ent"
 	taskent "server/internal/ent/task"
+	userent "server/internal/ent/user"
 	"server/internal/platform"
 )
 
@@ -36,9 +37,33 @@ func (s Service) ByID(ctx context.Context, taskID int) (*domain.Task, error) {
 	return domain.TaskFromEnt(task), nil
 }
 
-func (s Service) Update(ctx context.Context, taskID int) (*domain.Task, error) {
-	//TODO implement me
-	panic("implement me")
+func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain.Task, error) {
+	err := s.client.Update().
+		Where(
+			taskent.ID(taskDTO.TaskID),
+			taskent.HasCreatorWith(userent.ID(taskDTO.UserID)),
+		).
+		SetNillableIcon(taskDTO.Icon).
+		SetTitle(taskDTO.Title).
+		SetNillableDescription(taskDTO.Description).
+		SetNillableDeadline(taskDTO.Deadline).
+		SetNillableEstimated(taskDTO.Estimated).
+		SetNillableComplexity((*taskent.Complexity)(taskDTO.Complexity)).
+		SetNillablePriority((*taskent.Priority)(taskDTO.Complexity)).
+		Exec(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, platform.NotFound("Task is not found")
+		}
+		return nil, platform.WrapInternal(err)
+	}
+
+	task, err := s.ByID(ctx, taskDTO.TaskID)
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
 }
 
 func (s Service) Delete(ctx context.Context, taskID int) error {

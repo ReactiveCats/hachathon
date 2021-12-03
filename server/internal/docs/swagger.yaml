@@ -4,17 +4,48 @@ definitions:
     properties:
       complexity:
         type: string
+      created_at:
+        type: string
+      deadline:
+        type: string
       description:
         type: string
-      hardDeadline:
-        type: string
+      estimated:
+        type: integer
+      icon:
+        type: integer
       id:
         type: integer
       priority:
         type: string
-      softDeadline:
+      title:
         type: string
-      status:
+    type: object
+  domain.TaskPutDTO:
+    properties:
+      complexity:
+        enum:
+        - very_low
+        - low
+        - mid
+        - high
+        - very_high
+        type: string
+      deadline:
+        type: string
+      description:
+        type: string
+      estimated:
+        type: integer
+      icon:
+        type: integer
+      priority:
+        enum:
+        - very_low
+        - low
+        - mid
+        - high
+        - very_high
         type: string
       title:
         type: string
@@ -87,7 +118,7 @@ paths:
         in: path
         name: task_id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -109,6 +140,12 @@ paths:
         name: task_id
         required: true
         type: string
+      - description: task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TaskPutDTO'
       produces:
       - application/json
       responses:
