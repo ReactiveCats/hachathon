@@ -9,6 +9,7 @@ package bootstrap
 import (
 	"context"
 	"server/internal/config"
+	"server/internal/domain/task"
 	"server/internal/domain/user"
 )
 
@@ -24,6 +25,7 @@ func Up(ctx context.Context) (Dependencies, error) {
 		return Dependencies{}, err
 	}
 	service := user.NewService(client, configConfig)
-	dependencies := NewDependencies(configConfig, client, service)
+	taskService := task.NewService(client, configConfig)
+	dependencies := NewDependencies(configConfig, client, service, taskService)
 	return dependencies, nil
 }

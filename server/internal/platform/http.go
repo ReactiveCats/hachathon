@@ -18,6 +18,14 @@ import (
 //	}
 //}
 
+type err struct {
+	Error ErrorObj `json:"error"`
+}
+
+type ErrorObj struct {
+	Message string `json:"message"`
+}
+
 func GinOkResponse(ctx *gin.Context, httpStatusCode int, payload ...interface{}) {
 	switch len(payload) {
 	case 0:

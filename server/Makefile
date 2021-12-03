@@ -19,6 +19,8 @@ build:
 
 openapi-generate:
 	${SWAG} i --exclude internal/ent --parseVendor -g ${CMD_PATH}
+	@rm -rf ./internal/docs
+	@mv ./docs ./internal
 
 ent-generate:
 	@${GO} generate ./internal/ent/generate.go

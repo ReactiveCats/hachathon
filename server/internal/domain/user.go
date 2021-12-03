@@ -34,7 +34,7 @@ type UserService interface {
 	JWTToken(user *User) (string, error)
 	DataFromJWT(tokenStr string) (int, error)
 	Signup(ctx context.Context, username, password string) (string, error)
-	Login(ctx context.Context, username, password string) (string, error)
+	Login(ctx context.Context, userID int) (string, error)
 
 	ByID(ctx context.Context, dto GetUserDTO) (*User, error)
 }

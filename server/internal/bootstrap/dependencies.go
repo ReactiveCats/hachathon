@@ -12,13 +12,17 @@ type Dependencies struct {
 	EntClient *ent.Client
 
 	UserService domain.UserService
+	TaskService domain.TaskService
 }
 
-func NewDependencies(config config.Config, entClient *ent.Client, user domain.UserService) Dependencies {
+func NewDependencies(config config.Config, entClient *ent.Client,
+	user domain.UserService,
+	task domain.TaskService) Dependencies {
 	return Dependencies{
 		Config:      config,
 		EntClient:   entClient,
 		UserService: user,
+		TaskService: task,
 	}
 }
 
