@@ -102,7 +102,7 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 			return
 		}
 
-		err = service.Create(ctx, taskDTO)
+		err = service.Create(ctx.Request.Context(), taskDTO)
 		if err != nil {
 			platform.GinErrResponse(ctx, err)
 			return
