@@ -54,3 +54,24 @@ func (s Service) Delete(ctx context.Context, taskID int) error {
 
 	return nil
 }
+
+func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) error {
+	user := ctx.Value(platform.UserCtxKey)
+	err := s.client.Create().
+		SetTitle(taskDTO.Title).
+		SetNillableIcon(taskDTO.Icon).
+		SetNillableDescription(taskDTO.Description).
+		SetNillablePriority((*taskent.Priority)(taskDTO.Priority)).
+		SetNillableComplexity((*taskent.Complexity)(taskDTO.Complexity)).
+		SetNillableDeadline(taskDTO.Deadline).
+		SetNillableEstimated(taskDTO.Estimated).
+		SetCreatorID(user.(*domain.User).ID).
+		Exec(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return platform.NotFound("User not found")
+		}
+		return platform.WrapInternal(err)
+	}
+	return nil
+}

@@ -1,11 +1,14 @@
 package http
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"server/internal/domain"
 	"server/internal/platform"
 	"strconv"
+	"strings"
 )
 
 func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
@@ -87,6 +90,25 @@ func putTask(service domain.TaskService) func(ctx *gin.Context) {
 // @Router 		/task [post]
 func postTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		var taskDTO domain.CreateTaskDTO
+		err := ctx.ShouldBind(&taskDTO)
+		if err != nil {
+			var sb strings.Builder
+			sb.WriteString("Error: Field validation failed for: ")
+			for _, fieldErr := range err.(validator.ValidationErrors) {
+				sb.WriteString(fmt.Sprintf("%s, ", fieldErr.Field()))
+			}
+			platform.GinErrResponse(ctx, platform.UnprocessableEntity(sb.String()))
+			return
+		}
+
+		err = service.Create(ctx, taskDTO)
+		if err != nil {
+			platform.GinErrResponse(ctx, err)
+			return
+		}
+
+		platform.GinOkResponse(ctx, http.StatusCreated)
 	}
 }
 
