@@ -12,13 +12,13 @@ var (
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "icon", Type: field.TypeInt, Default: 0},
 		{Name: "title", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "priority", Type: field.TypeString, Default: "5"},
-		{Name: "complexity", Type: field.TypeString, Default: "5"},
-		{Name: "hard_deadline", Type: field.TypeTime, Nullable: true},
-		{Name: "soft_deadline", Type: field.TypeTime, Nullable: true},
-		{Name: "status", Type: field.TypeString, Default: "123"},
+		{Name: "deadline", Type: field.TypeTime, Nullable: true},
+		{Name: "estimated", Type: field.TypeInt, Nullable: true},
+		{Name: "complexity", Type: field.TypeEnum, Enums: []string{"low", "mid", "high"}, Default: "mid"},
+		{Name: "priority", Type: field.TypeEnum, Enums: []string{"low", "mid", "high"}, Default: "mid"},
 		{Name: "creator_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.

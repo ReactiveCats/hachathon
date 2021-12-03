@@ -18,16 +18,8 @@ func init() {
 	taskDescCreatedAt := taskFields[0].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
-	// taskDescPriority is the schema descriptor for priority field.
-	taskDescPriority := taskFields[4].Descriptor()
-	// task.DefaultPriority holds the default value on creation for the priority field.
-	task.DefaultPriority = taskDescPriority.Default.(string)
-	// taskDescComplexity is the schema descriptor for complexity field.
-	taskDescComplexity := taskFields[5].Descriptor()
-	// task.DefaultComplexity holds the default value on creation for the complexity field.
-	task.DefaultComplexity = taskDescComplexity.Default.(string)
-	// taskDescStatus is the schema descriptor for status field.
-	taskDescStatus := taskFields[8].Descriptor()
-	// task.DefaultStatus holds the default value on creation for the status field.
-	task.DefaultStatus = taskDescStatus.Default.(string)
+	// taskDescIcon is the schema descriptor for icon field.
+	taskDescIcon := taskFields[1].Descriptor()
+	// task.DefaultIcon holds the default value on creation for the icon field.
+	task.DefaultIcon = taskDescIcon.Default.(int)
 }

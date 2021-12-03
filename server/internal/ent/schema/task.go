@@ -16,14 +16,18 @@ type Task struct {
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("created_at").Default(time.Now),
-		field.Int("creator_id"),
+		field.Int("icon").Default(0),
 		field.String("title"),
 		field.String("description").Optional(),
-		field.String("priority").Default("5"),
-		field.String("complexity").Default("5"),
-		field.Time("hard_deadline").Optional(),
-		field.Time("soft_deadline").Optional(),
-		field.String("status").Default("123"),
+		field.Time("deadline").Optional(),
+		field.Int("estimated").Optional(),
+		field.Enum("complexity").
+			Values("low", "mid", "high").
+			Default("mid"),
+		field.Enum("priority").
+			Values("low", "mid", "high").
+			Default("mid"),
+		field.Int("creator_id"),
 	}
 }
 

@@ -66,11 +66,12 @@ func getTaskByID(service domain.TaskService) func(ctx *gin.Context) {
 //// @Security 	ApiKeyAuth
 // @Tags 		tasks
 // @ID 			put_task
-// @Param 		task_id 	path 	string		true 	"task id"
+// @Param 		task_id 	path 	string				true 	"task id"
+// @Param 		task 		body 	domain.TaskPutDTO	true 	"task object"
 // @Produce  	json
 // @Success 	200 {object} domain.Task
 // @Router 		/task/{task_id} [put]
-func putTask(domain.TaskService) func(ctx *gin.Context) {
+func putTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 	}
 }

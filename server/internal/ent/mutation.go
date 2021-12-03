@@ -34,13 +34,15 @@ type TaskMutation struct {
 	typ            string
 	id             *int
 	created_at     *time.Time
+	icon           *int
+	addicon        *int
 	title          *string
 	description    *string
-	priority       *string
-	complexity     *string
-	hard_deadline  *time.Time
-	soft_deadline  *time.Time
-	status         *string
+	deadline       *time.Time
+	estimated      *int
+	addestimated   *int
+	complexity     *task.Complexity
+	priority       *task.Priority
 	clearedFields  map[string]struct{}
 	creator        *int
 	clearedcreator bool
@@ -164,40 +166,60 @@ func (m *TaskMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetCreatorID sets the "creator_id" field.
-func (m *TaskMutation) SetCreatorID(i int) {
-	m.creator = &i
+// SetIcon sets the "icon" field.
+func (m *TaskMutation) SetIcon(i int) {
+	m.icon = &i
+	m.addicon = nil
 }
 
-// CreatorID returns the value of the "creator_id" field in the mutation.
-func (m *TaskMutation) CreatorID() (r int, exists bool) {
-	v := m.creator
+// Icon returns the value of the "icon" field in the mutation.
+func (m *TaskMutation) Icon() (r int, exists bool) {
+	v := m.icon
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCreatorID returns the old "creator_id" field's value of the Task entity.
+// OldIcon returns the old "icon" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldCreatorID(ctx context.Context) (v int, err error) {
+func (m *TaskMutation) OldIcon(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreatorID is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldIcon is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreatorID requires an ID field in the mutation")
+		return v, fmt.Errorf("OldIcon requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatorID: %w", err)
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
 	}
-	return oldValue.CreatorID, nil
+	return oldValue.Icon, nil
 }
 
-// ResetCreatorID resets all changes to the "creator_id" field.
-func (m *TaskMutation) ResetCreatorID() {
-	m.creator = nil
+// AddIcon adds i to the "icon" field.
+func (m *TaskMutation) AddIcon(i int) {
+	if m.addicon != nil {
+		*m.addicon += i
+	} else {
+		m.addicon = &i
+	}
+}
+
+// AddedIcon returns the value that was added to the "icon" field in this mutation.
+func (m *TaskMutation) AddedIcon() (r int, exists bool) {
+	v := m.addicon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIcon resets all changes to the "icon" field.
+func (m *TaskMutation) ResetIcon() {
+	m.icon = nil
+	m.addicon = nil
 }
 
 // SetTitle sets the "title" field.
@@ -285,49 +307,132 @@ func (m *TaskMutation) ResetDescription() {
 	delete(m.clearedFields, task.FieldDescription)
 }
 
-// SetPriority sets the "priority" field.
-func (m *TaskMutation) SetPriority(s string) {
-	m.priority = &s
+// SetDeadline sets the "deadline" field.
+func (m *TaskMutation) SetDeadline(t time.Time) {
+	m.deadline = &t
 }
 
-// Priority returns the value of the "priority" field in the mutation.
-func (m *TaskMutation) Priority() (r string, exists bool) {
-	v := m.priority
+// Deadline returns the value of the "deadline" field in the mutation.
+func (m *TaskMutation) Deadline() (r time.Time, exists bool) {
+	v := m.deadline
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPriority returns the old "priority" field's value of the Task entity.
+// OldDeadline returns the old "deadline" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldPriority(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldDeadline(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldPriority is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldDeadline is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldPriority requires an ID field in the mutation")
+		return v, fmt.Errorf("OldDeadline requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPriority: %w", err)
+		return v, fmt.Errorf("querying old value for OldDeadline: %w", err)
 	}
-	return oldValue.Priority, nil
+	return oldValue.Deadline, nil
 }
 
-// ResetPriority resets all changes to the "priority" field.
-func (m *TaskMutation) ResetPriority() {
-	m.priority = nil
+// ClearDeadline clears the value of the "deadline" field.
+func (m *TaskMutation) ClearDeadline() {
+	m.deadline = nil
+	m.clearedFields[task.FieldDeadline] = struct{}{}
+}
+
+// DeadlineCleared returns if the "deadline" field was cleared in this mutation.
+func (m *TaskMutation) DeadlineCleared() bool {
+	_, ok := m.clearedFields[task.FieldDeadline]
+	return ok
+}
+
+// ResetDeadline resets all changes to the "deadline" field.
+func (m *TaskMutation) ResetDeadline() {
+	m.deadline = nil
+	delete(m.clearedFields, task.FieldDeadline)
+}
+
+// SetEstimated sets the "estimated" field.
+func (m *TaskMutation) SetEstimated(i int) {
+	m.estimated = &i
+	m.addestimated = nil
+}
+
+// Estimated returns the value of the "estimated" field in the mutation.
+func (m *TaskMutation) Estimated() (r int, exists bool) {
+	v := m.estimated
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEstimated returns the old "estimated" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldEstimated(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEstimated is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEstimated requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEstimated: %w", err)
+	}
+	return oldValue.Estimated, nil
+}
+
+// AddEstimated adds i to the "estimated" field.
+func (m *TaskMutation) AddEstimated(i int) {
+	if m.addestimated != nil {
+		*m.addestimated += i
+	} else {
+		m.addestimated = &i
+	}
+}
+
+// AddedEstimated returns the value that was added to the "estimated" field in this mutation.
+func (m *TaskMutation) AddedEstimated() (r int, exists bool) {
+	v := m.addestimated
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearEstimated clears the value of the "estimated" field.
+func (m *TaskMutation) ClearEstimated() {
+	m.estimated = nil
+	m.addestimated = nil
+	m.clearedFields[task.FieldEstimated] = struct{}{}
+}
+
+// EstimatedCleared returns if the "estimated" field was cleared in this mutation.
+func (m *TaskMutation) EstimatedCleared() bool {
+	_, ok := m.clearedFields[task.FieldEstimated]
+	return ok
+}
+
+// ResetEstimated resets all changes to the "estimated" field.
+func (m *TaskMutation) ResetEstimated() {
+	m.estimated = nil
+	m.addestimated = nil
+	delete(m.clearedFields, task.FieldEstimated)
 }
 
 // SetComplexity sets the "complexity" field.
-func (m *TaskMutation) SetComplexity(s string) {
-	m.complexity = &s
+func (m *TaskMutation) SetComplexity(t task.Complexity) {
+	m.complexity = &t
 }
 
 // Complexity returns the value of the "complexity" field in the mutation.
-func (m *TaskMutation) Complexity() (r string, exists bool) {
+func (m *TaskMutation) Complexity() (r task.Complexity, exists bool) {
 	v := m.complexity
 	if v == nil {
 		return
@@ -338,7 +443,7 @@ func (m *TaskMutation) Complexity() (r string, exists bool) {
 // OldComplexity returns the old "complexity" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldComplexity(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldComplexity(ctx context.Context) (v task.Complexity, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldComplexity is only allowed on UpdateOne operations")
 	}
@@ -357,138 +462,76 @@ func (m *TaskMutation) ResetComplexity() {
 	m.complexity = nil
 }
 
-// SetHardDeadline sets the "hard_deadline" field.
-func (m *TaskMutation) SetHardDeadline(t time.Time) {
-	m.hard_deadline = &t
+// SetPriority sets the "priority" field.
+func (m *TaskMutation) SetPriority(t task.Priority) {
+	m.priority = &t
 }
 
-// HardDeadline returns the value of the "hard_deadline" field in the mutation.
-func (m *TaskMutation) HardDeadline() (r time.Time, exists bool) {
-	v := m.hard_deadline
+// Priority returns the value of the "priority" field in the mutation.
+func (m *TaskMutation) Priority() (r task.Priority, exists bool) {
+	v := m.priority
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldHardDeadline returns the old "hard_deadline" field's value of the Task entity.
+// OldPriority returns the old "priority" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldHardDeadline(ctx context.Context) (v time.Time, err error) {
+func (m *TaskMutation) OldPriority(ctx context.Context) (v task.Priority, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldHardDeadline is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldPriority is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldHardDeadline requires an ID field in the mutation")
+		return v, fmt.Errorf("OldPriority requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHardDeadline: %w", err)
+		return v, fmt.Errorf("querying old value for OldPriority: %w", err)
 	}
-	return oldValue.HardDeadline, nil
+	return oldValue.Priority, nil
 }
 
-// ClearHardDeadline clears the value of the "hard_deadline" field.
-func (m *TaskMutation) ClearHardDeadline() {
-	m.hard_deadline = nil
-	m.clearedFields[task.FieldHardDeadline] = struct{}{}
+// ResetPriority resets all changes to the "priority" field.
+func (m *TaskMutation) ResetPriority() {
+	m.priority = nil
 }
 
-// HardDeadlineCleared returns if the "hard_deadline" field was cleared in this mutation.
-func (m *TaskMutation) HardDeadlineCleared() bool {
-	_, ok := m.clearedFields[task.FieldHardDeadline]
-	return ok
+// SetCreatorID sets the "creator_id" field.
+func (m *TaskMutation) SetCreatorID(i int) {
+	m.creator = &i
 }
 
-// ResetHardDeadline resets all changes to the "hard_deadline" field.
-func (m *TaskMutation) ResetHardDeadline() {
-	m.hard_deadline = nil
-	delete(m.clearedFields, task.FieldHardDeadline)
-}
-
-// SetSoftDeadline sets the "soft_deadline" field.
-func (m *TaskMutation) SetSoftDeadline(t time.Time) {
-	m.soft_deadline = &t
-}
-
-// SoftDeadline returns the value of the "soft_deadline" field in the mutation.
-func (m *TaskMutation) SoftDeadline() (r time.Time, exists bool) {
-	v := m.soft_deadline
+// CreatorID returns the value of the "creator_id" field in the mutation.
+func (m *TaskMutation) CreatorID() (r int, exists bool) {
+	v := m.creator
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSoftDeadline returns the old "soft_deadline" field's value of the Task entity.
+// OldCreatorID returns the old "creator_id" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldSoftDeadline(ctx context.Context) (v time.Time, err error) {
+func (m *TaskMutation) OldCreatorID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldSoftDeadline is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldCreatorID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldSoftDeadline requires an ID field in the mutation")
+		return v, fmt.Errorf("OldCreatorID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSoftDeadline: %w", err)
+		return v, fmt.Errorf("querying old value for OldCreatorID: %w", err)
 	}
-	return oldValue.SoftDeadline, nil
+	return oldValue.CreatorID, nil
 }
 
-// ClearSoftDeadline clears the value of the "soft_deadline" field.
-func (m *TaskMutation) ClearSoftDeadline() {
-	m.soft_deadline = nil
-	m.clearedFields[task.FieldSoftDeadline] = struct{}{}
-}
-
-// SoftDeadlineCleared returns if the "soft_deadline" field was cleared in this mutation.
-func (m *TaskMutation) SoftDeadlineCleared() bool {
-	_, ok := m.clearedFields[task.FieldSoftDeadline]
-	return ok
-}
-
-// ResetSoftDeadline resets all changes to the "soft_deadline" field.
-func (m *TaskMutation) ResetSoftDeadline() {
-	m.soft_deadline = nil
-	delete(m.clearedFields, task.FieldSoftDeadline)
-}
-
-// SetStatus sets the "status" field.
-func (m *TaskMutation) SetStatus(s string) {
-	m.status = &s
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *TaskMutation) Status() (r string, exists bool) {
-	v := m.status
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the Task entity.
-// If the Task object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldStatus(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldStatus is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *TaskMutation) ResetStatus() {
-	m.status = nil
+// ResetCreatorID resets all changes to the "creator_id" field.
+func (m *TaskMutation) ResetCreatorID() {
+	m.creator = nil
 }
 
 // ClearCreator clears the "creator" edge to the User entity.
@@ -540,8 +583,8 @@ func (m *TaskMutation) Fields() []string {
 	if m.created_at != nil {
 		fields = append(fields, task.FieldCreatedAt)
 	}
-	if m.creator != nil {
-		fields = append(fields, task.FieldCreatorID)
+	if m.icon != nil {
+		fields = append(fields, task.FieldIcon)
 	}
 	if m.title != nil {
 		fields = append(fields, task.FieldTitle)
@@ -549,20 +592,20 @@ func (m *TaskMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, task.FieldDescription)
 	}
-	if m.priority != nil {
-		fields = append(fields, task.FieldPriority)
+	if m.deadline != nil {
+		fields = append(fields, task.FieldDeadline)
+	}
+	if m.estimated != nil {
+		fields = append(fields, task.FieldEstimated)
 	}
 	if m.complexity != nil {
 		fields = append(fields, task.FieldComplexity)
 	}
-	if m.hard_deadline != nil {
-		fields = append(fields, task.FieldHardDeadline)
+	if m.priority != nil {
+		fields = append(fields, task.FieldPriority)
 	}
-	if m.soft_deadline != nil {
-		fields = append(fields, task.FieldSoftDeadline)
-	}
-	if m.status != nil {
-		fields = append(fields, task.FieldStatus)
+	if m.creator != nil {
+		fields = append(fields, task.FieldCreatorID)
 	}
 	return fields
 }
@@ -574,22 +617,22 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case task.FieldCreatedAt:
 		return m.CreatedAt()
-	case task.FieldCreatorID:
-		return m.CreatorID()
+	case task.FieldIcon:
+		return m.Icon()
 	case task.FieldTitle:
 		return m.Title()
 	case task.FieldDescription:
 		return m.Description()
-	case task.FieldPriority:
-		return m.Priority()
+	case task.FieldDeadline:
+		return m.Deadline()
+	case task.FieldEstimated:
+		return m.Estimated()
 	case task.FieldComplexity:
 		return m.Complexity()
-	case task.FieldHardDeadline:
-		return m.HardDeadline()
-	case task.FieldSoftDeadline:
-		return m.SoftDeadline()
-	case task.FieldStatus:
-		return m.Status()
+	case task.FieldPriority:
+		return m.Priority()
+	case task.FieldCreatorID:
+		return m.CreatorID()
 	}
 	return nil, false
 }
@@ -601,22 +644,22 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case task.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case task.FieldCreatorID:
-		return m.OldCreatorID(ctx)
+	case task.FieldIcon:
+		return m.OldIcon(ctx)
 	case task.FieldTitle:
 		return m.OldTitle(ctx)
 	case task.FieldDescription:
 		return m.OldDescription(ctx)
-	case task.FieldPriority:
-		return m.OldPriority(ctx)
+	case task.FieldDeadline:
+		return m.OldDeadline(ctx)
+	case task.FieldEstimated:
+		return m.OldEstimated(ctx)
 	case task.FieldComplexity:
 		return m.OldComplexity(ctx)
-	case task.FieldHardDeadline:
-		return m.OldHardDeadline(ctx)
-	case task.FieldSoftDeadline:
-		return m.OldSoftDeadline(ctx)
-	case task.FieldStatus:
-		return m.OldStatus(ctx)
+	case task.FieldPriority:
+		return m.OldPriority(ctx)
+	case task.FieldCreatorID:
+		return m.OldCreatorID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Task field %s", name)
 }
@@ -633,12 +676,12 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case task.FieldCreatorID:
+	case task.FieldIcon:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCreatorID(v)
+		m.SetIcon(v)
 		return nil
 	case task.FieldTitle:
 		v, ok := value.(string)
@@ -654,40 +697,40 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
-	case task.FieldPriority:
-		v, ok := value.(string)
+	case task.FieldDeadline:
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPriority(v)
+		m.SetDeadline(v)
+		return nil
+	case task.FieldEstimated:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEstimated(v)
 		return nil
 	case task.FieldComplexity:
-		v, ok := value.(string)
+		v, ok := value.(task.Complexity)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetComplexity(v)
 		return nil
-	case task.FieldHardDeadline:
-		v, ok := value.(time.Time)
+	case task.FieldPriority:
+		v, ok := value.(task.Priority)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetHardDeadline(v)
+		m.SetPriority(v)
 		return nil
-	case task.FieldSoftDeadline:
-		v, ok := value.(time.Time)
+	case task.FieldCreatorID:
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSoftDeadline(v)
-		return nil
-	case task.FieldStatus:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
+		m.SetCreatorID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
@@ -697,6 +740,12 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TaskMutation) AddedFields() []string {
 	var fields []string
+	if m.addicon != nil {
+		fields = append(fields, task.FieldIcon)
+	}
+	if m.addestimated != nil {
+		fields = append(fields, task.FieldEstimated)
+	}
 	return fields
 }
 
@@ -705,6 +754,10 @@ func (m *TaskMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
+	case task.FieldIcon:
+		return m.AddedIcon()
+	case task.FieldEstimated:
+		return m.AddedEstimated()
 	}
 	return nil, false
 }
@@ -714,6 +767,20 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TaskMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case task.FieldIcon:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIcon(v)
+		return nil
+	case task.FieldEstimated:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddEstimated(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
 }
@@ -725,11 +792,11 @@ func (m *TaskMutation) ClearedFields() []string {
 	if m.FieldCleared(task.FieldDescription) {
 		fields = append(fields, task.FieldDescription)
 	}
-	if m.FieldCleared(task.FieldHardDeadline) {
-		fields = append(fields, task.FieldHardDeadline)
+	if m.FieldCleared(task.FieldDeadline) {
+		fields = append(fields, task.FieldDeadline)
 	}
-	if m.FieldCleared(task.FieldSoftDeadline) {
-		fields = append(fields, task.FieldSoftDeadline)
+	if m.FieldCleared(task.FieldEstimated) {
+		fields = append(fields, task.FieldEstimated)
 	}
 	return fields
 }
@@ -748,11 +815,11 @@ func (m *TaskMutation) ClearField(name string) error {
 	case task.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case task.FieldHardDeadline:
-		m.ClearHardDeadline()
+	case task.FieldDeadline:
+		m.ClearDeadline()
 		return nil
-	case task.FieldSoftDeadline:
-		m.ClearSoftDeadline()
+	case task.FieldEstimated:
+		m.ClearEstimated()
 		return nil
 	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
@@ -765,8 +832,8 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case task.FieldCreatorID:
-		m.ResetCreatorID()
+	case task.FieldIcon:
+		m.ResetIcon()
 		return nil
 	case task.FieldTitle:
 		m.ResetTitle()
@@ -774,20 +841,20 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldDescription:
 		m.ResetDescription()
 		return nil
-	case task.FieldPriority:
-		m.ResetPriority()
+	case task.FieldDeadline:
+		m.ResetDeadline()
+		return nil
+	case task.FieldEstimated:
+		m.ResetEstimated()
 		return nil
 	case task.FieldComplexity:
 		m.ResetComplexity()
 		return nil
-	case task.FieldHardDeadline:
-		m.ResetHardDeadline()
+	case task.FieldPriority:
+		m.ResetPriority()
 		return nil
-	case task.FieldSoftDeadline:
-		m.ResetSoftDeadline()
-		return nil
-	case task.FieldStatus:
-		m.ResetStatus()
+	case task.FieldCreatorID:
+		m.ResetCreatorID()
 		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)

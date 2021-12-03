@@ -36,6 +36,11 @@ func (s Service) ByID(ctx context.Context, taskID int) (*domain.Task, error) {
 	return domain.TaskFromEnt(task), nil
 }
 
+func (s Service) Update(ctx context.Context, taskID int) (*domain.Task, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (s Service) Delete(ctx context.Context, taskID int) error {
 	_, err := s.client.Delete().
 		Where(taskent.ID(taskID)).
