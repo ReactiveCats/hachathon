@@ -77,14 +77,16 @@ var (
 // Complexity defines the type for the "complexity" enum field.
 type Complexity string
 
-// ComplexityMid is the default value of the Complexity enum.
-const DefaultComplexity = ComplexityMid
+// ComplexityMedium is the default value of the Complexity enum.
+const DefaultComplexity = ComplexityMedium
 
 // Complexity values.
 const (
-	ComplexityLow  Complexity = "low"
-	ComplexityMid  Complexity = "mid"
-	ComplexityHigh Complexity = "high"
+	ComplexityVeryLow  Complexity = "very_low"
+	ComplexityLow      Complexity = "low"
+	ComplexityMedium   Complexity = "medium"
+	ComplexityHigh     Complexity = "high"
+	ComplexityVeryHigh Complexity = "very_high"
 )
 
 func (c Complexity) String() string {
@@ -94,7 +96,7 @@ func (c Complexity) String() string {
 // ComplexityValidator is a validator for the "complexity" field enum values. It is called by the builders before save.
 func ComplexityValidator(c Complexity) error {
 	switch c {
-	case ComplexityLow, ComplexityMid, ComplexityHigh:
+	case ComplexityVeryLow, ComplexityLow, ComplexityMedium, ComplexityHigh, ComplexityVeryHigh:
 		return nil
 	default:
 		return fmt.Errorf("task: invalid enum value for complexity field: %q", c)
@@ -104,14 +106,16 @@ func ComplexityValidator(c Complexity) error {
 // Priority defines the type for the "priority" enum field.
 type Priority string
 
-// PriorityMid is the default value of the Priority enum.
-const DefaultPriority = PriorityMid
+// PriorityMedium is the default value of the Priority enum.
+const DefaultPriority = PriorityMedium
 
 // Priority values.
 const (
-	PriorityLow  Priority = "low"
-	PriorityMid  Priority = "mid"
-	PriorityHigh Priority = "high"
+	PriorityVeryLow  Priority = "very_low"
+	PriorityLow      Priority = "low"
+	PriorityMedium   Priority = "medium"
+	PriorityHigh     Priority = "high"
+	PriorityVeryHigh Priority = "very_high"
 )
 
 func (pr Priority) String() string {
@@ -121,7 +125,7 @@ func (pr Priority) String() string {
 // PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
 func PriorityValidator(pr Priority) error {
 	switch pr {
-	case PriorityLow, PriorityMid, PriorityHigh:
+	case PriorityVeryLow, PriorityLow, PriorityMedium, PriorityHigh, PriorityVeryHigh:
 		return nil
 	default:
 		return fmt.Errorf("task: invalid enum value for priority field: %q", pr)
