@@ -2,11 +2,17 @@
 
 package task
 
+import (
+	"time"
+)
+
 const (
 	// Label holds the string label denoting the task type in the database.
 	Label = "task"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// FieldCreatorID holds the string denoting the creator_id field in the database.
 	FieldCreatorID = "creator_id"
 	// FieldTitle holds the string denoting the title field in the database.
@@ -39,6 +45,7 @@ const (
 // Columns holds all SQL columns for task fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
 	FieldCreatorID,
 	FieldTitle,
 	FieldDescription,
@@ -60,6 +67,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultPriority holds the default value on creation for the "priority" field.
 	DefaultPriority string
 	// DefaultComplexity holds the default value on creation for the "complexity" field.

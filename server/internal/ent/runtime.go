@@ -5,6 +5,7 @@ package ent
 import (
 	"server/internal/ent/schema"
 	"server/internal/ent/task"
+	"time"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -13,16 +14,20 @@ import (
 func init() {
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
+	// taskDescCreatedAt is the schema descriptor for created_at field.
+	taskDescCreatedAt := taskFields[0].Descriptor()
+	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
+	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
 	// taskDescPriority is the schema descriptor for priority field.
-	taskDescPriority := taskFields[3].Descriptor()
+	taskDescPriority := taskFields[4].Descriptor()
 	// task.DefaultPriority holds the default value on creation for the priority field.
 	task.DefaultPriority = taskDescPriority.Default.(string)
 	// taskDescComplexity is the schema descriptor for complexity field.
-	taskDescComplexity := taskFields[4].Descriptor()
+	taskDescComplexity := taskFields[5].Descriptor()
 	// task.DefaultComplexity holds the default value on creation for the complexity field.
 	task.DefaultComplexity = taskDescComplexity.Default.(string)
 	// taskDescStatus is the schema descriptor for status field.
-	taskDescStatus := taskFields[7].Descriptor()
+	taskDescStatus := taskFields[8].Descriptor()
 	// task.DefaultStatus holds the default value on creation for the status field.
 	task.DefaultStatus = taskDescStatus.Default.(string)
 }

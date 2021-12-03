@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"time"
 )
 
 // Task holds the schema definition for the Task entity.
@@ -14,6 +15,7 @@ type Task struct {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
+		field.Time("created_at").Default(time.Now),
 		field.Int("creator_id"),
 		field.String("title"),
 		field.String("description").Optional(),

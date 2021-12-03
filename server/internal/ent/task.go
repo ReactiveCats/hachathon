@@ -17,6 +17,8 @@ type Task struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatorID holds the value of the "creator_id" field.
 	CreatorID int `json:"creator_id,omitempty"`
 	// Title holds the value of the "title" field.
@@ -70,7 +72,7 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case task.FieldTitle, task.FieldDescription, task.FieldPriority, task.FieldComplexity, task.FieldStatus:
 			values[i] = new(sql.NullString)
-		case task.FieldHardDeadline, task.FieldSoftDeadline:
+		case task.FieldCreatedAt, task.FieldHardDeadline, task.FieldSoftDeadline:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Task", columns[i])
@@ -93,6 +95,12 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			t.ID = int(value.Int64)
+		case task.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				t.CreatedAt = value.Time
+			}
 		case task.FieldCreatorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field creator_id", values[i])
@@ -174,6 +182,8 @@ func (t *Task) String() string {
 	var builder strings.Builder
 	builder.WriteString("Task(")
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
+	builder.WriteString(", created_at=")
+	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", creator_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.CreatorID))
 	builder.WriteString(", title=")

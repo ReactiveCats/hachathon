@@ -290,12 +290,12 @@ func (tq *TaskQuery) WithCreator(opts ...func(*UserQuery)) *TaskQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatorID int `json:"creator_id,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		GroupBy(task.FieldCreatorID).
+//		GroupBy(task.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -317,11 +317,11 @@ func (tq *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatorID int `json:"creator_id,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		Select(task.FieldCreatorID).
+//		Select(task.FieldCreatedAt).
 //		Scan(ctx, &v)
 //
 func (tq *TaskQuery) Select(fields ...string) *TaskSelect {
