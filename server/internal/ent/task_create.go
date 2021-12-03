@@ -21,6 +21,12 @@ type TaskCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatorID sets the "creator_id" field.
+func (tc *TaskCreate) SetCreatorID(i int) *TaskCreate {
+	tc.mutation.SetCreatorID(i)
+	return tc
+}
+
 // SetTitle sets the "title" field.
 func (tc *TaskCreate) SetTitle(s string) *TaskCreate {
 	tc.mutation.SetTitle(s)
@@ -111,19 +117,9 @@ func (tc *TaskCreate) SetNillableStatus(s *string) *TaskCreate {
 	return tc
 }
 
-// AddCreatorIDs adds the "creator" edge to the User entity by IDs.
-func (tc *TaskCreate) AddCreatorIDs(ids ...int) *TaskCreate {
-	tc.mutation.AddCreatorIDs(ids...)
-	return tc
-}
-
-// AddCreator adds the "creator" edges to the User entity.
-func (tc *TaskCreate) AddCreator(u ...*User) *TaskCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tc.AddCreatorIDs(ids...)
+// SetCreator sets the "creator" edge to the User entity.
+func (tc *TaskCreate) SetCreator(u *User) *TaskCreate {
+	return tc.SetCreatorID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -213,6 +209,9 @@ func (tc *TaskCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TaskCreate) check() error {
+	if _, ok := tc.mutation.CreatorID(); !ok {
+		return &ValidationError{Name: "creator_id", err: errors.New(`ent: missing required field "creator_id"`)}
+	}
 	if _, ok := tc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
 	}
@@ -224,6 +223,9 @@ func (tc *TaskCreate) check() error {
 	}
 	if _, ok := tc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "status"`)}
+	}
+	if _, ok := tc.mutation.CreatorID(); !ok {
+		return &ValidationError{Name: "creator", err: errors.New("ent: missing required edge \"creator\"")}
 	}
 	return nil
 }
@@ -310,10 +312,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if nodes := tc.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -325,6 +327,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.CreatorID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

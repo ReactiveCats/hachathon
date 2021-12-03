@@ -93,6 +93,13 @@ func IDLTE(id int) predicate.Task {
 	})
 }
 
+// CreatorID applies equality check predicate on the "creator_id" field. It's identical to CreatorIDEQ.
+func CreatorID(v int) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCreatorID), v))
+	})
+}
+
 // Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
 func Title(v string) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
@@ -139,6 +146,54 @@ func SoftDeadline(v time.Time) predicate.Task {
 func Status(v string) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldStatus), v))
+	})
+}
+
+// CreatorIDEQ applies the EQ predicate on the "creator_id" field.
+func CreatorIDEQ(v int) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCreatorID), v))
+	})
+}
+
+// CreatorIDNEQ applies the NEQ predicate on the "creator_id" field.
+func CreatorIDNEQ(v int) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCreatorID), v))
+	})
+}
+
+// CreatorIDIn applies the In predicate on the "creator_id" field.
+func CreatorIDIn(vs ...int) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCreatorID), v...))
+	})
+}
+
+// CreatorIDNotIn applies the NotIn predicate on the "creator_id" field.
+func CreatorIDNotIn(vs ...int) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCreatorID), v...))
 	})
 }
 
@@ -897,7 +952,7 @@ func HasCreator() predicate.Task {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(CreatorTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, CreatorTable, CreatorPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, CreatorTable, CreatorColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -909,7 +964,7 @@ func HasCreatorWith(preds ...predicate.User) predicate.Task {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(CreatorInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, CreatorTable, CreatorPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, CreatorTable, CreatorColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

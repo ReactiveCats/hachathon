@@ -41,8 +41,7 @@ type TaskMutation struct {
 	soft_deadline  *time.Time
 	status         *string
 	clearedFields  map[string]struct{}
-	creator        map[int]struct{}
-	removedcreator map[int]struct{}
+	creator        *int
 	clearedcreator bool
 	done           bool
 	oldValue       func(context.Context) (*Task, error)
@@ -126,6 +125,42 @@ func (m *TaskMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreatorID sets the "creator_id" field.
+func (m *TaskMutation) SetCreatorID(i int) {
+	m.creator = &i
+}
+
+// CreatorID returns the value of the "creator_id" field in the mutation.
+func (m *TaskMutation) CreatorID() (r int, exists bool) {
+	v := m.creator
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatorID returns the old "creator_id" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldCreatorID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreatorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreatorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatorID: %w", err)
+	}
+	return oldValue.CreatorID, nil
+}
+
+// ResetCreatorID resets all changes to the "creator_id" field.
+func (m *TaskMutation) ResetCreatorID() {
+	m.creator = nil
 }
 
 // SetTitle sets the "title" field.
@@ -419,16 +454,6 @@ func (m *TaskMutation) ResetStatus() {
 	m.status = nil
 }
 
-// AddCreatorIDs adds the "creator" edge to the User entity by ids.
-func (m *TaskMutation) AddCreatorIDs(ids ...int) {
-	if m.creator == nil {
-		m.creator = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.creator[ids[i]] = struct{}{}
-	}
-}
-
 // ClearCreator clears the "creator" edge to the User entity.
 func (m *TaskMutation) ClearCreator() {
 	m.clearedcreator = true
@@ -439,29 +464,12 @@ func (m *TaskMutation) CreatorCleared() bool {
 	return m.clearedcreator
 }
 
-// RemoveCreatorIDs removes the "creator" edge to the User entity by IDs.
-func (m *TaskMutation) RemoveCreatorIDs(ids ...int) {
-	if m.removedcreator == nil {
-		m.removedcreator = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.creator, ids[i])
-		m.removedcreator[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedCreator returns the removed IDs of the "creator" edge to the User entity.
-func (m *TaskMutation) RemovedCreatorIDs() (ids []int) {
-	for id := range m.removedcreator {
-		ids = append(ids, id)
-	}
-	return
-}
-
 // CreatorIDs returns the "creator" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CreatorID instead. It exists only for internal usage by the builders.
 func (m *TaskMutation) CreatorIDs() (ids []int) {
-	for id := range m.creator {
-		ids = append(ids, id)
+	if id := m.creator; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -470,7 +478,6 @@ func (m *TaskMutation) CreatorIDs() (ids []int) {
 func (m *TaskMutation) ResetCreator() {
 	m.creator = nil
 	m.clearedcreator = false
-	m.removedcreator = nil
 }
 
 // Where appends a list predicates to the TaskMutation builder.
@@ -492,7 +499,10 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
+	if m.creator != nil {
+		fields = append(fields, task.FieldCreatorID)
+	}
 	if m.title != nil {
 		fields = append(fields, task.FieldTitle)
 	}
@@ -522,6 +532,8 @@ func (m *TaskMutation) Fields() []string {
 // schema.
 func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case task.FieldCreatorID:
+		return m.CreatorID()
 	case task.FieldTitle:
 		return m.Title()
 	case task.FieldDescription:
@@ -545,6 +557,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case task.FieldCreatorID:
+		return m.OldCreatorID(ctx)
 	case task.FieldTitle:
 		return m.OldTitle(ctx)
 	case task.FieldDescription:
@@ -568,6 +582,13 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *TaskMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case task.FieldCreatorID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatorID(v)
+		return nil
 	case task.FieldTitle:
 		v, ok := value.(string)
 		if !ok {
@@ -624,13 +645,16 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *TaskMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -687,6 +711,9 @@ func (m *TaskMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TaskMutation) ResetField(name string) error {
 	switch name {
+	case task.FieldCreatorID:
+		m.ResetCreatorID()
+		return nil
 	case task.FieldTitle:
 		m.ResetTitle()
 		return nil
@@ -726,11 +753,9 @@ func (m *TaskMutation) AddedEdges() []string {
 func (m *TaskMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case task.EdgeCreator:
-		ids := make([]ent.Value, 0, len(m.creator))
-		for id := range m.creator {
-			ids = append(ids, id)
+		if id := m.creator; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -738,9 +763,6 @@ func (m *TaskMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TaskMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedcreator != nil {
-		edges = append(edges, task.EdgeCreator)
-	}
 	return edges
 }
 
@@ -748,12 +770,6 @@ func (m *TaskMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *TaskMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case task.EdgeCreator:
-		ids := make([]ent.Value, 0, len(m.removedcreator))
-		for id := range m.removedcreator {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
@@ -781,6 +797,9 @@ func (m *TaskMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *TaskMutation) ClearEdge(name string) error {
 	switch name {
+	case task.EdgeCreator:
+		m.ClearCreator()
+		return nil
 	}
 	return fmt.Errorf("unknown Task unique edge %s", name)
 }

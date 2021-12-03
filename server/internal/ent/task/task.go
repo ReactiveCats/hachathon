@@ -7,6 +7,8 @@ const (
 	Label = "task"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatorID holds the string denoting the creator_id field in the database.
+	FieldCreatorID = "creator_id"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldDescription holds the string denoting the description field in the database.
@@ -25,16 +27,19 @@ const (
 	EdgeCreator = "creator"
 	// Table holds the table name of the task in the database.
 	Table = "tasks"
-	// CreatorTable is the table that holds the creator relation/edge. The primary key declared below.
-	CreatorTable = "task_creator"
+	// CreatorTable is the table that holds the creator relation/edge.
+	CreatorTable = "tasks"
 	// CreatorInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	CreatorInverseTable = "users"
+	// CreatorColumn is the table column denoting the creator relation/edge.
+	CreatorColumn = "creator_id"
 )
 
 // Columns holds all SQL columns for task fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatorID,
 	FieldTitle,
 	FieldDescription,
 	FieldPriority,
@@ -43,12 +48,6 @@ var Columns = []string{
 	FieldSoftDeadline,
 	FieldStatus,
 }
-
-var (
-	// CreatorPrimaryKey and CreatorColumn2 are the table columns denoting the
-	// primary key for the creator relation (M2M).
-	CreatorPrimaryKey = []string{"task_id", "user_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

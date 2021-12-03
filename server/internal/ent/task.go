@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"server/internal/ent/task"
+	"server/internal/ent/user"
 	"strings"
 	"time"
 
@@ -16,6 +17,8 @@ type Task struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreatorID holds the value of the "creator_id" field.
+	CreatorID int `json:"creator_id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Description holds the value of the "description" field.
@@ -38,16 +41,21 @@ type Task struct {
 // TaskEdges holds the relations/edges for other nodes in the graph.
 type TaskEdges struct {
 	// Creator holds the value of the creator edge.
-	Creator []*User `json:"creator,omitempty"`
+	Creator *User `json:"creator,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // CreatorOrErr returns the Creator value or an error if the edge
-// was not loaded in eager-loading.
-func (e TaskEdges) CreatorOrErr() ([]*User, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TaskEdges) CreatorOrErr() (*User, error) {
 	if e.loadedTypes[0] {
+		if e.Creator == nil {
+			// The edge creator was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
 		return e.Creator, nil
 	}
 	return nil, &NotLoadedError{edge: "creator"}
@@ -58,7 +66,7 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldID:
+		case task.FieldID, task.FieldCreatorID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldTitle, task.FieldDescription, task.FieldPriority, task.FieldComplexity, task.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -85,6 +93,12 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			t.ID = int(value.Int64)
+		case task.FieldCreatorID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field creator_id", values[i])
+			} else if value.Valid {
+				t.CreatorID = int(value.Int64)
+			}
 		case task.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
@@ -160,6 +174,8 @@ func (t *Task) String() string {
 	var builder strings.Builder
 	builder.WriteString("Task(")
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
+	builder.WriteString(", creator_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.CreatorID))
 	builder.WriteString(", title=")
 	builder.WriteString(t.Title)
 	builder.WriteString(", description=")

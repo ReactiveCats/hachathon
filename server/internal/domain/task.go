@@ -43,5 +43,6 @@ func TasksFromEnt(slice []*ent.Task) []*Task {
 }
 
 type TaskService interface {
+	ByID(ctx context.Context, taskID int) (*Task, error)
 	Delete(ctx context.Context, taskID int) error
 }

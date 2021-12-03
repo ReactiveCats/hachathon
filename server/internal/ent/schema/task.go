@@ -14,6 +14,7 @@ type Task struct {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("creator_id"),
 		field.String("title"),
 		field.String("description").Optional(),
 		field.String("priority").Default("5"),
@@ -27,6 +28,9 @@ func (Task) Fields() []ent.Field {
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("creator", User.Type),
+		edge.From("creator", User.Type).
+			Ref("tasks").
+			Field("creator_id").Required().
+			Unique(),
 	}
 }

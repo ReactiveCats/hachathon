@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"server/internal/ent/predicate"
 	"server/internal/ent/task"
@@ -25,6 +26,12 @@ type TaskUpdate struct {
 // Where appends a list predicates to the TaskUpdate builder.
 func (tu *TaskUpdate) Where(ps ...predicate.Task) *TaskUpdate {
 	tu.mutation.Where(ps...)
+	return tu
+}
+
+// SetCreatorID sets the "creator_id" field.
+func (tu *TaskUpdate) SetCreatorID(i int) *TaskUpdate {
+	tu.mutation.SetCreatorID(i)
 	return tu
 }
 
@@ -136,19 +143,9 @@ func (tu *TaskUpdate) SetNillableStatus(s *string) *TaskUpdate {
 	return tu
 }
 
-// AddCreatorIDs adds the "creator" edge to the User entity by IDs.
-func (tu *TaskUpdate) AddCreatorIDs(ids ...int) *TaskUpdate {
-	tu.mutation.AddCreatorIDs(ids...)
-	return tu
-}
-
-// AddCreator adds the "creator" edges to the User entity.
-func (tu *TaskUpdate) AddCreator(u ...*User) *TaskUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tu.AddCreatorIDs(ids...)
+// SetCreator sets the "creator" edge to the User entity.
+func (tu *TaskUpdate) SetCreator(u *User) *TaskUpdate {
+	return tu.SetCreatorID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -156,25 +153,10 @@ func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
 }
 
-// ClearCreator clears all "creator" edges to the User entity.
+// ClearCreator clears the "creator" edge to the User entity.
 func (tu *TaskUpdate) ClearCreator() *TaskUpdate {
 	tu.mutation.ClearCreator()
 	return tu
-}
-
-// RemoveCreatorIDs removes the "creator" edge to User entities by IDs.
-func (tu *TaskUpdate) RemoveCreatorIDs(ids ...int) *TaskUpdate {
-	tu.mutation.RemoveCreatorIDs(ids...)
-	return tu
-}
-
-// RemoveCreator removes "creator" edges to User entities.
-func (tu *TaskUpdate) RemoveCreator(u ...*User) *TaskUpdate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tu.RemoveCreatorIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -184,12 +166,18 @@ func (tu *TaskUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(tu.hooks) == 0 {
+		if err = tu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = tu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tu.check(); err != nil {
+				return 0, err
 			}
 			tu.mutation = mutation
 			affected, err = tu.sqlSave(ctx)
@@ -229,6 +217,14 @@ func (tu *TaskUpdate) ExecX(ctx context.Context) {
 	if err := tu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tu *TaskUpdate) check() error {
+	if _, ok := tu.mutation.CreatorID(); tu.mutation.CreatorCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"creator\"")
+	}
+	return nil
 }
 
 func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -318,10 +314,10 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -329,34 +325,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.RemovedCreatorIDs(); len(nodes) > 0 && !tu.mutation.CreatorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tu.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -387,6 +364,12 @@ type TaskUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *TaskMutation
+}
+
+// SetCreatorID sets the "creator_id" field.
+func (tuo *TaskUpdateOne) SetCreatorID(i int) *TaskUpdateOne {
+	tuo.mutation.SetCreatorID(i)
+	return tuo
 }
 
 // SetTitle sets the "title" field.
@@ -497,19 +480,9 @@ func (tuo *TaskUpdateOne) SetNillableStatus(s *string) *TaskUpdateOne {
 	return tuo
 }
 
-// AddCreatorIDs adds the "creator" edge to the User entity by IDs.
-func (tuo *TaskUpdateOne) AddCreatorIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.AddCreatorIDs(ids...)
-	return tuo
-}
-
-// AddCreator adds the "creator" edges to the User entity.
-func (tuo *TaskUpdateOne) AddCreator(u ...*User) *TaskUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tuo.AddCreatorIDs(ids...)
+// SetCreator sets the "creator" edge to the User entity.
+func (tuo *TaskUpdateOne) SetCreator(u *User) *TaskUpdateOne {
+	return tuo.SetCreatorID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -517,25 +490,10 @@ func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
 }
 
-// ClearCreator clears all "creator" edges to the User entity.
+// ClearCreator clears the "creator" edge to the User entity.
 func (tuo *TaskUpdateOne) ClearCreator() *TaskUpdateOne {
 	tuo.mutation.ClearCreator()
 	return tuo
-}
-
-// RemoveCreatorIDs removes the "creator" edge to User entities by IDs.
-func (tuo *TaskUpdateOne) RemoveCreatorIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.RemoveCreatorIDs(ids...)
-	return tuo
-}
-
-// RemoveCreator removes "creator" edges to User entities.
-func (tuo *TaskUpdateOne) RemoveCreator(u ...*User) *TaskUpdateOne {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return tuo.RemoveCreatorIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -552,12 +510,18 @@ func (tuo *TaskUpdateOne) Save(ctx context.Context) (*Task, error) {
 		node *Task
 	)
 	if len(tuo.hooks) == 0 {
+		if err = tuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = tuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tuo.check(); err != nil {
+				return nil, err
 			}
 			tuo.mutation = mutation
 			node, err = tuo.sqlSave(ctx)
@@ -597,6 +561,14 @@ func (tuo *TaskUpdateOne) ExecX(ctx context.Context) {
 	if err := tuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TaskUpdateOne) check() error {
+	if _, ok := tuo.mutation.CreatorID(); tuo.mutation.CreatorCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"creator\"")
+	}
+	return nil
 }
 
 func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) {
@@ -703,10 +675,10 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -714,34 +686,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 					Column: user.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.RemovedCreatorIDs(); len(nodes) > 0 && !tuo.mutation.CreatorCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tuo.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   task.CreatorTable,
-			Columns: task.CreatorPrimaryKey,
+			Columns: []string{task.CreatorColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
