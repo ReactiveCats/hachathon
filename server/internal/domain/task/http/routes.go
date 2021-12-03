@@ -6,6 +6,7 @@ import (
 	"server/internal/domain"
 	"server/internal/platform"
 	"strconv"
+	"time"
 )
 
 func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
@@ -73,6 +74,41 @@ func getTaskByID(service domain.TaskService) func(ctx *gin.Context) {
 // @Router 		/task/{task_id} [put]
 func putTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
+		user := ctx.Value(platform.UserCtxKey).(*domain.User)
+
+		taskID, err := strconv.Atoi(ctx.Param("task_id"))
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.NotFound("Task is not found"))
+			return
+		}
+
+		var params domain.TaskPutDTO
+
+		err = ctx.ShouldBind(&params)
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.WrapUnprocessableEntity(err, "wrong task"))
+			return
+		}
+
+		if params.DeadlineDateStr != nil {
+			deadline, err := time.Parse(time.RFC3339, *params.DeadlineDateStr)
+			if err != nil {
+				platform.GinErrResponse(ctx, platform.WrapUnprocessableEntity(err, "wrong date"))
+				return
+			}
+			params.Deadline = &deadline
+		}
+
+		params.TaskID = taskID
+		params.UserID = user.ID
+
+		task, err := service.Update(ctx.Request.Context(), params)
+		if err != nil {
+			platform.GinErrResponse(ctx, err)
+			return
+		}
+
+		platform.GinOkResponse(ctx, http.StatusOK, task)
 	}
 }
 
