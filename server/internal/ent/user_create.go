@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"server/internal/ent/task"
 	"server/internal/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -23,6 +24,21 @@ type UserCreate struct {
 func (uc *UserCreate) SetUsername(s string) *UserCreate {
 	uc.mutation.SetUsername(s)
 	return uc
+}
+
+// AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
+func (uc *UserCreate) AddTaskIDs(ids ...int) *UserCreate {
+	uc.mutation.AddTaskIDs(ids...)
+	return uc
+}
+
+// AddTasks adds the "tasks" edges to the Task entity.
+func (uc *UserCreate) AddTasks(t ...*Task) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddTaskIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -132,6 +148,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldUsername,
 		})
 		_node.Username = value
+	}
+	if nodes := uc.mutation.TasksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.TasksTable,
+			Columns: user.TasksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: task.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

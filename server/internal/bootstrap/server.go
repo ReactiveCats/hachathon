@@ -6,8 +6,11 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
+	_ "server/internal/docs"
+	"server/internal/domain"
 	authHTTP "server/internal/domain/auth/http"
-	userHTTP "server/internal/domain/user/http"
+	taskHTTP "server/internal/domain/task/http"
+	"server/internal/platform"
 )
 
 type Server struct {
@@ -33,14 +36,24 @@ func NewServer(deps Dependencies) *Server {
 
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	handler := engine.Group("/api")
+	handler := engine.Group("/api",
+		func(ctx *gin.Context) {
+			ctx.Set(platform.UserCtxKey, &domain.User{
+				ID:       1,
+				Username: "username_____",
+			})
+
+			ctx.Next()
+		})
 
 	authHTTP.RegisterRoutes(handler.Group("/auth"), deps.UserService)
 
-	handlerAuthorized := handler.Group("")
-	handlerAuthorized.Use(authHTTP.JwtAuth(deps.UserService))
+	//handlerAuthorized := handler.Group("")
+	//handlerAuthorized.Use(authHTTP.JwtAuth(deps.UserService))
 
-	userHTTP.RegisterRoutes(handlerAuthorized.Group("/users"), deps.UserService)
+	//userHTTP.RegisterRoutes(handlerAuthorized.Group("/users"), deps.UserService)
+
+	taskHTTP.RegisterRoutes(handler.Group("/task"), deps.TaskService)
 
 	return &Server{
 		server: &http.Server{
