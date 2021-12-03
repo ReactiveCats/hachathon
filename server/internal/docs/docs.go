@@ -94,7 +94,7 @@ var doc = `{
                 "operationId": "get_task_by_id",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "task id",
                         "name": "task_id",
                         "in": "path",
@@ -132,6 +132,15 @@ var doc = `{
                         "name": "task_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "task object",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.TaskPutDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -182,11 +191,20 @@ var doc = `{
                 "complexity": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
-                "hardDeadline": {
-                    "type": "string"
+                "estimated": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -194,11 +212,45 @@ var doc = `{
                 "priority": {
                     "type": "string"
                 },
-                "softDeadline": {
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.TaskPutDTO": {
+            "type": "object",
+            "properties": {
+                "complexity": {
+                    "type": "string",
+                    "enum": [
+                        "very_low",
+                        "low",
+                        "medium",
+                        "high",
+                        "very_high"
+                    ]
+                },
+                "deadline": {
                     "type": "string"
                 },
-                "status": {
+                "description": {
                     "type": "string"
+                },
+                "estimated": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string",
+                    "enum": [
+                        "very_low",
+                        "low",
+                        "medium",
+                        "high",
+                        "very_high"
+                    ]
                 },
                 "title": {
                     "type": "string"
