@@ -18,12 +18,18 @@ import (
 //	}
 //}
 
-type err struct {
-	Error ErrorObj `json:"error"`
+type jsonErr struct {
+	Error errObj `json:"error"`
 }
 
-type ErrorObj struct {
+type errObj struct {
 	Message string `json:"message"`
+}
+
+func newJsonErr(message string) jsonErr {
+	return jsonErr{
+		Error: errObj{Message: message},
+	}
 }
 
 func GinOkResponse(ctx *gin.Context, httpStatusCode int, payload ...interface{}) {
@@ -41,9 +47,9 @@ func GinErrResponse(ctx *gin.Context, err error) {
 	switch e := err.(type) {
 	case ServerError:
 		_ = ctx.Error(err)
-		ctx.String(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		ctx.JSON(http.StatusInternalServerError, newJsonErr(http.StatusText(http.StatusInternalServerError)))
 	case ClientError:
-		ctx.String(e.HttpStatusCode(), e.Message())
+		ctx.JSON(e.HttpStatusCode(), newJsonErr(e.Message()))
 	default:
 		logrus.Panicf("unknown error (%T) to response: %s", err, err.Error())
 	}
