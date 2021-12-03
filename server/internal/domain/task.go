@@ -8,6 +8,7 @@ import (
 
 type Task struct {
 	ID           int
+	CreatedAt    time.Time
 	Title        string
 	Description  string
 	Priority     string
@@ -24,6 +25,7 @@ func TaskFromEnt(task *ent.Task) *Task {
 
 	return &Task{
 		ID:           task.ID,
+		CreatedAt:    task.CreatedAt,
 		Title:        task.Title,
 		Description:  task.Description,
 		Priority:     task.Priority,
