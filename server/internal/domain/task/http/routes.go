@@ -56,7 +56,7 @@ func getTaskByID(domain.TaskService) func(ctx *gin.Context) {
 // @Param 		task_id 	path 	string		true 	"task id"
 // @Produce  	json
 // @Success 	200 {object} domain.Task
-// @Router 		/tasks/{task_id} [put]
+// @Router 		/task/{task_id} [put]
 func putTask(domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 	}
@@ -70,7 +70,7 @@ func putTask(domain.TaskService) func(ctx *gin.Context) {
 // @ID 			post_task
 // @Produce  	json
 // @Success 	200 {object} domain.Task
-// @Router 		/tasks [post]
+// @Router 		/task [post]
 func postTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 	}
@@ -85,7 +85,7 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 // @Param 		task_id 	path 	string		true 	"task id"
 // @Produce  	json
 // @Success 	204
-// @Router 		/tasks/{task_id} [delete]
+// @Router 		/task/{task_id} [delete]
 func deleteTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		taskID, err := strconv.Atoi(ctx.Param("task_id"))

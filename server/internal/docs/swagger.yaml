@@ -44,29 +44,6 @@ paths:
       summary: Get all user tasks
       tags:
       - tasks
-  /task/{task_id}:
-    get:
-      description: Get task by id
-      operationId: get_task_by_id
-      parameters:
-      - description: task id
-        in: query
-        name: task_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Task'
-      security:
-      - ApiKeyAuth: []
-      summary: Get task by id
-      tags:
-      - tasks
-  /tasks:
     post:
       description: Add new task
       operationId: post_task
@@ -82,13 +59,13 @@ paths:
       summary: Add new task
       tags:
       - tasks
-  /tasks/{task_id}:
+  /task/{task_id}:
     delete:
       description: Get list of tasks
       operationId: delete_task
       parameters:
       - description: task id
-        in: query
+        in: path
         name: task_id
         required: true
         type: string
@@ -102,12 +79,33 @@ paths:
       summary: Get list of tasks
       tags:
       - tasks
+    get:
+      description: Get task by id
+      operationId: get_task_by_id
+      parameters:
+      - description: task id
+        in: path
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Task'
+      security:
+      - ApiKeyAuth: []
+      summary: Get task by id
+      tags:
+      - tasks
     put:
       description: Edit task
       operationId: put_task
       parameters:
       - description: task id
-        in: query
+        in: path
         name: task_id
         required: true
         type: string
