@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"server/internal/consts"
 	"time"
 )
 
@@ -22,11 +23,23 @@ func (Task) Fields() []ent.Field {
 		field.Time("deadline").Optional(),
 		field.Int("estimated").Optional(),
 		field.Enum("complexity").
-			Values("low", "mid", "high").
-			Default("mid"),
+			Values(
+				consts.ComplexityVeryLow,
+				consts.ComplexityLow,
+				consts.ComplexityMid,
+				consts.ComplexityHigh,
+				consts.ComplexityVeryHigh,
+			).
+			Default(consts.ComplexityMid),
 		field.Enum("priority").
-			Values("low", "mid", "high").
-			Default("mid"),
+			Values(
+				consts.PriorityVeryLow,
+				consts.PriorityLow,
+				consts.PriorityMid,
+				consts.PriorityHigh,
+				consts.PriorityVeryHigh,
+			).
+			Default(consts.PriorityMid),
 		field.Int("creator_id"),
 	}
 }
