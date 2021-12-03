@@ -4,12 +4,13 @@ import {
   OPEN_TASK_CARD,
   useTaskModalContext,
 } from '../../task-modal/context/task-modal-context';
+import { mockTask } from '../../task-modal/mock';
 
 function TaskModalPreviewPage() {
   const { state, dispatch } = useTaskModalContext();
 
   const handleClick = () => {
-    dispatch({ type: OPEN_TASK_CARD, data: {} });
+    dispatch({ type: OPEN_TASK_CARD, data: mockTask({ title: 'Preview' }) });
   };
 
   return (
