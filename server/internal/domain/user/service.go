@@ -43,6 +43,9 @@ func (s Service) DataFromJWT(tokenStr string) (int, error) {
 	if !ok {
 		return 0, platform.WrapInternal(err)
 	}
+	if _, ok := claims["id"]; !ok {
+		return 0, platform.NotFound("token payload entry not found")
+	}
 
 	return int(claims["id"].(float64)), nil
 }

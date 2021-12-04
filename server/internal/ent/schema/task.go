@@ -42,6 +42,9 @@ func (Task) Fields() []ent.Field {
 
 		field.Int8("complexity").Min(0).Max(11).Default(5),
 		field.Int8("priority").Min(0).Max(11).Default(5),
+
+		field.Float("f"),
+
 		field.Int("creator_id"),
 	}
 }

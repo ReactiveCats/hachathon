@@ -144,6 +144,14 @@ func (tu *TaskUpdate) SetComplexity(i int8) *TaskUpdate {
 	return tu
 }
 
+// SetNillableComplexity sets the "complexity" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableComplexity(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetComplexity(*i)
+	}
+	return tu
+}
+
 // AddComplexity adds i to the "complexity" field.
 func (tu *TaskUpdate) AddComplexity(i int8) *TaskUpdate {
 	tu.mutation.AddComplexity(i)
@@ -157,9 +165,30 @@ func (tu *TaskUpdate) SetPriority(i int8) *TaskUpdate {
 	return tu
 }
 
+// SetNillablePriority sets the "priority" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillablePriority(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetPriority(*i)
+	}
+	return tu
+}
+
 // AddPriority adds i to the "priority" field.
 func (tu *TaskUpdate) AddPriority(i int8) *TaskUpdate {
 	tu.mutation.AddPriority(i)
+	return tu
+}
+
+// SetF sets the "f" field.
+func (tu *TaskUpdate) SetF(f float64) *TaskUpdate {
+	tu.mutation.ResetF()
+	tu.mutation.SetF(f)
+	return tu
+}
+
+// AddF adds f to the "f" field.
+func (tu *TaskUpdate) AddF(f float64) *TaskUpdate {
+	tu.mutation.AddF(f)
 	return tu
 }
 
@@ -383,6 +412,20 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: task.FieldPriority,
 		})
 	}
+	if value, ok := tu.mutation.F(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldF,
+		})
+	}
+	if value, ok := tu.mutation.AddedF(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldF,
+		})
+	}
 	if tu.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -552,6 +595,14 @@ func (tuo *TaskUpdateOne) SetComplexity(i int8) *TaskUpdateOne {
 	return tuo
 }
 
+// SetNillableComplexity sets the "complexity" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableComplexity(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetComplexity(*i)
+	}
+	return tuo
+}
+
 // AddComplexity adds i to the "complexity" field.
 func (tuo *TaskUpdateOne) AddComplexity(i int8) *TaskUpdateOne {
 	tuo.mutation.AddComplexity(i)
@@ -565,9 +616,30 @@ func (tuo *TaskUpdateOne) SetPriority(i int8) *TaskUpdateOne {
 	return tuo
 }
 
+// SetNillablePriority sets the "priority" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillablePriority(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetPriority(*i)
+	}
+	return tuo
+}
+
 // AddPriority adds i to the "priority" field.
 func (tuo *TaskUpdateOne) AddPriority(i int8) *TaskUpdateOne {
 	tuo.mutation.AddPriority(i)
+	return tuo
+}
+
+// SetF sets the "f" field.
+func (tuo *TaskUpdateOne) SetF(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetF()
+	tuo.mutation.SetF(f)
+	return tuo
+}
+
+// AddF adds f to the "f" field.
+func (tuo *TaskUpdateOne) AddF(f float64) *TaskUpdateOne {
+	tuo.mutation.AddF(f)
 	return tuo
 }
 
@@ -813,6 +885,20 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldPriority,
+		})
+	}
+	if value, ok := tuo.mutation.F(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldF,
+		})
+	}
+	if value, ok := tuo.mutation.AddedF(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldF,
 		})
 	}
 	if tuo.mutation.CreatorCleared() {

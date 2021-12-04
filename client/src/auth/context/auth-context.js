@@ -20,19 +20,11 @@ export function useAuthContext() {
   return useContext(AuthContext);
 }
 
-function saveAccessToken(accessToken) {
-  window.localStorage.setItem('accessToken', accessToken);
-}
-
-function removeAccessToken() {
-  window.localStorage.removeItem('accessToken');
-}
-
 function login(user, dispatch) {
   authService
     .login(user)
     .then(({ accessToken }) => {
-      saveAccessToken(accessToken);
+      authService.saveAccessToken(accessToken);
     })
     .catch((err) => {
       dispatch({ type: AUTH_ERROR, data: err });
@@ -43,7 +35,7 @@ function signup(user, dispatch) {
   authService
     .signup(user)
     .then(({ accessToken }) => {
-      saveAccessToken(accessToken);
+      authService.saveAccessToken(accessToken);
     })
     .catch((err) => {
       dispatch({ type: AUTH_ERROR, data: err });
@@ -51,7 +43,7 @@ function signup(user, dispatch) {
 }
 
 function logout(data, dispatch) {
-  removeAccessToken();
+  authService.removeAccessToken();
 }
 
 const authEffects = {
