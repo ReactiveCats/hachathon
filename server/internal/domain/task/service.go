@@ -10,6 +10,7 @@ import (
 	taskent "server/internal/ent/task"
 	userent "server/internal/ent/user"
 	"server/internal/platform"
+	"sort"
 )
 
 type Service struct {
@@ -58,14 +59,22 @@ func (s Service) Fetch(ctx context.Context, dto domain.GetTaskDTO) ([]*domain.Ta
 		}
 	}
 	query.Where(taskent.HasCreatorWith(userent.ID(dto.UserID)))
-	tasks, err := query.All(ctx)
+	taskents, err := query.All(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, platform.NotFound("Tasks are not found")
 		}
 		return nil, platform.WrapInternal(err)
 	}
-	return domain.TasksFromEnt(tasks), nil
+	if dto.Priority != nil {
+		if !*dto.Priority {
+			return domain.TasksFromEnt(taskents), nil
+		}
+		tasks := (domain.Tasks)(domain.TasksFromEnt(taskents))
+		sort.Sort(sort.Reverse(tasks))
+		return tasks, nil
+	}
+	return domain.TasksFromEnt(taskents), nil
 }
 
 func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain.Task, error) {
