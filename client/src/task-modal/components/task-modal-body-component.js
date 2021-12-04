@@ -1,5 +1,5 @@
-import Button from '@mui/material/Button';
 import { useForm } from 'react-hook-form';
+import Button from '@mui/material/Button';
 import {
   InputLabel,
   FormControl,
@@ -29,7 +29,9 @@ export function TaskModalBody({ task, onClose, onSave }) {
               {...register('title', { required: true, value: task.title })}
             />
             {errors.title?.type === 'required' && (
-              <span>Title is required</span>
+              <Box sx={{ color: 'red' }} component="span">
+                Title is required
+              </Box>
             )}
           </Box>
           <Box sx={formFieldStyle}>

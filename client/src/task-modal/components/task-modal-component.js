@@ -1,10 +1,9 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 import isEqual from '@tinkoff/utils/is/equal';
 import {
-  HIDE_TASK_CARD,
-  UPDATE_TASK_CARD,
+  TASK_MODAL_HIDE,
+  TASK_MODAL_SAVE,
   useTaskModalContext,
 } from '../context/task-modal-context';
 import { TaskModalBody } from './task-modal-body-component';
@@ -17,6 +16,7 @@ const style = {
   width: 400,
   bgcolor: 'background.paper',
   boxShadow: 24,
+  borderRadius: 2,
   p: 4,
 };
 
@@ -34,12 +34,12 @@ export function TaskModal() {
   }
 
   const close = () => {
-    dispatch({ type: HIDE_TASK_CARD });
+    dispatch({ type: TASK_MODAL_HIDE });
   };
 
   const handleSave = (data) => {
     if (!isEqual(data, state.data)) {
-      dispatch({ type: UPDATE_TASK_CARD, data });
+      dispatch({ type: TASK_MODAL_SAVE, data });
     }
 
     close();
