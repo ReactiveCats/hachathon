@@ -23,7 +23,9 @@ import { getIconById, mockTask } from '../../task-modal/mock';
 
 const listItemBoxStyle = {
   bgcolor: 'lightgreen',
-  borderRadius: 2,
+  borderRadius: "8px 8px 0px 0px",
+  boxShadow: 8,
+  cursor: 'pointer',
 
   '&:hover': {
     transform: 'scale(1.02)',
@@ -78,8 +80,8 @@ export function TaskList() {
   return (
     <>
       <Container>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Box mt={5} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <List sx={{ display: 'flex', flexDirection: 'column', gap: 3, padding: 0 }}>
             {state.items.map(({ title, icon, description }, index) => {
               const { component: IconComponent } = getIconById(icon);
 
