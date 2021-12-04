@@ -82,7 +82,7 @@ export function TaskList() {
       <Container>
         <Box mt={5} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <List sx={{ display: 'flex', flexDirection: 'column', gap: 3, padding: 0 }}>
-            {state.items.map(({ title, icon, description }, index) => {
+            {state.items.map(({ title, icon, description, importance }, index) => {
               const { component: IconComponent } = getIconById(icon);
 
               const itemBgColor = {
