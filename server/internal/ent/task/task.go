@@ -23,12 +23,12 @@ const (
 	FieldDeadline = "deadline"
 	// FieldEstimated holds the string denoting the estimated field in the database.
 	FieldEstimated = "estimated"
-	// FieldComplexity holds the string denoting the complexity field in the database.
-	FieldComplexity = "complexity"
-	// FieldPriority holds the string denoting the priority field in the database.
-	FieldPriority = "priority"
-	// FieldF holds the string denoting the f field in the database.
-	FieldF = "f"
+	// FieldImportance holds the string denoting the importance field in the database.
+	FieldImportance = "importance"
+	// FieldUrgency holds the string denoting the urgency field in the database.
+	FieldUrgency = "urgency"
+	// FieldCustomMult holds the string denoting the custom_mult field in the database.
+	FieldCustomMult = "custom_mult"
 	// FieldLo holds the string denoting the lo field in the database.
 	FieldLo = "lo"
 	// FieldHi holds the string denoting the hi field in the database.
@@ -57,9 +57,9 @@ var Columns = []string{
 	FieldDescription,
 	FieldDeadline,
 	FieldEstimated,
-	FieldComplexity,
-	FieldPriority,
-	FieldF,
+	FieldImportance,
+	FieldUrgency,
+	FieldCustomMult,
 	FieldLo,
 	FieldHi,
 	FieldCreatorID,
@@ -80,12 +80,22 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultIcon holds the default value on creation for the "icon" field.
 	DefaultIcon int
-	// DefaultComplexity holds the default value on creation for the "complexity" field.
-	DefaultComplexity int8
-	// ComplexityValidator is a validator for the "complexity" field. It is called by the builders before save.
-	ComplexityValidator func(int8) error
-	// DefaultPriority holds the default value on creation for the "priority" field.
-	DefaultPriority int8
-	// PriorityValidator is a validator for the "priority" field. It is called by the builders before save.
-	PriorityValidator func(int8) error
+	// IconValidator is a validator for the "icon" field. It is called by the builders before save.
+	IconValidator func(int) error
+	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	TitleValidator func(string) error
+	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	DescriptionValidator func(string) error
+	// EstimatedValidator is a validator for the "estimated" field. It is called by the builders before save.
+	EstimatedValidator func(int) error
+	// DefaultImportance holds the default value on creation for the "importance" field.
+	DefaultImportance int8
+	// ImportanceValidator is a validator for the "importance" field. It is called by the builders before save.
+	ImportanceValidator func(int8) error
+	// DefaultUrgency holds the default value on creation for the "urgency" field.
+	DefaultUrgency int8
+	// UrgencyValidator is a validator for the "urgency" field. It is called by the builders before save.
+	UrgencyValidator func(int8) error
+	// DefaultCustomMult holds the default value on creation for the "custom_mult" field.
+	DefaultCustomMult float64
 )

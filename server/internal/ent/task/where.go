@@ -135,24 +135,24 @@ func Estimated(v int) predicate.Task {
 	})
 }
 
-// Complexity applies equality check predicate on the "complexity" field. It's identical to ComplexityEQ.
-func Complexity(v int8) predicate.Task {
+// Importance applies equality check predicate on the "importance" field. It's identical to ImportanceEQ.
+func Importance(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldComplexity), v))
+		s.Where(sql.EQ(s.C(FieldImportance), v))
 	})
 }
 
-// Priority applies equality check predicate on the "priority" field. It's identical to PriorityEQ.
-func Priority(v int8) predicate.Task {
+// Urgency applies equality check predicate on the "urgency" field. It's identical to UrgencyEQ.
+func Urgency(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPriority), v))
+		s.Where(sql.EQ(s.C(FieldUrgency), v))
 	})
 }
 
-// F applies equality check predicate on the "f" field. It's identical to FEQ.
-func F(v float64) predicate.Task {
+// CustomMult applies equality check predicate on the "custom_mult" field. It's identical to CustomMultEQ.
+func CustomMult(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldF), v))
+		s.Where(sql.EQ(s.C(FieldCustomMult), v))
 	})
 }
 
@@ -745,22 +745,22 @@ func EstimatedNotNil() predicate.Task {
 	})
 }
 
-// ComplexityEQ applies the EQ predicate on the "complexity" field.
-func ComplexityEQ(v int8) predicate.Task {
+// ImportanceEQ applies the EQ predicate on the "importance" field.
+func ImportanceEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldComplexity), v))
+		s.Where(sql.EQ(s.C(FieldImportance), v))
 	})
 }
 
-// ComplexityNEQ applies the NEQ predicate on the "complexity" field.
-func ComplexityNEQ(v int8) predicate.Task {
+// ImportanceNEQ applies the NEQ predicate on the "importance" field.
+func ImportanceNEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldComplexity), v))
+		s.Where(sql.NEQ(s.C(FieldImportance), v))
 	})
 }
 
-// ComplexityIn applies the In predicate on the "complexity" field.
-func ComplexityIn(vs ...int8) predicate.Task {
+// ImportanceIn applies the In predicate on the "importance" field.
+func ImportanceIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -772,12 +772,12 @@ func ComplexityIn(vs ...int8) predicate.Task {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldComplexity), v...))
+		s.Where(sql.In(s.C(FieldImportance), v...))
 	})
 }
 
-// ComplexityNotIn applies the NotIn predicate on the "complexity" field.
-func ComplexityNotIn(vs ...int8) predicate.Task {
+// ImportanceNotIn applies the NotIn predicate on the "importance" field.
+func ImportanceNotIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -789,54 +789,54 @@ func ComplexityNotIn(vs ...int8) predicate.Task {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldComplexity), v...))
+		s.Where(sql.NotIn(s.C(FieldImportance), v...))
 	})
 }
 
-// ComplexityGT applies the GT predicate on the "complexity" field.
-func ComplexityGT(v int8) predicate.Task {
+// ImportanceGT applies the GT predicate on the "importance" field.
+func ImportanceGT(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldComplexity), v))
+		s.Where(sql.GT(s.C(FieldImportance), v))
 	})
 }
 
-// ComplexityGTE applies the GTE predicate on the "complexity" field.
-func ComplexityGTE(v int8) predicate.Task {
+// ImportanceGTE applies the GTE predicate on the "importance" field.
+func ImportanceGTE(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldComplexity), v))
+		s.Where(sql.GTE(s.C(FieldImportance), v))
 	})
 }
 
-// ComplexityLT applies the LT predicate on the "complexity" field.
-func ComplexityLT(v int8) predicate.Task {
+// ImportanceLT applies the LT predicate on the "importance" field.
+func ImportanceLT(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldComplexity), v))
+		s.Where(sql.LT(s.C(FieldImportance), v))
 	})
 }
 
-// ComplexityLTE applies the LTE predicate on the "complexity" field.
-func ComplexityLTE(v int8) predicate.Task {
+// ImportanceLTE applies the LTE predicate on the "importance" field.
+func ImportanceLTE(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldComplexity), v))
+		s.Where(sql.LTE(s.C(FieldImportance), v))
 	})
 }
 
-// PriorityEQ applies the EQ predicate on the "priority" field.
-func PriorityEQ(v int8) predicate.Task {
+// UrgencyEQ applies the EQ predicate on the "urgency" field.
+func UrgencyEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPriority), v))
+		s.Where(sql.EQ(s.C(FieldUrgency), v))
 	})
 }
 
-// PriorityNEQ applies the NEQ predicate on the "priority" field.
-func PriorityNEQ(v int8) predicate.Task {
+// UrgencyNEQ applies the NEQ predicate on the "urgency" field.
+func UrgencyNEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPriority), v))
+		s.Where(sql.NEQ(s.C(FieldUrgency), v))
 	})
 }
 
-// PriorityIn applies the In predicate on the "priority" field.
-func PriorityIn(vs ...int8) predicate.Task {
+// UrgencyIn applies the In predicate on the "urgency" field.
+func UrgencyIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -848,12 +848,12 @@ func PriorityIn(vs ...int8) predicate.Task {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldPriority), v...))
+		s.Where(sql.In(s.C(FieldUrgency), v...))
 	})
 }
 
-// PriorityNotIn applies the NotIn predicate on the "priority" field.
-func PriorityNotIn(vs ...int8) predicate.Task {
+// UrgencyNotIn applies the NotIn predicate on the "urgency" field.
+func UrgencyNotIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -865,54 +865,54 @@ func PriorityNotIn(vs ...int8) predicate.Task {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldPriority), v...))
+		s.Where(sql.NotIn(s.C(FieldUrgency), v...))
 	})
 }
 
-// PriorityGT applies the GT predicate on the "priority" field.
-func PriorityGT(v int8) predicate.Task {
+// UrgencyGT applies the GT predicate on the "urgency" field.
+func UrgencyGT(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPriority), v))
+		s.Where(sql.GT(s.C(FieldUrgency), v))
 	})
 }
 
-// PriorityGTE applies the GTE predicate on the "priority" field.
-func PriorityGTE(v int8) predicate.Task {
+// UrgencyGTE applies the GTE predicate on the "urgency" field.
+func UrgencyGTE(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPriority), v))
+		s.Where(sql.GTE(s.C(FieldUrgency), v))
 	})
 }
 
-// PriorityLT applies the LT predicate on the "priority" field.
-func PriorityLT(v int8) predicate.Task {
+// UrgencyLT applies the LT predicate on the "urgency" field.
+func UrgencyLT(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPriority), v))
+		s.Where(sql.LT(s.C(FieldUrgency), v))
 	})
 }
 
-// PriorityLTE applies the LTE predicate on the "priority" field.
-func PriorityLTE(v int8) predicate.Task {
+// UrgencyLTE applies the LTE predicate on the "urgency" field.
+func UrgencyLTE(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPriority), v))
+		s.Where(sql.LTE(s.C(FieldUrgency), v))
 	})
 }
 
-// FEQ applies the EQ predicate on the "f" field.
-func FEQ(v float64) predicate.Task {
+// CustomMultEQ applies the EQ predicate on the "custom_mult" field.
+func CustomMultEQ(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldF), v))
+		s.Where(sql.EQ(s.C(FieldCustomMult), v))
 	})
 }
 
-// FNEQ applies the NEQ predicate on the "f" field.
-func FNEQ(v float64) predicate.Task {
+// CustomMultNEQ applies the NEQ predicate on the "custom_mult" field.
+func CustomMultNEQ(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldF), v))
+		s.Where(sql.NEQ(s.C(FieldCustomMult), v))
 	})
 }
 
-// FIn applies the In predicate on the "f" field.
-func FIn(vs ...float64) predicate.Task {
+// CustomMultIn applies the In predicate on the "custom_mult" field.
+func CustomMultIn(vs ...float64) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -924,12 +924,12 @@ func FIn(vs ...float64) predicate.Task {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldF), v...))
+		s.Where(sql.In(s.C(FieldCustomMult), v...))
 	})
 }
 
-// FNotIn applies the NotIn predicate on the "f" field.
-func FNotIn(vs ...float64) predicate.Task {
+// CustomMultNotIn applies the NotIn predicate on the "custom_mult" field.
+func CustomMultNotIn(vs ...float64) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -941,35 +941,35 @@ func FNotIn(vs ...float64) predicate.Task {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldF), v...))
+		s.Where(sql.NotIn(s.C(FieldCustomMult), v...))
 	})
 }
 
-// FGT applies the GT predicate on the "f" field.
-func FGT(v float64) predicate.Task {
+// CustomMultGT applies the GT predicate on the "custom_mult" field.
+func CustomMultGT(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldF), v))
+		s.Where(sql.GT(s.C(FieldCustomMult), v))
 	})
 }
 
-// FGTE applies the GTE predicate on the "f" field.
-func FGTE(v float64) predicate.Task {
+// CustomMultGTE applies the GTE predicate on the "custom_mult" field.
+func CustomMultGTE(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldF), v))
+		s.Where(sql.GTE(s.C(FieldCustomMult), v))
 	})
 }
 
-// FLT applies the LT predicate on the "f" field.
-func FLT(v float64) predicate.Task {
+// CustomMultLT applies the LT predicate on the "custom_mult" field.
+func CustomMultLT(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldF), v))
+		s.Where(sql.LT(s.C(FieldCustomMult), v))
 	})
 }
 
-// FLTE applies the LTE predicate on the "f" field.
-func FLTE(v float64) predicate.Task {
+// CustomMultLTE applies the LTE predicate on the "custom_mult" field.
+func CustomMultLTE(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldF), v))
+		s.Where(sql.LTE(s.C(FieldCustomMult), v))
 	})
 }
 
