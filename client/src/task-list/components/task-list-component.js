@@ -5,6 +5,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -14,7 +15,7 @@ import {
   useTaskModalContext,
 } from '../../task-modal/context/task-modal-context';
 import {
-  TASK_LIST_ADD_ITEM,
+  TASK_LIST_SAVE_ITEM,
   TASK_LIST_LOAD_ITEMS,
   useTaskListContext,
 } from '../context/task-list-context';
@@ -23,6 +24,12 @@ import { mockTask } from '../../task-modal/mock';
 const listItemBoxStyle = {
   bgcolor: 'lightgreen',
   borderRadius: 2,
+
+  '&:hover': {
+    transform: 'scale(1.02)',
+  },
+
+  transition: 'ease-in-out transform 0.2s',
 };
 
 const listItemTextStyle = {
@@ -57,8 +64,15 @@ export function TaskList() {
     });
   };
 
+  const handleEdit = (index) => () => {
+    taskModalDispatch({
+      type: TASK_MODAL_OPEN,
+      data: state.items[index],
+    });
+  };
+
   const handleSave = (data) => {
-    dispatch({ type: TASK_LIST_ADD_ITEM, data });
+    dispatch({ type: TASK_LIST_SAVE_ITEM, data });
   };
 
   return (
@@ -66,17 +80,23 @@ export function TaskList() {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {state.items.map(({ title, description }, index) => (
-            <Box sx={listItemBoxStyle}>
-              <ListItem key={index}>
-                <ListItemIcon>
-                  <AccessTimeIcon />
-                </ListItemIcon>
-                <ListItemText sx={listItemTextStyle} primary={title} />
-              </ListItem>
-              <Box sx={listItemDescriptionBoxStyle} component="p">
-                {description}
+            <Tooltip title="Click to edit" followCursor>
+              <Box sx={listItemBoxStyle}>
+                <ListItem
+                  key={index}
+                  aria-role="button"
+                  onClick={handleEdit(index)}
+                >
+                  <ListItemIcon>
+                    <AccessTimeIcon />
+                  </ListItemIcon>
+                  <ListItemText sx={listItemTextStyle} primary={title} />
+                </ListItem>
+                <Box sx={listItemDescriptionBoxStyle} component="p">
+                  {description}
+                </Box>
               </Box>
-            </Box>
+            </Tooltip>
           ))}
         </List>
         <Button variant="outlined" onClick={handleAddTask} fullWidth>
