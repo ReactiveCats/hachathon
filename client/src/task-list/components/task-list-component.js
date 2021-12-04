@@ -80,13 +80,13 @@ export function TaskList() {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {state.items.map(({ title, description }, index) => (
-            <Tooltip title="Click to edit" followCursor>
-              <Box sx={listItemBoxStyle}>
-                <ListItem
-                  key={index}
-                  aria-role="button"
-                  onClick={handleEdit(index)}
-                >
+            <Tooltip key={index} title="Click to edit" followCursor>
+              <Box
+                sx={listItemBoxStyle}
+                aria-role="button"
+                onClick={handleEdit(index)}
+              >
+                <ListItem>
                   <ListItemIcon>
                     <AccessTimeIcon />
                   </ListItemIcon>
