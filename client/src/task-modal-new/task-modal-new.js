@@ -84,14 +84,14 @@ function TaskModal({ open, onClose }) {
                   onChange={(e) => handleChange(e, 'description')}
                 />
                 <Stack direction="row" spacing={2}>
-                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                  {/* <LocalizationProvider dateAdapter={AdapterMoment}>
                     <DatePicker
                       label="Deadline"
                       value={deadline}
                       onChange={(e) => handleChange(e, 'deadline')}
                       renderInput={(params) => <TextField {...params} />}
                     />
-                  </LocalizationProvider>
+                  </LocalizationProvider> */}
                   <TextField
                     fullWidth
                     label="Estimated Time"
