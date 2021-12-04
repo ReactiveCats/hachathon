@@ -1,5 +1,13 @@
 import { useEffect } from 'react';
-import { Button, List } from '@mui/material';
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+import { Box } from '@mui/system';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { TaskModal } from '../../task-modal/components/task-modal-component';
 import {
   TASK_MODAL_OPEN,
@@ -12,6 +20,26 @@ import {
 } from '../context/task-list-context';
 import { mockTask } from '../../task-modal/mock';
 
+const listItemBoxStyle = {
+  bgcolor: 'lightgreen',
+  borderRadius: 2,
+};
+
+const listItemTextStyle = {
+  // Заголовок
+  span: { fontSize: 'h5.fontSize', marginLeft: '-24px' },
+  // Описание
+  p: {},
+};
+
+const listItemDescriptionBoxStyle = {
+  fontSize: 'body1',
+  paddingX: 2,
+  paddingBottom: 2,
+  margin: 0,
+  marginTop: '-8px',
+};
+
 export function TaskList() {
   const [state, dispatch] = useTaskListContext();
   const [taskModalState, taskModalDispatch] = useTaskModalContext();
@@ -23,7 +51,9 @@ export function TaskList() {
   const handleAddTask = () => {
     taskModalDispatch({
       type: TASK_MODAL_OPEN,
-      data: {},
+      data: {
+        title: `Task ${state.items.length + 1}`,
+      },
     });
   };
 
@@ -33,10 +63,26 @@ export function TaskList() {
 
   return (
     <>
-      <List>{JSON.stringify(state.items, null, 2)}</List>
-      <Button variant="outlined" onClick={handleAddTask}>
-        Add task
-      </Button>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {state.items.map(({ title, description }, index) => (
+            <Box sx={listItemBoxStyle}>
+              <ListItem key={index}>
+                <ListItemIcon>
+                  <AccessTimeIcon />
+                </ListItemIcon>
+                <ListItemText sx={listItemTextStyle} primary={title} />
+              </ListItem>
+              <Box sx={listItemDescriptionBoxStyle} component="p">
+                {description}
+              </Box>
+            </Box>
+          ))}
+        </List>
+        <Button variant="outlined" onClick={handleAddTask} fullWidth>
+          Add task
+        </Button>
+      </Box>
       <TaskModal onSave={handleSave}></TaskModal>
     </>
   );
