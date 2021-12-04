@@ -11,10 +11,9 @@ export function AuthGuard({ children }) {
     if (!state.authorized) {
       router.push({
         pathname: '/auth',
-        query: { from: router.asPath },
       });
     }
   }, []);
 
-  return state.authorized ? children : <></>;
+  return children;
 }

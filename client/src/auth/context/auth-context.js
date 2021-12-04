@@ -25,6 +25,8 @@ function login(user, dispatch) {
     .login(user)
     .then(({ accessToken }) => {
       authService.saveAccessToken(accessToken);
+
+      dispatch({ type: AUTH_SUCCESS });
     })
     .catch((err) => {
       dispatch({ type: AUTH_ERROR, data: err });
@@ -36,6 +38,8 @@ function signup(user, dispatch) {
     .signup(user)
     .then(({ accessToken }) => {
       authService.saveAccessToken(accessToken);
+
+      dispatch({ type: AUTH_SUCCESS });
     })
     .catch((err) => {
       dispatch({ type: AUTH_ERROR, data: err });
@@ -43,7 +47,9 @@ function signup(user, dispatch) {
 }
 
 function logout(data, dispatch) {
-  authService.removeAccessToken();
+  authService.logout();
+
+  dispatch({ type: AUTH_LOGOUT });
 }
 
 const authEffects = {
@@ -54,8 +60,6 @@ const authEffects = {
 
 function authReducer(state = initialState, action) {
   const { type, data = {} } = action;
-
-  console.log('action', action);
 
   switch (type) {
     case AUTH_LOGIN:

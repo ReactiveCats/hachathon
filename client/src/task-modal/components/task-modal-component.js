@@ -32,6 +32,7 @@ const style = {
 const taskFromData = (data) => ({
   title: '',
   description: '',
+  icon: 0,
   ...data,
 });
 

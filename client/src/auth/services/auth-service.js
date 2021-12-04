@@ -17,6 +17,10 @@ class AuthService {
     });
   }
 
+  logout() {
+    this.removeAccessToken();
+  }
+
   saveAccessToken(accessToken) {
     window.localStorage.setItem(
       AuthService.ACCESS_TOKEN_STORAGE_KEY,
