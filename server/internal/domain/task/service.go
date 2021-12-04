@@ -96,7 +96,7 @@ func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain
 }
 
 func (s Service) Delete(ctx context.Context, taskID int) error {
-	_, err := s.client.Delete().
+	n, err := s.client.Delete().
 		Where(taskent.ID(taskID)).
 		Exec(ctx)
 	if err != nil {
@@ -104,6 +104,10 @@ func (s Service) Delete(ctx context.Context, taskID int) error {
 			return platform.NotFound("Task is not found")
 		}
 		return platform.WrapInternal(err)
+	}
+
+	if n == 0 {
+		return platform.NotFound("Task is not found")
 	}
 
 	return nil
