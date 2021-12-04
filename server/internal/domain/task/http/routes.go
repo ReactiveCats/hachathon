@@ -151,6 +151,7 @@ func answerQuestion(service domain.TaskService) func(ctx *gin.Context) {
 
 		var params = domain.AnswerQuestionDTO{
 			UserID:        user.ID,
+			TaskID:        taskID,
 			CompareTaskID: taskID,
 		}
 

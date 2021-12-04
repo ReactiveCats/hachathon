@@ -137,6 +137,7 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestionDTO) (*domain.Question, error) {
 	task1, err := s.client.Query().
 		Where(taskent.ID(params.TaskID)).
+		WithCreator().
 		First(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -146,6 +147,7 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 	}
 	task2, err := s.client.Query().
 		Where(taskent.ID(params.TaskID)).
+		WithCreator().
 		First(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -157,7 +159,11 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 		switch params.Response {
 		case 1:
 			task1.Lo = task2.CustomMult
-			newHiTask, err := s.client.Query().Where(taskent.CreatorID(params.UserID)).Order(ent.Desc()).First(ctx)
+			newHiTask, err := s.client.Query().
+				Where(taskent.CreatorID(params.UserID)).
+				WithCreator().
+				Order(ent.Desc()).
+				First(ctx)
 			if err != nil {
 				return nil, platform.NotFound("Task is not found")
 			}
@@ -165,7 +171,11 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 			break
 		case -1:
 			task1.Hi = task2.CustomMult
-			newHiTask, err := s.client.Query().Where(taskent.CreatorID(params.UserID)).Order(ent.Asc()).First(ctx)
+			newHiTask, err := s.client.Query().
+				Where(taskent.CreatorID(params.UserID)).
+				WithCreator().
+				Order(ent.Asc()).
+				First(ctx)
 			if err != nil {
 				return nil, platform.NotFound("Task is not found")
 			}
