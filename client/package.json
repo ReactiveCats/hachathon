@@ -10,14 +10,21 @@
     "swagger:generate": "openapi-generator-cli generate -i \"../server/internal/docs/swagger.json\" -g typescript-fetch -o  ./swagger"
   },
   "dependencies": {
+    "@date-io/moment": "^2.11.0",
     "@emotion/cache": "^11.6.0",
     "@emotion/react": "^11.7.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.6.0",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@material-ui/pickers": "^3.3.10",
+    "@mui/icons-material": "^5.2.0",
+    "@mui/lab": "^5.0.0-alpha.58",
     "@mui/material": "^5.2.2",
     "@tinkoff/utils": "^2.2.1",
     "cross-env": "7.0.3",
     "fastify": "3.24.1",
+    "moment": "^2.29.1",
     "next": "12.0.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -25,7 +32,7 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.4.18",
-    "eslint": "7.32.0",
+    "eslint": "^7.32.0",
     "eslint-config-next": "12.0.4",
     "prettier": "^2.5.0"
   }
