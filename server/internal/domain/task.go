@@ -92,7 +92,7 @@ type AnswerQuestionDTO struct {
 	UserID        int `json:"-"`
 	Response      int `json:"response"` // -1,0,1
 	TaskID        int `json:"-"`
-	CompareTaskID int `json:"task_id"`
+	CompareTaskID int `json:"compare_task_id"`
 }
 
 type CreateTaskDTO struct {

@@ -2,9 +2,10 @@ basePath: /api
 definitions:
   domain.AnswerQuestionDTO:
     properties:
-      response:
+      compare_task_id:
         type: integer
-      task_id:
+      response:
+        description: -1,0,1
         type: integer
     type: object
   domain.CreateTagDTO:

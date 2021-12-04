@@ -507,10 +507,11 @@ var doc = `{
         "domain.AnswerQuestionDTO": {
             "type": "object",
             "properties": {
-                "response": {
+                "compare_task_id": {
                     "type": "integer"
                 },
-                "task_id": {
+                "response": {
+                    "description": "-1,0,1",
                     "type": "integer"
                 }
             }
