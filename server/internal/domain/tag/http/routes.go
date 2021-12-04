@@ -82,7 +82,7 @@ func getTagByID(service domain.TagService) func(ctx *gin.Context) {
 // @Param 		tag_id 		path 	string				true 	"tag id"
 // @Param 		tag 		body 	domain.TagPutDTO	true 	"tag object"
 // @Produce  	json
-// @Success 	200 {object} domain.Tag
+// @Success 	204
 // @Router 		/tag/{tag_id} [put]
 func putTag(service domain.TagService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
@@ -105,13 +105,13 @@ func putTag(service domain.TagService) func(ctx *gin.Context) {
 			return
 		}
 
-		tag, err := service.Update(ctx.Request.Context(), params)
+		err = service.Update(ctx.Request.Context(), params)
 		if err != nil {
 			platform.GinErrResponse(ctx, err)
 			return
 		}
 
-		platform.GinOkResponse(ctx, http.StatusOK, tag)
+		platform.GinOkResponse(ctx, http.StatusNoContent)
 	}
 }
 
@@ -121,6 +121,7 @@ func putTag(service domain.TagService) func(ctx *gin.Context) {
 //// @Security 	ApiKeyAuth
 // @Tags 		tags
 // @ID 			post_tag
+// @Param 		tag 		body 	domain.CreateTagDTO	true 	"tag object"
 // @Produce  	json
 // @Success 	200 {object} domain.Tag
 // @Router 		/tag [post]

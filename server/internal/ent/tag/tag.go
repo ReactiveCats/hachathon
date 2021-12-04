@@ -43,3 +43,8 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultMult holds the default value on creation for the "mult" field.
+	DefaultMult float64
+)

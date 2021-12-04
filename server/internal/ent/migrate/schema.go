@@ -12,7 +12,7 @@ var (
 	TagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "title", Type: field.TypeString},
-		{Name: "mult", Type: field.TypeFloat64},
+		{Name: "mult", Type: field.TypeFloat64, Default: 1},
 		{Name: "user_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TagsTable holds the schema information for the "tags" table.

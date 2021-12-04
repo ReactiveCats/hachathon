@@ -4,6 +4,7 @@ package ent
 
 import (
 	"server/internal/ent/schema"
+	"server/internal/ent/tag"
 	"server/internal/ent/task"
 	"time"
 )
@@ -12,6 +13,12 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	tagFields := schema.Tag{}.Fields()
+	_ = tagFields
+	// tagDescMult is the schema descriptor for mult field.
+	tagDescMult := tagFields[2].Descriptor()
+	// tag.DefaultMult holds the default value on creation for the mult field.
+	tag.DefaultMult = tagDescMult.Default.(float64)
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
 	// taskDescCreatedAt is the schema descriptor for created_at field.

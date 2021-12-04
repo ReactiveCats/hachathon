@@ -7,6 +7,11 @@ definitions:
       task_id:
         type: integer
     type: object
+  domain.CreateTagDTO:
+    properties:
+      title:
+        type: string
+    type: object
   domain.CreateTaskAnswer:
     properties:
       question:
@@ -154,6 +159,13 @@ paths:
     post:
       description: Add new tag
       operationId: post_tag
+      parameters:
+      - description: tag object
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateTagDTO'
       produces:
       - application/json
       responses:
@@ -225,10 +237,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Tag'
+        "204":
+          description: ""
       security:
       - ApiKeyAuth: []
       summary: Edit tag

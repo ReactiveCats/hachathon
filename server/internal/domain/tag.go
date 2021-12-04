@@ -35,7 +35,7 @@ type TagService interface {
 	All(ctx context.Context, dto AllTagsDTO) ([]*Tag, error)
 	ByID(ctx context.Context, dto TagsByIDDTO) (*Tag, error)
 	Create(ctx context.Context, dto CreateTagDTO) (*Tag, error)
-	Update(ctx context.Context, dto TagPutDTO) (*Tag, error)
+	Update(ctx context.Context, dto TagPutDTO) error
 	Delete(ctx context.Context, dto DeleteTagDTO) error
 }
 
@@ -49,9 +49,8 @@ type TagsByIDDTO struct {
 }
 
 type CreateTagDTO struct {
-	UserID int     `json:"-"`
-	Title  string  `json:"title"`
-	Mult   float64 `json:"mult"`
+	UserID int    `json:"-"`
+	Title  string `json:"title"`
 }
 
 type TagPutDTO struct {

@@ -47,6 +47,14 @@ func (tu *TagUpdate) SetMult(f float64) *TagUpdate {
 	return tu
 }
 
+// SetNillableMult sets the "mult" field if the given value is not nil.
+func (tu *TagUpdate) SetNillableMult(f *float64) *TagUpdate {
+	if f != nil {
+		tu.SetMult(*f)
+	}
+	return tu
+}
+
 // AddMult adds f to the "mult" field.
 func (tu *TagUpdate) AddMult(f float64) *TagUpdate {
 	tu.mutation.AddMult(f)
@@ -246,6 +254,14 @@ func (tuo *TagUpdateOne) SetTitle(s string) *TagUpdateOne {
 func (tuo *TagUpdateOne) SetMult(f float64) *TagUpdateOne {
 	tuo.mutation.ResetMult()
 	tuo.mutation.SetMult(f)
+	return tuo
+}
+
+// SetNillableMult sets the "mult" field if the given value is not nil.
+func (tuo *TagUpdateOne) SetNillableMult(f *float64) *TagUpdateOne {
+	if f != nil {
+		tuo.SetMult(*f)
+	}
 	return tuo
 }
 

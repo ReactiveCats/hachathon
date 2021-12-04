@@ -128,6 +128,17 @@ var doc = `{
                 ],
                 "summary": "Add new tag",
                 "operationId": "post_tag",
+                "parameters": [
+                    {
+                        "description": "tag object",
+                        "name": "tag",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateTagDTO"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -206,11 +217,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Tag"
-                        }
+                    "204": {
+                        "description": ""
                     }
                 }
             },
@@ -491,6 +499,14 @@ var doc = `{
                 },
                 "task_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "domain.CreateTagDTO": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
                 }
             }
         },
