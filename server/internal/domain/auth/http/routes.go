@@ -10,8 +10,8 @@ import (
 )
 
 func RegisterRoutes(r *gin.RouterGroup, service domain.UserService) {
-	r.GET("/login", login(service))
-	r.GET("/signup", signup(service))
+	r.POST("/login", login(service))
+	r.POST("/signup", signup(service))
 }
 
 func JwtAuth(config config.Config, service domain.UserService) gin.HandlerFunc {
