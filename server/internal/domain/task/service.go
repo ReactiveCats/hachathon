@@ -211,16 +211,21 @@ func GetNearest(service Service, ctx context.Context, task *domain.Task) (*ent.T
 		Where(taskent.CreatorID(task.Creator.ID),
 			taskent.CustomMultGTE(task.CustomMult)).
 		Order(ent.Asc(taskent.FieldCustomMult)).First(ctx)
-	if err != nil || !ent.IsNotFound(err) {
+	if err != nil && !ent.IsNotFound(err) {
 		return nil, platform.WrapInternal(err)
 	}
 	lowerTask, err := service.client.Query().
 		Where(taskent.CreatorID(task.Creator.ID),
 			taskent.CustomMultGTE(task.CustomMult)).
 		Order(ent.Asc(taskent.FieldCustomMult)).First(ctx)
-	if err != nil {
+	if err != nil && !ent.IsNotFound(err) {
 		return nil, platform.WrapInternal(err)
 	}
+
+	if higherTask == nil && lowerTask == nil {
+		return nil, nil
+	}
+
 	if math.Abs(higherTask.CustomMult-task.CustomMult) > Epsilon &&
 		math.Abs(lowerTask.CustomMult-task.CustomMult) > Epsilon {
 		return nil, nil
