@@ -131,6 +131,18 @@ func (tc *TaskCreate) SetF(f float64) *TaskCreate {
 	return tc
 }
 
+// SetLo sets the "lo" field.
+func (tc *TaskCreate) SetLo(f float64) *TaskCreate {
+	tc.mutation.SetLo(f)
+	return tc
+}
+
+// SetHi sets the "hi" field.
+func (tc *TaskCreate) SetHi(f float64) *TaskCreate {
+	tc.mutation.SetHi(f)
+	return tc
+}
+
 // SetCreatorID sets the "creator_id" field.
 func (tc *TaskCreate) SetCreatorID(i int) *TaskCreate {
 	tc.mutation.SetCreatorID(i)
@@ -261,6 +273,12 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.F(); !ok {
 		return &ValidationError{Name: "f", err: errors.New(`ent: missing required field "f"`)}
 	}
+	if _, ok := tc.mutation.Lo(); !ok {
+		return &ValidationError{Name: "lo", err: errors.New(`ent: missing required field "lo"`)}
+	}
+	if _, ok := tc.mutation.Hi(); !ok {
+		return &ValidationError{Name: "hi", err: errors.New(`ent: missing required field "hi"`)}
+	}
 	if _, ok := tc.mutation.CreatorID(); !ok {
 		return &ValidationError{Name: "creator_id", err: errors.New(`ent: missing required field "creator_id"`)}
 	}
@@ -365,6 +383,22 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			Column: task.FieldF,
 		})
 		_node.F = value
+	}
+	if value, ok := tc.mutation.Lo(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+		_node.Lo = value
+	}
+	if value, ok := tc.mutation.Hi(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+		_node.Hi = value
 	}
 	if nodes := tc.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -29,6 +29,10 @@ const (
 	FieldPriority = "priority"
 	// FieldF holds the string denoting the f field in the database.
 	FieldF = "f"
+	// FieldLo holds the string denoting the lo field in the database.
+	FieldLo = "lo"
+	// FieldHi holds the string denoting the hi field in the database.
+	FieldHi = "hi"
 	// FieldCreatorID holds the string denoting the creator_id field in the database.
 	FieldCreatorID = "creator_id"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
@@ -56,6 +60,8 @@ var Columns = []string{
 	FieldComplexity,
 	FieldPriority,
 	FieldF,
+	FieldLo,
+	FieldHi,
 	FieldCreatorID,
 }
 

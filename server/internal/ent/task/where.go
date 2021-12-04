@@ -156,6 +156,20 @@ func F(v float64) predicate.Task {
 	})
 }
 
+// Lo applies equality check predicate on the "lo" field. It's identical to LoEQ.
+func Lo(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLo), v))
+	})
+}
+
+// Hi applies equality check predicate on the "hi" field. It's identical to HiEQ.
+func Hi(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHi), v))
+	})
+}
+
 // CreatorID applies equality check predicate on the "creator_id" field. It's identical to CreatorIDEQ.
 func CreatorID(v int) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
@@ -956,6 +970,158 @@ func FLT(v float64) predicate.Task {
 func FLTE(v float64) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldF), v))
+	})
+}
+
+// LoEQ applies the EQ predicate on the "lo" field.
+func LoEQ(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLo), v))
+	})
+}
+
+// LoNEQ applies the NEQ predicate on the "lo" field.
+func LoNEQ(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLo), v))
+	})
+}
+
+// LoIn applies the In predicate on the "lo" field.
+func LoIn(vs ...float64) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldLo), v...))
+	})
+}
+
+// LoNotIn applies the NotIn predicate on the "lo" field.
+func LoNotIn(vs ...float64) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldLo), v...))
+	})
+}
+
+// LoGT applies the GT predicate on the "lo" field.
+func LoGT(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLo), v))
+	})
+}
+
+// LoGTE applies the GTE predicate on the "lo" field.
+func LoGTE(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLo), v))
+	})
+}
+
+// LoLT applies the LT predicate on the "lo" field.
+func LoLT(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLo), v))
+	})
+}
+
+// LoLTE applies the LTE predicate on the "lo" field.
+func LoLTE(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLo), v))
+	})
+}
+
+// HiEQ applies the EQ predicate on the "hi" field.
+func HiEQ(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHi), v))
+	})
+}
+
+// HiNEQ applies the NEQ predicate on the "hi" field.
+func HiNEQ(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldHi), v))
+	})
+}
+
+// HiIn applies the In predicate on the "hi" field.
+func HiIn(vs ...float64) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldHi), v...))
+	})
+}
+
+// HiNotIn applies the NotIn predicate on the "hi" field.
+func HiNotIn(vs ...float64) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldHi), v...))
+	})
+}
+
+// HiGT applies the GT predicate on the "hi" field.
+func HiGT(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldHi), v))
+	})
+}
+
+// HiGTE applies the GTE predicate on the "hi" field.
+func HiGTE(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldHi), v))
+	})
+}
+
+// HiLT applies the LT predicate on the "hi" field.
+func HiLT(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldHi), v))
+	})
+}
+
+// HiLTE applies the LTE predicate on the "hi" field.
+func HiLTE(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldHi), v))
 	})
 }
 

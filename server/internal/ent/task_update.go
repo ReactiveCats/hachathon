@@ -192,6 +192,32 @@ func (tu *TaskUpdate) AddF(f float64) *TaskUpdate {
 	return tu
 }
 
+// SetLo sets the "lo" field.
+func (tu *TaskUpdate) SetLo(f float64) *TaskUpdate {
+	tu.mutation.ResetLo()
+	tu.mutation.SetLo(f)
+	return tu
+}
+
+// AddLo adds f to the "lo" field.
+func (tu *TaskUpdate) AddLo(f float64) *TaskUpdate {
+	tu.mutation.AddLo(f)
+	return tu
+}
+
+// SetHi sets the "hi" field.
+func (tu *TaskUpdate) SetHi(f float64) *TaskUpdate {
+	tu.mutation.ResetHi()
+	tu.mutation.SetHi(f)
+	return tu
+}
+
+// AddHi adds f to the "hi" field.
+func (tu *TaskUpdate) AddHi(f float64) *TaskUpdate {
+	tu.mutation.AddHi(f)
+	return tu
+}
+
 // SetCreatorID sets the "creator_id" field.
 func (tu *TaskUpdate) SetCreatorID(i int) *TaskUpdate {
 	tu.mutation.SetCreatorID(i)
@@ -426,6 +452,34 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: task.FieldF,
 		})
 	}
+	if value, ok := tu.mutation.Lo(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tu.mutation.AddedLo(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tu.mutation.Hi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+	}
+	if value, ok := tu.mutation.AddedHi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+	}
 	if tu.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -640,6 +694,32 @@ func (tuo *TaskUpdateOne) SetF(f float64) *TaskUpdateOne {
 // AddF adds f to the "f" field.
 func (tuo *TaskUpdateOne) AddF(f float64) *TaskUpdateOne {
 	tuo.mutation.AddF(f)
+	return tuo
+}
+
+// SetLo sets the "lo" field.
+func (tuo *TaskUpdateOne) SetLo(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetLo()
+	tuo.mutation.SetLo(f)
+	return tuo
+}
+
+// AddLo adds f to the "lo" field.
+func (tuo *TaskUpdateOne) AddLo(f float64) *TaskUpdateOne {
+	tuo.mutation.AddLo(f)
+	return tuo
+}
+
+// SetHi sets the "hi" field.
+func (tuo *TaskUpdateOne) SetHi(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetHi()
+	tuo.mutation.SetHi(f)
+	return tuo
+}
+
+// AddHi adds f to the "hi" field.
+func (tuo *TaskUpdateOne) AddHi(f float64) *TaskUpdateOne {
+	tuo.mutation.AddHi(f)
 	return tuo
 }
 
@@ -899,6 +979,34 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Type:   field.TypeFloat64,
 			Value:  value,
 			Column: task.FieldF,
+		})
+	}
+	if value, ok := tuo.mutation.Lo(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tuo.mutation.AddedLo(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tuo.mutation.Hi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+	}
+	if value, ok := tuo.mutation.AddedHi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
 		})
 	}
 	if tuo.mutation.CreatorCleared() {
