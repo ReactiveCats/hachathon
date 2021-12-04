@@ -42,11 +42,11 @@ func (s Service) Fetch(ctx context.Context, dto domain.GetTaskDTO) ([]*domain.Ta
 	if dto.Estimated != nil {
 		query.Where(taskent.Estimated(*dto.Estimated))
 	}
-	if dto.Complexity != nil {
-		query.Where(taskent.ComplexityEQ(int8(*dto.Complexity)))
+	if dto.Urgency != nil {
+		query.Where(taskent.Urgency(int8(*dto.Urgency)))
 	}
-	if dto.Priority != nil {
-		query.Where(taskent.PriorityEQ(int8(*dto.Priority)))
+	if dto.Importance != nil {
+		query.Where(taskent.Importance(int8(*dto.Importance)))
 	}
 	if dto.OrderBy != nil && dto.Order != nil {
 		if *dto.Order == "asc" {
@@ -117,8 +117,8 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 
 	task := domain.TaskFromEnt(entTask)
 
-	f, lo, hi := CalculateF(task)
-	task.F = f
+	f := task.F()
+	task.CustomMult = f
 
 	question, err := s.AskQuestion(ctx, task)
 	if err != nil {
