@@ -45,6 +45,12 @@ type TaskMutation struct {
 	addcomplexity  *int8
 	priority       *int8
 	addpriority    *int8
+	f              *float64
+	addf           *float64
+	lo             *float64
+	addlo          *float64
+	hi             *float64
+	addhi          *float64
 	clearedFields  map[string]struct{}
 	creator        *int
 	clearedcreator bool
@@ -540,6 +546,174 @@ func (m *TaskMutation) ResetPriority() {
 	m.addpriority = nil
 }
 
+// SetF sets the "f" field.
+func (m *TaskMutation) SetF(f float64) {
+	m.f = &f
+	m.addf = nil
+}
+
+// F returns the value of the "f" field in the mutation.
+func (m *TaskMutation) F() (r float64, exists bool) {
+	v := m.f
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldF returns the old "f" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldF(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldF is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldF requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldF: %w", err)
+	}
+	return oldValue.F, nil
+}
+
+// AddF adds f to the "f" field.
+func (m *TaskMutation) AddF(f float64) {
+	if m.addf != nil {
+		*m.addf += f
+	} else {
+		m.addf = &f
+	}
+}
+
+// AddedF returns the value that was added to the "f" field in this mutation.
+func (m *TaskMutation) AddedF() (r float64, exists bool) {
+	v := m.addf
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetF resets all changes to the "f" field.
+func (m *TaskMutation) ResetF() {
+	m.f = nil
+	m.addf = nil
+}
+
+// SetLo sets the "lo" field.
+func (m *TaskMutation) SetLo(f float64) {
+	m.lo = &f
+	m.addlo = nil
+}
+
+// Lo returns the value of the "lo" field in the mutation.
+func (m *TaskMutation) Lo() (r float64, exists bool) {
+	v := m.lo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLo returns the old "lo" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldLo(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLo: %w", err)
+	}
+	return oldValue.Lo, nil
+}
+
+// AddLo adds f to the "lo" field.
+func (m *TaskMutation) AddLo(f float64) {
+	if m.addlo != nil {
+		*m.addlo += f
+	} else {
+		m.addlo = &f
+	}
+}
+
+// AddedLo returns the value that was added to the "lo" field in this mutation.
+func (m *TaskMutation) AddedLo() (r float64, exists bool) {
+	v := m.addlo
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLo resets all changes to the "lo" field.
+func (m *TaskMutation) ResetLo() {
+	m.lo = nil
+	m.addlo = nil
+}
+
+// SetHi sets the "hi" field.
+func (m *TaskMutation) SetHi(f float64) {
+	m.hi = &f
+	m.addhi = nil
+}
+
+// Hi returns the value of the "hi" field in the mutation.
+func (m *TaskMutation) Hi() (r float64, exists bool) {
+	v := m.hi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHi returns the old "hi" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldHi(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHi is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHi requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHi: %w", err)
+	}
+	return oldValue.Hi, nil
+}
+
+// AddHi adds f to the "hi" field.
+func (m *TaskMutation) AddHi(f float64) {
+	if m.addhi != nil {
+		*m.addhi += f
+	} else {
+		m.addhi = &f
+	}
+}
+
+// AddedHi returns the value that was added to the "hi" field in this mutation.
+func (m *TaskMutation) AddedHi() (r float64, exists bool) {
+	v := m.addhi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetHi resets all changes to the "hi" field.
+func (m *TaskMutation) ResetHi() {
+	m.hi = nil
+	m.addhi = nil
+}
+
 // SetCreatorID sets the "creator_id" field.
 func (m *TaskMutation) SetCreatorID(i int) {
 	m.creator = &i
@@ -621,7 +795,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, task.FieldCreatedAt)
 	}
@@ -645,6 +819,15 @@ func (m *TaskMutation) Fields() []string {
 	}
 	if m.priority != nil {
 		fields = append(fields, task.FieldPriority)
+	}
+	if m.f != nil {
+		fields = append(fields, task.FieldF)
+	}
+	if m.lo != nil {
+		fields = append(fields, task.FieldLo)
+	}
+	if m.hi != nil {
+		fields = append(fields, task.FieldHi)
 	}
 	if m.creator != nil {
 		fields = append(fields, task.FieldCreatorID)
@@ -673,6 +856,12 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.Complexity()
 	case task.FieldPriority:
 		return m.Priority()
+	case task.FieldF:
+		return m.F()
+	case task.FieldLo:
+		return m.Lo()
+	case task.FieldHi:
+		return m.Hi()
 	case task.FieldCreatorID:
 		return m.CreatorID()
 	}
@@ -700,6 +889,12 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldComplexity(ctx)
 	case task.FieldPriority:
 		return m.OldPriority(ctx)
+	case task.FieldF:
+		return m.OldF(ctx)
+	case task.FieldLo:
+		return m.OldLo(ctx)
+	case task.FieldHi:
+		return m.OldHi(ctx)
 	case task.FieldCreatorID:
 		return m.OldCreatorID(ctx)
 	}
@@ -767,6 +962,27 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPriority(v)
 		return nil
+	case task.FieldF:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetF(v)
+		return nil
+	case task.FieldLo:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLo(v)
+		return nil
+	case task.FieldHi:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHi(v)
+		return nil
 	case task.FieldCreatorID:
 		v, ok := value.(int)
 		if !ok {
@@ -794,6 +1010,15 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.addpriority != nil {
 		fields = append(fields, task.FieldPriority)
 	}
+	if m.addf != nil {
+		fields = append(fields, task.FieldF)
+	}
+	if m.addlo != nil {
+		fields = append(fields, task.FieldLo)
+	}
+	if m.addhi != nil {
+		fields = append(fields, task.FieldHi)
+	}
 	return fields
 }
 
@@ -810,6 +1035,12 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedComplexity()
 	case task.FieldPriority:
 		return m.AddedPriority()
+	case task.FieldF:
+		return m.AddedF()
+	case task.FieldLo:
+		return m.AddedLo()
+	case task.FieldHi:
+		return m.AddedHi()
 	}
 	return nil, false
 }
@@ -846,6 +1077,27 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddPriority(v)
+		return nil
+	case task.FieldF:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddF(v)
+		return nil
+	case task.FieldLo:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLo(v)
+		return nil
+	case task.FieldHi:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHi(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
@@ -918,6 +1170,15 @@ func (m *TaskMutation) ResetField(name string) error {
 		return nil
 	case task.FieldPriority:
 		m.ResetPriority()
+		return nil
+	case task.FieldF:
+		m.ResetF()
+		return nil
+	case task.FieldLo:
+		m.ResetLo()
+		return nil
+	case task.FieldHi:
+		m.ResetHi()
 		return nil
 	case task.FieldCreatorID:
 		m.ResetCreatorID()

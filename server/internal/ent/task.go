@@ -33,6 +33,12 @@ type Task struct {
 	Complexity int8 `json:"complexity,omitempty"`
 	// Priority holds the value of the "priority" field.
 	Priority int8 `json:"priority,omitempty"`
+	// F holds the value of the "f" field.
+	F float64 `json:"f,omitempty"`
+	// Lo holds the value of the "lo" field.
+	Lo float64 `json:"lo,omitempty"`
+	// Hi holds the value of the "hi" field.
+	Hi float64 `json:"hi,omitempty"`
 	// CreatorID holds the value of the "creator_id" field.
 	CreatorID int `json:"creator_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -68,6 +74,8 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case task.FieldF, task.FieldLo, task.FieldHi:
+			values[i] = new(sql.NullFloat64)
 		case task.FieldID, task.FieldIcon, task.FieldEstimated, task.FieldComplexity, task.FieldPriority, task.FieldCreatorID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldTitle, task.FieldDescription:
@@ -143,6 +151,24 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.Priority = int8(value.Int64)
 			}
+		case task.FieldF:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field f", values[i])
+			} else if value.Valid {
+				t.F = value.Float64
+			}
+		case task.FieldLo:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field lo", values[i])
+			} else if value.Valid {
+				t.Lo = value.Float64
+			}
+		case task.FieldHi:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field hi", values[i])
+			} else if value.Valid {
+				t.Hi = value.Float64
+			}
 		case task.FieldCreatorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field creator_id", values[i])
@@ -198,6 +224,12 @@ func (t *Task) String() string {
 	builder.WriteString(fmt.Sprintf("%v", t.Complexity))
 	builder.WriteString(", priority=")
 	builder.WriteString(fmt.Sprintf("%v", t.Priority))
+	builder.WriteString(", f=")
+	builder.WriteString(fmt.Sprintf("%v", t.F))
+	builder.WriteString(", lo=")
+	builder.WriteString(fmt.Sprintf("%v", t.Lo))
+	builder.WriteString(", hi=")
+	builder.WriteString(fmt.Sprintf("%v", t.Hi))
 	builder.WriteString(", creator_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.CreatorID))
 	builder.WriteByte(')')

@@ -27,6 +27,12 @@ const (
 	FieldComplexity = "complexity"
 	// FieldPriority holds the string denoting the priority field in the database.
 	FieldPriority = "priority"
+	// FieldF holds the string denoting the f field in the database.
+	FieldF = "f"
+	// FieldLo holds the string denoting the lo field in the database.
+	FieldLo = "lo"
+	// FieldHi holds the string denoting the hi field in the database.
+	FieldHi = "hi"
 	// FieldCreatorID holds the string denoting the creator_id field in the database.
 	FieldCreatorID = "creator_id"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
@@ -53,6 +59,9 @@ var Columns = []string{
 	FieldEstimated,
 	FieldComplexity,
 	FieldPriority,
+	FieldF,
+	FieldLo,
+	FieldHi,
 	FieldCreatorID,
 }
 
@@ -71,8 +80,12 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultIcon holds the default value on creation for the "icon" field.
 	DefaultIcon int
+	// DefaultComplexity holds the default value on creation for the "complexity" field.
+	DefaultComplexity int8
 	// ComplexityValidator is a validator for the "complexity" field. It is called by the builders before save.
 	ComplexityValidator func(int8) error
+	// DefaultPriority holds the default value on creation for the "priority" field.
+	DefaultPriority int8
 	// PriorityValidator is a validator for the "priority" field. It is called by the builders before save.
 	PriorityValidator func(int8) error
 )

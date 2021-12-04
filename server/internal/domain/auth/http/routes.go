@@ -6,6 +6,7 @@ import (
 	"server/internal/config"
 	"server/internal/domain"
 	"server/internal/platform"
+	"strings"
 )
 
 func RegisterRoutes(r *gin.RouterGroup, service domain.UserService) {
@@ -15,16 +16,19 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.UserService) {
 
 func JwtAuth(config config.Config, service domain.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		tokenStr := ctx.GetHeader("Token")
-		if tokenStr == "" {
+		authStr := ctx.GetHeader("Authorization")
+		if authStr == "" {
 			if !config.DefaultAuthUser {
 				ctx.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
-			tokenStr, _ = service.JWTToken(&domain.User{ID: 1})
+			authStr, _ = service.JWTToken(&domain.User{ID: 1})
+			authStr = "Bearer " + authStr
 		}
 
-		userID, err := service.DataFromJWT(tokenStr)
+		token := strings.Replace(authStr, "Bearer ", "", 1)
+
+		userID, err := service.DataFromJWT(token)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
@@ -52,18 +56,24 @@ func JwtAuth(config config.Config, service domain.UserService) gin.HandlerFunc {
 // @Produce  	json
 // @Param   	username  	query  string  	true  "username"
 // @Success 	200 {object} string
-// @Router 		/auth/login [get]
+// @Router 		/auth/login [post]
 func login(service domain.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		username := ctx.Query("username")
+		var params domain.LoginDTO
 
-		token, err := service.Login(ctx.Request.Context(), username)
+		err := ctx.ShouldBind(&params)
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.WrapUnprocessableEntity(err, "username is empty"))
+			return
+		}
+
+		token, err := service.Login(ctx.Request.Context(), params.Username)
 		if err != nil {
 			platform.GinErrResponse(ctx, err)
 			return
 		}
 
-		platform.GinOkResponse(ctx, http.StatusOK, token)
+		platform.GinOkResponse(ctx, http.StatusOK, domain.AccessToken{AccessToken: token})
 	}
 }
 
@@ -73,19 +83,25 @@ func login(service domain.UserService) gin.HandlerFunc {
 // @Tags 		auth
 // @ID 			signup
 // @Produce  	json
-// @Param   	username  	query  string  	true  "username"
+// @Param   	username  	body  string  	true  "username"
 // @Success 	200 {object} string
-// @Router 		/auth/signup [get]
+// @Router 		/auth/signup [post]
 func signup(service domain.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		username := ctx.Query("username")
+		var params domain.SignupDTO
 
-		token, err := service.Signup(ctx.Request.Context(), username)
+		err := ctx.ShouldBind(&params)
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.WrapUnprocessableEntity(err, "username is empty"))
+			return
+		}
+
+		token, err := service.Signup(ctx.Request.Context(), params.Username)
 		if err != nil {
 			platform.GinErrResponse(ctx, err)
 			return
 		}
 
-		platform.GinOkResponse(ctx, http.StatusOK, token)
+		platform.GinOkResponse(ctx, http.StatusOK, domain.AccessToken{AccessToken: token})
 	}
 }

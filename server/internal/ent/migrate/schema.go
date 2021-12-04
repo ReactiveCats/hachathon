@@ -17,8 +17,11 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "estimated", Type: field.TypeInt, Nullable: true},
-		{Name: "complexity", Type: field.TypeInt8},
-		{Name: "priority", Type: field.TypeInt8},
+		{Name: "complexity", Type: field.TypeInt8, Default: 5},
+		{Name: "priority", Type: field.TypeInt8, Default: 5},
+		{Name: "f", Type: field.TypeFloat64},
+		{Name: "lo", Type: field.TypeFloat64},
+		{Name: "hi", Type: field.TypeFloat64},
 		{Name: "creator_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
@@ -29,7 +32,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_users_tasks",
-				Columns:    []*schema.Column{TasksColumns[9]},
+				Columns:    []*schema.Column{TasksColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

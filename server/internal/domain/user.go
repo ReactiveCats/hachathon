@@ -41,6 +41,18 @@ type UserService interface {
 
 // maybe it's better to replace such little DTOs with just arguments
 
+type AccessToken struct {
+	AccessToken string `json:"accessToken"`
+}
+
+type LoginDTO struct {
+	Username string `json:"username" binding:"required"`
+}
+
+type SignupDTO struct {
+	Username string `json:"username" binding:"required"`
+}
+
 type GetUserDTO struct {
 	ID int
 }

@@ -1,10 +1,10 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 import isEqual from '@tinkoff/utils/is/equal';
+import { theme } from '../../shared/theme';
 import {
-  HIDE_TASK_CARD,
-  UPDATE_TASK_CARD,
+  TASK_MODAL_HIDE,
+  TASK_MODAL_SAVE,
   useTaskModalContext,
 } from '../context/task-modal-context';
 import { TaskModalBody } from './task-modal-body-component';
@@ -13,11 +13,20 @@ const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
+  minWidth: 286,
   transform: 'translate(-50%, -50%)',
-  width: 400,
   bgcolor: 'background.paper',
   boxShadow: 24,
+  borderRadius: 2,
   p: 4,
+
+  [theme.breakpoints.up('md')]: {
+    width: 432,
+  },
+
+  [theme.breakpoints.up('lg')]: {
+    width: 574,
+  },
 };
 
 const taskFromData = (data) => ({
@@ -26,20 +35,24 @@ const taskFromData = (data) => ({
   ...data,
 });
 
-export function TaskModal() {
-  const { state, dispatch } = useTaskModalContext();
+export function TaskModal({ onSave }) {
+  const [state, dispatch] = useTaskModalContext();
 
   if (state.data === null) {
     return <></>;
   }
 
   const close = () => {
-    dispatch({ type: HIDE_TASK_CARD });
+    dispatch({ type: TASK_MODAL_HIDE });
   };
 
   const handleSave = (data) => {
     if (!isEqual(data, state.data)) {
-      dispatch({ type: UPDATE_TASK_CARD, data });
+      dispatch({ type: TASK_MODAL_SAVE, data });
+
+      if (typeof onSave === 'function') {
+        onSave(data);
+      }
     }
 
     close();

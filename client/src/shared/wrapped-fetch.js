@@ -1,3 +1,5 @@
+import { authService } from '../auth/services/auth-service';
+
 /**
  * Обертка над fetch
  * @description Добавляет заголовок `Content-Type` к запросу
@@ -13,6 +15,12 @@ export async function wrappedFetch(input, init) {
     headers.append('Content-Type', 'application/json');
   } else {
     headers['Content-Type'] = 'application/json';
+  }
+
+  const accessToken = authService.getAccessToken();
+
+  if (accessToken) {
+    headers['Authorization'] = 'Bearer ' + accessToken;
   }
 
   const response = await fetch(input, {

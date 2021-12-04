@@ -8,7 +8,7 @@ import (
 
 type Task struct {
 	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
+	CreatedAt   time.Time `json:"createdAt"`
 	Icon        int       `json:"icon"`
 	Title       string    `json:"title"`
 	Description string    `json:"description,omitempty"`
@@ -16,7 +16,15 @@ type Task struct {
 	Estimated   int       `json:"estimated,omitempty"`
 	Complexity  int       `json:"complexity"`
 	Priority    int       `json:"priority"`
+	F           float64   `json:"f"`
+	Lo          float64   `json:"lo"`
+	Hi          float64   `json:"hi"`
 	Creator     *User     `json:"-"`
+}
+
+type Question struct {
+	Text          string `json:"text"`
+	CompareTaskID int    `json:"compare_task_id"`
 }
 
 func TaskFromEnt(task *ent.Task) *Task {
@@ -34,6 +42,9 @@ func TaskFromEnt(task *ent.Task) *Task {
 		Estimated:   task.Estimated,
 		Complexity:  int(task.Complexity),
 		Priority:    int(task.Priority),
+		F:           task.F,
+		Lo:          task.Lo,
+		Hi:          task.Hi,
 		Creator:     UserFromEnt(task.Edges.Creator),
 	}
 }
@@ -50,7 +61,9 @@ type TaskService interface {
 	ByID(ctx context.Context, taskID int) (*Task, error)
 	Fetch(ctx context.Context, dto GetTaskDTO) ([]*Task, error)
 
-	Create(ctx context.Context, task CreateTaskDTO) error
+	Create(ctx context.Context, task CreateTaskDTO) (*Task, *Question, error)
+	AnswerQuestion(ctx context.Context, params AnswerQuestionDTO) (*Question, error)
+	AskQuestion(ctx context.Context, task *Task) (*Question, error)
 
 	Update(ctx context.Context, dto TaskPutDTO) (*Task, error)
 
@@ -63,7 +76,14 @@ type GetTaskDTO struct {
 	Complexity *int    `json:"complexity" binding:"omitempty,max=10,min=0"`
 	Priority   *int    `json:"priority" binding:"omitempty,max=10,min=0"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
-	OrderBy    *string `json:"order_by" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
+	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
+}
+
+type AnswerQuestionDTO struct {
+	UserID        int `json:"-"`
+	Response      int `json:"response"`
+	TaskID        int `json:"-"`
+	CompareTaskID int `json:"task_id"`
 }
 
 type CreateTaskDTO struct {
@@ -75,6 +95,11 @@ type CreateTaskDTO struct {
 	Estimated   *int       `json:"estimated,omitempty"`
 	Complexity  int        `json:"complexity" binding:"omitempty,max=10,min=0"`
 	Priority    int        `json:"priority" binding:"omitempty,max=10,min=0"`
+}
+
+type CreateTaskAnswer struct {
+	Task     *Task     `json:"task"`
+	Question *Question `json:"question"`
 }
 
 type TaskPutDTO struct {
