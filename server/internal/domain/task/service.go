@@ -116,7 +116,11 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 		}
 		return nil, nil, platform.WrapInternal(err)
 	}
-
+	creator, err := entTask.QueryCreator().Only(ctx)
+	if err != nil {
+		return nil, nil, platform.WrapInternal(err)
+	}
+	entTask.Edges.Creator = creator
 	task := domain.TaskFromEnt(entTask)
 
 	f := task.F()
