@@ -179,13 +179,22 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 		var taskDTO domain.CreateTaskDTO
 		err := ctx.ShouldBind(&taskDTO)
 		if err != nil {
-			var sb strings.Builder
-			sb.WriteString("Error: Field validation failed for: ")
-			for _, fieldErr := range err.(validator.ValidationErrors) {
-				sb.WriteString(fmt.Sprintf("%s, ", fieldErr.Field()))
+			switch err.(type) {
+			case validator.ValidationErrors:
+				var sb strings.Builder
+				sb.WriteString("Error: Field validation failed for: ")
+				for _, fieldErr := range err.(validator.ValidationErrors) {
+					sb.WriteString(fmt.Sprintf("%s, ", fieldErr.Field()))
+				}
+				platform.GinErrResponse(ctx, platform.UnprocessableEntity(sb.String()))
+				return
+			case *time.ParseError:
+				platform.GinErrResponse(ctx, platform.UnprocessableEntity("Incorrect date format"))
+			default:
+				platform.GinErrResponse(ctx, platform.UnprocessableEntity(err.Error()))
+				return
 			}
-			platform.GinErrResponse(ctx, platform.UnprocessableEntity(sb.String()))
-			return
+
 		}
 
 		taskDTO.UserID = user.ID
