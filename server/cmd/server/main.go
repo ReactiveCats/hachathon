@@ -8,7 +8,7 @@
 //
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
-// @name Token
+// @name Authorization
 
 // @tag.name 			auth
 // @tag.description  	Authorization endpoints

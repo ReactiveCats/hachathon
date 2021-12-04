@@ -8,7 +8,7 @@ import (
 
 type Task struct {
 	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
+	CreatedAt   time.Time `json:"createdAt"`
 	Icon        int       `json:"icon"`
 	Title       string    `json:"title"`
 	Description string    `json:"description,omitempty"`
@@ -63,7 +63,7 @@ type GetTaskDTO struct {
 	Complexity *int    `json:"complexity" binding:"omitempty,max=10,min=0"`
 	Priority   *int    `json:"priority" binding:"omitempty,max=10,min=0"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
-	OrderBy    *string `json:"order_by" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
+	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
 }
 
 type CreateTaskDTO struct {

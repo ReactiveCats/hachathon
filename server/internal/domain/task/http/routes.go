@@ -31,7 +31,7 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 // @Param 		complexity 	query 	string		false 	"complexity"
 // @Param 		priority 	query 	string		false 	"priority"
 // @Param 		order 		query 	string		false 	"order field (asc/desc)"
-// @Param 		order_by 	query 	string		false 	"order field (e.g. deadline, estimated, complexity)"
+// @Param 		orderBy 	query 	string		false 	"order field (e.g. deadline, estimated, complexity)"
 // @Produce  	json
 // @Success 	200 {array} domain.Task
 // @Router 		/task [get]
@@ -77,7 +77,7 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 			dto.Order = &order
 		}
 
-		orderBy, ok := ctx.GetQuery("order_by")
+		orderBy, ok := ctx.GetQuery("orderBy")
 		if ok {
 			dto.OrderBy = &orderBy
 		}
