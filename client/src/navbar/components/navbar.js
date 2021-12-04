@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { AppBar, Toolbar, Box, Typography, Container } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -39,10 +40,10 @@ function Navbar({ name }) {
       <Toolbar>
         <Container sx={containerStyles}>
           <Box sx={mobileLogoStyles}>
-            <img src="/logo-mobile.svg" />
+            <Image src="/logo-mobile.svg" width="55" height="55" />
           </Box>
           <Box sx={desktopLogoStyles}>
-            <img src="/logo.svg" />
+            <Image src="/logo.svg" width="190" height="55" />
           </Box>
           <Box sx={accountStyles}>
             <Typography variant="h6" mr="8px">
