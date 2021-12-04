@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider } from '@emotion/react';
 import { theme } from '../shared/theme';
 import { createEmotionCache } from '../shared/create-emotion-cache';
+import { AuthProvider } from '../auth/context/auth-context';
 import { TaskModalProvider } from '../task-modal/context/task-modal-context';
 
 function HackathonApp({ Component, pageProps }) {
@@ -15,9 +16,11 @@ function HackathonApp({ Component, pageProps }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <TaskModalProvider>
-          <Component {...pageProps} />
-        </TaskModalProvider>
+        <AuthProvider>
+          <TaskModalProvider>
+            <Component {...pageProps} />
+          </TaskModalProvider>
+        </AuthProvider>
       </ThemeProvider>
     </CacheProvider>
   );

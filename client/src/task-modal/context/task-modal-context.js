@@ -10,37 +10,47 @@ const initialState = {
 const TaskModalContext = createContext();
 TaskModalContext.displayName = 'TaskModalContext';
 
-export const OPEN_TASK_CARD = 'open';
-export const HIDE_TASK_CARD = 'hide';
-export const UPDATE_TASK_CARD = 'update';
+export const TASK_MODAL_OPEN = 'task modal open';
+export const TASK_MODAL_HIDE = 'task modal hide';
+export const TASK_MODAL_SAVE = 'task modal save';
 
 export function useTaskModalContext() {
   return useContext(TaskModalContext);
 }
 
-function updateTask(task, dispatch) {
-  taskModalService.update(task.id, task);
+function saveTask(task, dispatch) {
+  if (task.id) {
+    taskModalService.update(task.id, task);
+
+    return;
+  }
+
+  taskModalService.create(task);
 }
 
 const taskModalEffects = {
-  [UPDATE_TASK_CARD]: updateTask,
+  [TASK_MODAL_SAVE]: saveTask,
 };
 
 function taskModalReducer(state = initialState, action) {
   const { type, data = {} } = action;
 
   switch (type) {
-    case OPEN_TASK_CARD:
-      return {
-        data,
-        open: true,
-      };
-    case HIDE_TASK_CARD:
+    case TASK_MODAL_OPEN:
       return {
         ...state,
+        data: {
+          ...action.data,
+        },
+        open: true,
+      };
+    case TASK_MODAL_HIDE:
+      return {
+        ...state,
+        data: null,
         open: false,
       };
-    case UPDATE_TASK_CARD:
+    case TASK_MODAL_SAVE:
       return {
         ...state,
         data: {
