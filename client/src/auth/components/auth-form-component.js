@@ -5,7 +5,7 @@ import { Box } from '@mui/system';
 
 const formFieldStyle = { display: 'flex', flexDirection: 'column', gap: 1 };
 
-export function AuthForm({ onSubmit }) {
+export function AuthForm({ onSubmit, children }) {
   const {
     register,
     handleSubmit,
@@ -29,9 +29,7 @@ export function AuthForm({ onSubmit }) {
             )}
           </Box>
 
-          <Box sx={{ alignSelf: 'flex-end' }}>
-            <Button type="submit">Login</Button>
-          </Box>
+          <Box sx={{ alignSelf: 'flex-end' }}>{children}</Box>
         </Box>
       </form>
     </>
