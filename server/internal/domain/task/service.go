@@ -7,6 +7,7 @@ import (
 	"server/internal/config"
 	"server/internal/domain"
 	"server/internal/ent"
+	"server/internal/ent/predicate"
 	taskent "server/internal/ent/task"
 	userent "server/internal/ent/user"
 	"server/internal/platform"
@@ -163,9 +164,13 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 		}
 		return nil, platform.WrapInternal(err)
 	}
+
+	var constant float64
+
 	if task1.Hi == 0 || task1.Lo == 0 {
 		switch params.Response {
 		case 1:
+			constant += Epsilon
 			task1.Lo = task2.CustomMult
 			newHiTask, err := s.client.Query().
 				Where(taskent.CreatorID(params.UserID)).
@@ -175,11 +180,12 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 			if err != nil {
 				return nil, platform.NotFound("Task is not found")
 			}
-			task1.Hi = newHiTask.Hi
+			task1.Hi = newHiTask.CustomMult
 			break
 		case -1:
+			constant -= Epsilon
 			task1.Hi = task2.CustomMult
-			newHiTask, err := s.client.Query().
+			newLoTask, err := s.client.Query().
 				Where(taskent.CreatorID(params.UserID)).
 				WithCreator().
 				Order(ent.Asc()).
@@ -187,12 +193,14 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 			if err != nil {
 				return nil, platform.NotFound("Task is not found")
 			}
-			task1.Lo = newHiTask.Lo
+			task1.Lo = newLoTask.CustomMult
 			break
 		}
 	}
 
-	task1.CustomMult = (task1.Hi + task1.Lo) / 2
+	task1.CustomMult = (task1.Hi + task1.Lo) / 2 * (1 + constant)
+	task2.CustomMult *= 1 - constant
+
 	question, err := s.GenerateQuestion(ctx, domain.TaskFromEnt(task1))
 	if err != nil {
 		return nil, err
@@ -201,6 +209,14 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 	err = s.client.Update().
 		Where(taskent.ID(task1.ID)).
 		SetCustomMult(task1.CustomMult).
+		Exec(ctx)
+	if err != nil {
+		return nil, platform.WrapInternal(err)
+	}
+
+	err = s.client.Update().
+		Where(taskent.ID(task2.ID)).
+		SetCustomMult(task2.CustomMult).
 		Exec(ctx)
 	if err != nil {
 		return nil, platform.WrapInternal(err)
@@ -240,20 +256,25 @@ func (s Service) GenerateQuestion(ctx context.Context, task *domain.Task) (*doma
 func GetNearest(service Service, ctx context.Context, task *domain.Task) (*ent.Task, error) {
 	higherTask, err := service.client.Query().
 		Where(taskent.CreatorID(task.Creator.ID),
-			taskent.CustomMultGTE(task.CustomMult)).
-		Order(ent.Asc(taskent.FieldCustomMult)).First(ctx)
-	if err != nil && !ent.IsNotFound(err) {
-		return nil, platform.WrapInternal(err)
-	}
-	lowerTask, err := service.client.Query().
-		Where(taskent.CreatorID(task.Creator.ID),
-			taskent.CustomMultGTE(task.CustomMult)).
+			taskent.CustomMultGTE(task.CustomMult),
+			sameRang(task),
+		).
 		Order(ent.Asc(taskent.FieldCustomMult)).First(ctx)
 	if err != nil && !ent.IsNotFound(err) {
 		return nil, platform.WrapInternal(err)
 	}
 
-	if higherTask == nil && lowerTask == nil {
+	lowerTask, err := service.client.Query().
+		Where(taskent.CreatorID(task.Creator.ID),
+			taskent.CustomMultLTE(task.CustomMult),
+			sameRang(task),
+		).
+		Order(ent.Desc(taskent.FieldCustomMult)).First(ctx)
+	if err != nil && !ent.IsNotFound(err) {
+		return nil, platform.WrapInternal(err)
+	}
+
+	if higherTask == nil || lowerTask == nil {
 		return nil, nil
 	}
 
@@ -266,6 +287,19 @@ func GetNearest(service Service, ctx context.Context, task *domain.Task) (*ent.T
 	} else {
 		return lowerTask, nil
 	}
+}
+
+func sameRang(task *domain.Task) predicate.Task {
+	return taskent.Or(
+		taskent.And(
+			taskent.Importance(int8(task.Importance)),
+			taskent.Urgency(int8(task.Urgency)),
+		),
+		taskent.And(
+			taskent.Importance(int8(task.Urgency)),
+			taskent.Urgency(int8(task.Importance)),
+		),
+	)
 }
 
 func (s Service) Delete(ctx context.Context, taskID int) error {

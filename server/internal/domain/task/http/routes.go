@@ -88,7 +88,7 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 		if ok {
 			parseBool, err := strconv.ParseBool(priority)
 			if err != nil {
-				platform.GinErrResponse(ctx, platform.Conflict("invalid importance (must be bool)"))
+				platform.GinErrResponse(ctx, platform.Conflict("invalid priority (must be bool)"))
 				return
 			}
 			dto.Priority = &parseBool
