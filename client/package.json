@@ -15,15 +15,11 @@
     "@emotion/react": "^11.7.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.6.0",
-<<<<<<< HEAD
     "@material-ui/core": "^4.12.3",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
     "@mui/icons-material": "^5.2.0",
     "@mui/lab": "^5.0.0-alpha.58",
-=======
-    "@mui/icons-material": "^5.2.0",
->>>>>>> c74747fde255754c756ad395db21445e4b1bebcd
     "@mui/material": "^5.2.2",
     "@tinkoff/utils": "^2.2.1",
     "cross-env": "7.0.3",
