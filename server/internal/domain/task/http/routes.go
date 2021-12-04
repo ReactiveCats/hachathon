@@ -227,6 +227,7 @@ func putTask(service domain.TaskService) func(ctx *gin.Context) {
 //// @Security 	ApiKeyAuth
 // @Tags 		tasks
 // @ID 			post_task
+// @Param 		task 	body 	domain.CreateTaskDTO	true 	"task object"
 // @Produce  	json
 // @Success 	200 {object} domain.CreateTaskAnswer
 // @Router 		/task [post]

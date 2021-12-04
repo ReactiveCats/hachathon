@@ -54,7 +54,7 @@ func JwtAuth(config config.Config, service domain.UserService) gin.HandlerFunc {
 // @Tags 		auth
 // @ID 			login
 // @Produce  	json
-// @Param   	username  	query  string  	true  "username"
+// @Param   	username  	body  domain.LoginDTO  	true  "username"
 // @Success 	200 {object} string
 // @Router 		/auth/login [post]
 func login(service domain.UserService) gin.HandlerFunc {
@@ -83,7 +83,7 @@ func login(service domain.UserService) gin.HandlerFunc {
 // @Tags 		auth
 // @ID 			signup
 // @Produce  	json
-// @Param   	username  	body  string  	true  "username"
+// @Param   	username  	body  domain.SignupDTO  	true  "username"
 // @Success 	200 {object} string
 // @Router 		/auth/signup [post]
 func signup(service domain.UserService) gin.HandlerFunc {

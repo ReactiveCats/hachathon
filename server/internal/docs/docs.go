@@ -36,11 +36,13 @@ var doc = `{
                 "operationId": "login",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "username",
                         "name": "username",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.LoginDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -71,7 +73,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.SignupDTO"
                         }
                     }
                 ],
@@ -328,6 +330,17 @@ var doc = `{
                 ],
                 "summary": "Add new task",
                 "operationId": "post_task",
+                "parameters": [
+                    {
+                        "description": "task object",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateTaskDTO"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -521,6 +534,56 @@ var doc = `{
                 }
             }
         },
+        "domain.CreateTaskDTO": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "deadline": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 256
+                },
+                "estimated": {
+                    "type": "integer",
+                    "maximum": 86400,
+                    "minimum": 0
+                },
+                "icon": {
+                    "type": "integer",
+                    "maximum": 16,
+                    "minimum": 0
+                },
+                "importance": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "urgency": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
+                }
+            }
+        },
+        "domain.LoginDTO": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Question": {
             "type": "object",
             "properties": {
@@ -528,6 +591,17 @@ var doc = `{
                     "type": "integer"
                 },
                 "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SignupDTO": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "username": {
                     "type": "string"
                 }
             }
