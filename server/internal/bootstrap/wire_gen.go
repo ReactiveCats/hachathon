@@ -9,8 +9,14 @@ package bootstrap
 import (
 	"context"
 	"server/internal/config"
+	"server/internal/domain/tag"
 	"server/internal/domain/task"
 	"server/internal/domain/user"
+)
+
+import (
+	_ "github.com/lib/pq"
+	_ "server/internal/docs"
 )
 
 // Injectors from wire.go:
@@ -26,6 +32,7 @@ func Up(ctx context.Context) (Dependencies, error) {
 	}
 	service := user.NewService(client, configConfig)
 	taskService := task.NewService(client, configConfig)
-	dependencies := NewDependencies(configConfig, client, service, taskService)
+	tagService := tag.NewService(client)
+	dependencies := NewDependencies(configConfig, client, service, taskService, tagService)
 	return dependencies, nil
 }

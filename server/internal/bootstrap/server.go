@@ -7,6 +7,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	authHTTP "server/internal/domain/auth/http"
+	tagHTTP "server/internal/domain/tag/http"
 	taskHTTP "server/internal/domain/task/http"
 )
 
@@ -40,8 +41,7 @@ func NewServer(deps Dependencies) *Server {
 	handlerAuthorized := handler.Group("")
 	handlerAuthorized.Use(authHTTP.JwtAuth(deps.Config, deps.UserService))
 
-	//userHTTP.RegisterRoutes(handlerAuthorized.Group("/users"), deps.UserService)
-
+	tagHTTP.RegisterRoutes(handlerAuthorized.Group("/tag"), deps.TagService)
 	taskHTTP.RegisterRoutes(handlerAuthorized.Group("/task"), deps.TaskService)
 
 	return &Server{
