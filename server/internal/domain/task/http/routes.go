@@ -33,6 +33,7 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 // @Param 		urgency 	query 	string		false 	"urgency"
 // @Param 		order 		query 	string		false 	"order field (asc/desc)"
 // @Param 		orderBy 	query 	string		false 	"order field (e.g. deadline, estimated, importance)"
+// @Param 		priority 	query 	bool		false 	"priority"
 // @Produce  	json
 // @Success 	200 {array} domain.Task
 // @Router 		/task [get]
@@ -81,6 +82,16 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 		orderBy, ok := ctx.GetQuery("orderBy")
 		if ok {
 			dto.OrderBy = &orderBy
+		}
+
+		priority, ok := ctx.GetQuery("priority")
+		if ok {
+			parseBool, err := strconv.ParseBool(priority)
+			if err != nil {
+				platform.GinErrResponse(ctx, platform.Conflict("invalid importance (must be bool)"))
+				return
+			}
+			dto.Priority = &parseBool
 		}
 
 		err := binding.Validator.ValidateStruct(&dto)
