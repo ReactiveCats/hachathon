@@ -2,7 +2,11 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { AUTH_LOGIN, useAuthContext } from '../context/auth-context';
+import {
+  AUTH_SIGNUP,
+  AUTH_LOGIN,
+  useAuthContext,
+} from '../context/auth-context';
 import { AuthForm } from './auth-form-component';
 
 const style = {
@@ -29,7 +33,7 @@ export function Auth() {
     if (state.authorized) {
       router.back();
     }
-  }, []);
+  }, [state]);
 
   const handleSubmit = (data) => {
     dispatch({ type: AUTH_LOGIN, data });
