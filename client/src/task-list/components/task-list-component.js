@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import {
-  Button,
+  Button, Container,
   List,
   ListItem,
   ListItemIcon,
@@ -77,36 +77,38 @@ export function TaskList() {
 
   return (
     <>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {state.items.map(({ title, icon, description }, index) => {
-            const { component: IconComponent } = getIconById(icon);
+      <Container>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {state.items.map(({ title, icon, description }, index) => {
+              const { component: IconComponent } = getIconById(icon);
 
-            return (
-              <Tooltip key={index} title="Click to edit" followCursor>
-                <Box
-                  sx={listItemBoxStyle}
-                  ariaRole="button"
-                  onClick={handleEdit(index)}
-                >
-                  <ListItem>
-                    <ListItemIcon>
-                      <IconComponent />
-                    </ListItemIcon>
-                    <ListItemText sx={listItemTextStyle} primary={title} />
-                  </ListItem>
-                  <Box sx={listItemDescriptionBoxStyle} component="p">
-                    {description}
+              return (
+                <Tooltip key={index} title="Click to edit" followCursor>
+                  <Box
+                    sx={listItemBoxStyle}
+                    ariaRole="button"
+                    onClick={handleEdit(index)}
+                  >
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconComponent />
+                      </ListItemIcon>
+                      <ListItemText sx={listItemTextStyle} primary={title} />
+                    </ListItem>
+                    <Box sx={listItemDescriptionBoxStyle} component="p">
+                      {description}
+                    </Box>
                   </Box>
-                </Box>
-              </Tooltip>
-            );
-          })}
-        </List>
-        <Button variant="outlined" onClick={handleAddTask} fullWidth>
-          Add task
-        </Button>
-      </Box>
+                </Tooltip>
+              );
+            })}
+          </List>
+          <Button variant="outlined" onClick={handleAddTask} fullWidth>
+            Add task
+          </Button>
+        </Box>
+      </Container>
       <TaskModal onSave={handleSave}></TaskModal>
     </>
   );

@@ -37,7 +37,7 @@ export const icons = {
     name: 'AccountBalance',
     component: AccountBalance,
   },
-  ADD_ALARM: {
+  ADD_LOCATION: {
     id: 3,
     name: 'AddLocation',
     component: AddLocation,
