@@ -4,97 +4,18 @@ import { CircularProgress, Box, Grid, Typography, TextField, Chip, Paper, IconBu
 
 import { wrappedFetch } from '../shared/wrapped-fetch';
 
-const MOCKS = [
-  {
-    id: 0,
-    title: 'f32',
-  },
-  {
-    id: 1,
-    title: 'bar',
-  },
-  {
-    id: 2,
-    title: 'foomore',
-  },
-  {
-    id: 3,
-    title: 'bsdfsdfa',
-  },
-  {
-    id: 4,
-    title: 'fooooo',
-  },
-  {
-    id: 5,
-    title: 'sdf',
-  },
-  {
-    id: 6,
-    title: 'dsffsdfd',
-  },
-  {
-    id: 7,
-    title: 'bar',
-  },
-  {
-    id: 8,
-    title: 'foomore',
-  },
-  {
-    id: 9,
-    title: 'bfofofa',
-  },
-  {
-    id: 10,
-    title: 'fooooo',
-  },
-  {
-    id: 11,
-    title: 'bfofoofofoffoofar',
-  },
-  {
-    id: 12,
-    title: 'dsffsdfd',
-  },
-  {
-    id: 13,
-    title: 'bar',
-  },
-  {
-    id: 14,
-    title: 'foomore',
-  },
-  {
-    id: 15,
-    title: 'bfofofa',
-  },
-  {
-    id: 16,
-    title: 'fooooo',
-  },
-  {
-    id: 17,
-    title: 'bfofoofofoffoofar',
-  },
-];
-
-const API = '';
+const API = '/api/tags';
 
 function TagsWidget() {
-  const [tags, setTags] = useState(MOCKS);
+  const [tags, setTags] = useState([]);
   const [title, setTitle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   setIsLoading(true);
+  useEffect(() => {
+    setIsLoading(true);
 
-  //   fetchTags();
-  // }, []);
-
-  // if (isLoading) {
-  //   return (<CircularProgress />);
-  // }
+    fetchTags();
+  }, []);
 
   return (
     <Paper sx={{
@@ -102,48 +23,53 @@ function TagsWidget() {
       width: 240,
       height: 280,
     }}>
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Add Tag"
-            size="small"
-            variant="standard"
-            value={title}
-            onChange={handleChange}
-            onBlur={handleCreate}
-            onKeyDown={handleKeyDown}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              maxHeight: '200px',
-              overflow: 'auto',
-            }}
-          >
-            {tags.map(tag => (
-              <Chip
-                sx={{ marginRight: 1, marginBottom: 1 }}
+      {
+        isLoading ? <CircularProgress /> : (
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Add Tag"
                 size="small"
-                key={tag.id}
-                label={tag.title}
-                onDelete={() => handleDelete(tag)}
+                variant="standard"
+                value={title}
+                onChange={handleChange}
+                onBlur={handleCreate}
+                onKeyDown={handleKeyDown}
               />
-            ))}
-          </Box>
-        </Grid>
-      </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  maxHeight: '200px',
+                  overflow: 'auto',
+                }}
+              >
+                {tags.map(tag => (
+                  <Chip
+                    sx={{ marginRight: 1, marginBottom: 1 }}
+                    size="small"
+                    key={tag.id}
+                    label={tag.title}
+                    onDelete={() => handleDelete(tag)}
+                  />
+                ))}
+              </Box>
+            </Grid>
+          </Grid>
+        )
+      }
+
     </Paper>
   );
 
-  // async function fetchTags() {
-  //   const response = await wrappedFetch(API);
-  //   setTags(response);
-  //   setIsLoading(false);
-  // }
+  async function fetchTags() {
+    const response = await wrappedFetch(API);
+    setTags(response);
+    setIsLoading(false);
+  }
 
   function handleChange(e) {
     const { value } = e.target;
@@ -163,24 +89,21 @@ function TagsWidget() {
       return;
     }
 
-    console.log(title);
-
-    // await wrappedFetch(API, {
-    //   method: 'PUT',
-    //   body: {
-    //     title: value
-    //   },
-    // }); 
+    wrappedFetch(API, {
+      method: 'PUT',
+      body: {
+        title: value
+      },
+    });
 
     setTitle('');
   }
 
   function handleDelete(tag) {
-    console.log(tag);
-    //   await wrappedFetch(API, {
-    //     method: 'POST',
-    //     body: tag,
-    //   });
+    wrappedFetch(API, {
+      method: 'DELETE',
+      body: tag,
+    });
   }
 }
 
