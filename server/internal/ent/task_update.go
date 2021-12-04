@@ -137,31 +137,92 @@ func (tu *TaskUpdate) ClearEstimated() *TaskUpdate {
 	return tu
 }
 
-// SetComplexity sets the "complexity" field.
-func (tu *TaskUpdate) SetComplexity(t task.Complexity) *TaskUpdate {
-	tu.mutation.SetComplexity(t)
+// SetImportance sets the "importance" field.
+func (tu *TaskUpdate) SetImportance(i int8) *TaskUpdate {
+	tu.mutation.ResetImportance()
+	tu.mutation.SetImportance(i)
 	return tu
 }
 
-// SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableComplexity(t *task.Complexity) *TaskUpdate {
-	if t != nil {
-		tu.SetComplexity(*t)
+// SetNillableImportance sets the "importance" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableImportance(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetImportance(*i)
 	}
 	return tu
 }
 
-// SetPriority sets the "priority" field.
-func (tu *TaskUpdate) SetPriority(t task.Priority) *TaskUpdate {
-	tu.mutation.SetPriority(t)
+// AddImportance adds i to the "importance" field.
+func (tu *TaskUpdate) AddImportance(i int8) *TaskUpdate {
+	tu.mutation.AddImportance(i)
 	return tu
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillablePriority(t *task.Priority) *TaskUpdate {
-	if t != nil {
-		tu.SetPriority(*t)
+// SetUrgency sets the "urgency" field.
+func (tu *TaskUpdate) SetUrgency(i int8) *TaskUpdate {
+	tu.mutation.ResetUrgency()
+	tu.mutation.SetUrgency(i)
+	return tu
+}
+
+// SetNillableUrgency sets the "urgency" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableUrgency(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetUrgency(*i)
 	}
+	return tu
+}
+
+// AddUrgency adds i to the "urgency" field.
+func (tu *TaskUpdate) AddUrgency(i int8) *TaskUpdate {
+	tu.mutation.AddUrgency(i)
+	return tu
+}
+
+// SetCustomMult sets the "custom_mult" field.
+func (tu *TaskUpdate) SetCustomMult(f float64) *TaskUpdate {
+	tu.mutation.ResetCustomMult()
+	tu.mutation.SetCustomMult(f)
+	return tu
+}
+
+// SetNillableCustomMult sets the "custom_mult" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableCustomMult(f *float64) *TaskUpdate {
+	if f != nil {
+		tu.SetCustomMult(*f)
+	}
+	return tu
+}
+
+// AddCustomMult adds f to the "custom_mult" field.
+func (tu *TaskUpdate) AddCustomMult(f float64) *TaskUpdate {
+	tu.mutation.AddCustomMult(f)
+	return tu
+}
+
+// SetLo sets the "lo" field.
+func (tu *TaskUpdate) SetLo(f float64) *TaskUpdate {
+	tu.mutation.ResetLo()
+	tu.mutation.SetLo(f)
+	return tu
+}
+
+// AddLo adds f to the "lo" field.
+func (tu *TaskUpdate) AddLo(f float64) *TaskUpdate {
+	tu.mutation.AddLo(f)
+	return tu
+}
+
+// SetHi sets the "hi" field.
+func (tu *TaskUpdate) SetHi(f float64) *TaskUpdate {
+	tu.mutation.ResetHi()
+	tu.mutation.SetHi(f)
+	return tu
+}
+
+// AddHi adds f to the "hi" field.
+func (tu *TaskUpdate) AddHi(f float64) *TaskUpdate {
+	tu.mutation.AddHi(f)
 	return tu
 }
 
@@ -249,14 +310,34 @@ func (tu *TaskUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tu *TaskUpdate) check() error {
-	if v, ok := tu.mutation.Complexity(); ok {
-		if err := task.ComplexityValidator(v); err != nil {
-			return &ValidationError{Name: "complexity", err: fmt.Errorf("ent: validator failed for field \"complexity\": %w", err)}
+	if v, ok := tu.mutation.Icon(); ok {
+		if err := task.IconValidator(v); err != nil {
+			return &ValidationError{Name: "icon", err: fmt.Errorf("ent: validator failed for field \"icon\": %w", err)}
 		}
 	}
-	if v, ok := tu.mutation.Priority(); ok {
-		if err := task.PriorityValidator(v); err != nil {
-			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+	if v, ok := tu.mutation.Title(); ok {
+		if err := task.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
+		}
+	}
+	if v, ok := tu.mutation.Description(); ok {
+		if err := task.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
+	if v, ok := tu.mutation.Estimated(); ok {
+		if err := task.EstimatedValidator(v); err != nil {
+			return &ValidationError{Name: "estimated", err: fmt.Errorf("ent: validator failed for field \"estimated\": %w", err)}
+		}
+	}
+	if v, ok := tu.mutation.Importance(); ok {
+		if err := task.ImportanceValidator(v); err != nil {
+			return &ValidationError{Name: "importance", err: fmt.Errorf("ent: validator failed for field \"importance\": %w", err)}
+		}
+	}
+	if v, ok := tu.mutation.Urgency(); ok {
+		if err := task.UrgencyValidator(v); err != nil {
+			return &ValidationError{Name: "urgency", err: fmt.Errorf("ent: validator failed for field \"urgency\": %w", err)}
 		}
 	}
 	if _, ok := tu.mutation.CreatorID(); tu.mutation.CreatorCleared() && !ok {
@@ -357,18 +438,74 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: task.FieldEstimated,
 		})
 	}
-	if value, ok := tu.mutation.Complexity(); ok {
+	if value, ok := tu.mutation.Importance(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
 			Value:  value,
-			Column: task.FieldComplexity,
+			Column: task.FieldImportance,
 		})
 	}
-	if value, ok := tu.mutation.Priority(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+	if value, ok := tu.mutation.AddedImportance(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
 			Value:  value,
-			Column: task.FieldPriority,
+			Column: task.FieldImportance,
+		})
+	}
+	if value, ok := tu.mutation.Urgency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldUrgency,
+		})
+	}
+	if value, ok := tu.mutation.AddedUrgency(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldUrgency,
+		})
+	}
+	if value, ok := tu.mutation.CustomMult(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldCustomMult,
+		})
+	}
+	if value, ok := tu.mutation.AddedCustomMult(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldCustomMult,
+		})
+	}
+	if value, ok := tu.mutation.Lo(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tu.mutation.AddedLo(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tu.mutation.Hi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+	}
+	if value, ok := tu.mutation.AddedHi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
 		})
 	}
 	if tu.mutation.CreatorCleared() {
@@ -533,31 +670,92 @@ func (tuo *TaskUpdateOne) ClearEstimated() *TaskUpdateOne {
 	return tuo
 }
 
-// SetComplexity sets the "complexity" field.
-func (tuo *TaskUpdateOne) SetComplexity(t task.Complexity) *TaskUpdateOne {
-	tuo.mutation.SetComplexity(t)
+// SetImportance sets the "importance" field.
+func (tuo *TaskUpdateOne) SetImportance(i int8) *TaskUpdateOne {
+	tuo.mutation.ResetImportance()
+	tuo.mutation.SetImportance(i)
 	return tuo
 }
 
-// SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableComplexity(t *task.Complexity) *TaskUpdateOne {
-	if t != nil {
-		tuo.SetComplexity(*t)
+// SetNillableImportance sets the "importance" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableImportance(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetImportance(*i)
 	}
 	return tuo
 }
 
-// SetPriority sets the "priority" field.
-func (tuo *TaskUpdateOne) SetPriority(t task.Priority) *TaskUpdateOne {
-	tuo.mutation.SetPriority(t)
+// AddImportance adds i to the "importance" field.
+func (tuo *TaskUpdateOne) AddImportance(i int8) *TaskUpdateOne {
+	tuo.mutation.AddImportance(i)
 	return tuo
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillablePriority(t *task.Priority) *TaskUpdateOne {
-	if t != nil {
-		tuo.SetPriority(*t)
+// SetUrgency sets the "urgency" field.
+func (tuo *TaskUpdateOne) SetUrgency(i int8) *TaskUpdateOne {
+	tuo.mutation.ResetUrgency()
+	tuo.mutation.SetUrgency(i)
+	return tuo
+}
+
+// SetNillableUrgency sets the "urgency" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableUrgency(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetUrgency(*i)
 	}
+	return tuo
+}
+
+// AddUrgency adds i to the "urgency" field.
+func (tuo *TaskUpdateOne) AddUrgency(i int8) *TaskUpdateOne {
+	tuo.mutation.AddUrgency(i)
+	return tuo
+}
+
+// SetCustomMult sets the "custom_mult" field.
+func (tuo *TaskUpdateOne) SetCustomMult(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetCustomMult()
+	tuo.mutation.SetCustomMult(f)
+	return tuo
+}
+
+// SetNillableCustomMult sets the "custom_mult" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableCustomMult(f *float64) *TaskUpdateOne {
+	if f != nil {
+		tuo.SetCustomMult(*f)
+	}
+	return tuo
+}
+
+// AddCustomMult adds f to the "custom_mult" field.
+func (tuo *TaskUpdateOne) AddCustomMult(f float64) *TaskUpdateOne {
+	tuo.mutation.AddCustomMult(f)
+	return tuo
+}
+
+// SetLo sets the "lo" field.
+func (tuo *TaskUpdateOne) SetLo(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetLo()
+	tuo.mutation.SetLo(f)
+	return tuo
+}
+
+// AddLo adds f to the "lo" field.
+func (tuo *TaskUpdateOne) AddLo(f float64) *TaskUpdateOne {
+	tuo.mutation.AddLo(f)
+	return tuo
+}
+
+// SetHi sets the "hi" field.
+func (tuo *TaskUpdateOne) SetHi(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetHi()
+	tuo.mutation.SetHi(f)
+	return tuo
+}
+
+// AddHi adds f to the "hi" field.
+func (tuo *TaskUpdateOne) AddHi(f float64) *TaskUpdateOne {
+	tuo.mutation.AddHi(f)
 	return tuo
 }
 
@@ -652,14 +850,34 @@ func (tuo *TaskUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tuo *TaskUpdateOne) check() error {
-	if v, ok := tuo.mutation.Complexity(); ok {
-		if err := task.ComplexityValidator(v); err != nil {
-			return &ValidationError{Name: "complexity", err: fmt.Errorf("ent: validator failed for field \"complexity\": %w", err)}
+	if v, ok := tuo.mutation.Icon(); ok {
+		if err := task.IconValidator(v); err != nil {
+			return &ValidationError{Name: "icon", err: fmt.Errorf("ent: validator failed for field \"icon\": %w", err)}
 		}
 	}
-	if v, ok := tuo.mutation.Priority(); ok {
-		if err := task.PriorityValidator(v); err != nil {
-			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+	if v, ok := tuo.mutation.Title(); ok {
+		if err := task.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
+		}
+	}
+	if v, ok := tuo.mutation.Description(); ok {
+		if err := task.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
+	if v, ok := tuo.mutation.Estimated(); ok {
+		if err := task.EstimatedValidator(v); err != nil {
+			return &ValidationError{Name: "estimated", err: fmt.Errorf("ent: validator failed for field \"estimated\": %w", err)}
+		}
+	}
+	if v, ok := tuo.mutation.Importance(); ok {
+		if err := task.ImportanceValidator(v); err != nil {
+			return &ValidationError{Name: "importance", err: fmt.Errorf("ent: validator failed for field \"importance\": %w", err)}
+		}
+	}
+	if v, ok := tuo.mutation.Urgency(); ok {
+		if err := task.UrgencyValidator(v); err != nil {
+			return &ValidationError{Name: "urgency", err: fmt.Errorf("ent: validator failed for field \"urgency\": %w", err)}
 		}
 	}
 	if _, ok := tuo.mutation.CreatorID(); tuo.mutation.CreatorCleared() && !ok {
@@ -777,18 +995,74 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Column: task.FieldEstimated,
 		})
 	}
-	if value, ok := tuo.mutation.Complexity(); ok {
+	if value, ok := tuo.mutation.Importance(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
 			Value:  value,
-			Column: task.FieldComplexity,
+			Column: task.FieldImportance,
 		})
 	}
-	if value, ok := tuo.mutation.Priority(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+	if value, ok := tuo.mutation.AddedImportance(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
 			Value:  value,
-			Column: task.FieldPriority,
+			Column: task.FieldImportance,
+		})
+	}
+	if value, ok := tuo.mutation.Urgency(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldUrgency,
+		})
+	}
+	if value, ok := tuo.mutation.AddedUrgency(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldUrgency,
+		})
+	}
+	if value, ok := tuo.mutation.CustomMult(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldCustomMult,
+		})
+	}
+	if value, ok := tuo.mutation.AddedCustomMult(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldCustomMult,
+		})
+	}
+	if value, ok := tuo.mutation.Lo(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tuo.mutation.AddedLo(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+	}
+	if value, ok := tuo.mutation.Hi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+	}
+	if value, ok := tuo.mutation.AddedHi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
 		})
 	}
 	if tuo.mutation.CreatorCleared() {

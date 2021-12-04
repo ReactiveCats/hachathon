@@ -1,4 +1,6 @@
 import { createContext, useReducer, useContext } from 'react';
+import { taskModalService } from '../services/task-modal-service';
+import { makeDispatchWithEffects } from '../../shared/make-dispatch-with-effects';
 
 const initialState = {
   open: false,
@@ -8,14 +10,33 @@ const initialState = {
 const TaskModalContext = createContext();
 TaskModalContext.displayName = 'TaskModalContext';
 
-export const OPEN_TASK_CARD = 'open';
-export const HIDE_TASK_CARD = 'hide';
+export const TASK_MODAL_OPEN = 'task modal open';
+export const TASK_MODAL_HIDE = 'task modal hide';
+export const TASK_MODAL_SAVE = 'task modal save';
 
-export const useTaskModalContext = () => useContext(TaskModalContext);
+export function useTaskModalContext() {
+  return useContext(TaskModalContext);
+}
+
+function saveTask(task, dispatch) {
+  if (task.id) {
+    taskModalService.update(task.id, task);
+
+    return;
+  }
+
+  taskModalService.create(task);
+}
+
+const taskModalEffects = {
+  [TASK_MODAL_SAVE]: saveTask,
+};
 
 function taskModalReducer(state = initialState, action) {
-  switch (action.type) {
-    case OPEN_TASK_CARD:
+  const { type, data = {} } = action;
+
+  switch (type) {
+    case TASK_MODAL_OPEN:
       return {
         ...state,
         data: {
@@ -23,11 +44,19 @@ function taskModalReducer(state = initialState, action) {
         },
         open: true,
       };
-    case HIDE_TASK_CARD:
+    case TASK_MODAL_HIDE:
       return {
         ...state,
         data: null,
         open: false,
+      };
+    case TASK_MODAL_SAVE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          data,
+        },
       };
     default:
       throw new Error('Unsupported action type');
@@ -37,8 +66,13 @@ function taskModalReducer(state = initialState, action) {
 export function TaskModalProvider({ children }) {
   const [state, dispatch] = useReducer(taskModalReducer, initialState);
 
+  const dispatchWithEffects = makeDispatchWithEffects(
+    dispatch,
+    taskModalEffects,
+  );
+
   return (
-    <TaskModalContext.Provider value={{ state, dispatch }}>
+    <TaskModalContext.Provider value={[state, dispatchWithEffects]}>
       {children}
     </TaskModalContext.Provider>
   );

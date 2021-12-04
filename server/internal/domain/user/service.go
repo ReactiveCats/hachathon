@@ -43,16 +43,39 @@ func (s Service) DataFromJWT(tokenStr string) (int, error) {
 	if !ok {
 		return 0, platform.WrapInternal(err)
 	}
+	if _, ok := claims["id"]; !ok {
+		return 0, platform.NotFound("token payload entry not found")
+	}
 
 	return int(claims["id"].(float64)), nil
 }
 
-func (s Service) Signup(ctx context.Context, username, password string) (string, error) {
-	panic("implement me")
+func (s Service) Login(ctx context.Context, username string) (string, error) {
+	user, err := s.client.Query().
+		Where(userent.Username(username)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return "", platform.NotFound("username not found")
+		}
+		return "", platform.WrapInternal(err)
+	}
+
+	return s.JWTToken(domain.UserFromEnt(user))
 }
 
-func (s Service) Login(ctx context.Context, userID int) (string, error) {
-	panic("implement me")
+func (s Service) Signup(ctx context.Context, username string) (string, error) {
+	user, err := s.client.Create().
+		SetUsername(username).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return "", platform.Conflict("username already exists")
+		}
+		return "", platform.WrapInternal(err)
+	}
+
+	return s.JWTToken(domain.UserFromEnt(user))
 }
 
 func (s Service) ByID(ctx context.Context, dto domain.GetUserDTO) (*domain.User, error) {

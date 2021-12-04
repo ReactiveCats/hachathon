@@ -97,31 +97,57 @@ func (tc *TaskCreate) SetNillableEstimated(i *int) *TaskCreate {
 	return tc
 }
 
-// SetComplexity sets the "complexity" field.
-func (tc *TaskCreate) SetComplexity(t task.Complexity) *TaskCreate {
-	tc.mutation.SetComplexity(t)
+// SetImportance sets the "importance" field.
+func (tc *TaskCreate) SetImportance(i int8) *TaskCreate {
+	tc.mutation.SetImportance(i)
 	return tc
 }
 
-// SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableComplexity(t *task.Complexity) *TaskCreate {
-	if t != nil {
-		tc.SetComplexity(*t)
+// SetNillableImportance sets the "importance" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableImportance(i *int8) *TaskCreate {
+	if i != nil {
+		tc.SetImportance(*i)
 	}
 	return tc
 }
 
-// SetPriority sets the "priority" field.
-func (tc *TaskCreate) SetPriority(t task.Priority) *TaskCreate {
-	tc.mutation.SetPriority(t)
+// SetUrgency sets the "urgency" field.
+func (tc *TaskCreate) SetUrgency(i int8) *TaskCreate {
+	tc.mutation.SetUrgency(i)
 	return tc
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tc *TaskCreate) SetNillablePriority(t *task.Priority) *TaskCreate {
-	if t != nil {
-		tc.SetPriority(*t)
+// SetNillableUrgency sets the "urgency" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableUrgency(i *int8) *TaskCreate {
+	if i != nil {
+		tc.SetUrgency(*i)
 	}
+	return tc
+}
+
+// SetCustomMult sets the "custom_mult" field.
+func (tc *TaskCreate) SetCustomMult(f float64) *TaskCreate {
+	tc.mutation.SetCustomMult(f)
+	return tc
+}
+
+// SetNillableCustomMult sets the "custom_mult" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableCustomMult(f *float64) *TaskCreate {
+	if f != nil {
+		tc.SetCustomMult(*f)
+	}
+	return tc
+}
+
+// SetLo sets the "lo" field.
+func (tc *TaskCreate) SetLo(f float64) *TaskCreate {
+	tc.mutation.SetLo(f)
+	return tc
+}
+
+// SetHi sets the "hi" field.
+func (tc *TaskCreate) SetHi(f float64) *TaskCreate {
+	tc.mutation.SetHi(f)
 	return tc
 }
 
@@ -215,13 +241,17 @@ func (tc *TaskCreate) defaults() {
 		v := task.DefaultIcon
 		tc.mutation.SetIcon(v)
 	}
-	if _, ok := tc.mutation.Complexity(); !ok {
-		v := task.DefaultComplexity
-		tc.mutation.SetComplexity(v)
+	if _, ok := tc.mutation.Importance(); !ok {
+		v := task.DefaultImportance
+		tc.mutation.SetImportance(v)
 	}
-	if _, ok := tc.mutation.Priority(); !ok {
-		v := task.DefaultPriority
-		tc.mutation.SetPriority(v)
+	if _, ok := tc.mutation.Urgency(); !ok {
+		v := task.DefaultUrgency
+		tc.mutation.SetUrgency(v)
+	}
+	if _, ok := tc.mutation.CustomMult(); !ok {
+		v := task.DefaultCustomMult
+		tc.mutation.SetCustomMult(v)
 	}
 }
 
@@ -233,24 +263,53 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Icon(); !ok {
 		return &ValidationError{Name: "icon", err: errors.New(`ent: missing required field "icon"`)}
 	}
+	if v, ok := tc.mutation.Icon(); ok {
+		if err := task.IconValidator(v); err != nil {
+			return &ValidationError{Name: "icon", err: fmt.Errorf(`ent: validator failed for field "icon": %w`, err)}
+		}
+	}
 	if _, ok := tc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
 	}
-	if _, ok := tc.mutation.Complexity(); !ok {
-		return &ValidationError{Name: "complexity", err: errors.New(`ent: missing required field "complexity"`)}
-	}
-	if v, ok := tc.mutation.Complexity(); ok {
-		if err := task.ComplexityValidator(v); err != nil {
-			return &ValidationError{Name: "complexity", err: fmt.Errorf(`ent: validator failed for field "complexity": %w`, err)}
+	if v, ok := tc.mutation.Title(); ok {
+		if err := task.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "title": %w`, err)}
 		}
 	}
-	if _, ok := tc.mutation.Priority(); !ok {
-		return &ValidationError{Name: "priority", err: errors.New(`ent: missing required field "priority"`)}
-	}
-	if v, ok := tc.mutation.Priority(); ok {
-		if err := task.PriorityValidator(v); err != nil {
-			return &ValidationError{Name: "priority", err: fmt.Errorf(`ent: validator failed for field "priority": %w`, err)}
+	if v, ok := tc.mutation.Description(); ok {
+		if err := task.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "description": %w`, err)}
 		}
+	}
+	if v, ok := tc.mutation.Estimated(); ok {
+		if err := task.EstimatedValidator(v); err != nil {
+			return &ValidationError{Name: "estimated", err: fmt.Errorf(`ent: validator failed for field "estimated": %w`, err)}
+		}
+	}
+	if _, ok := tc.mutation.Importance(); !ok {
+		return &ValidationError{Name: "importance", err: errors.New(`ent: missing required field "importance"`)}
+	}
+	if v, ok := tc.mutation.Importance(); ok {
+		if err := task.ImportanceValidator(v); err != nil {
+			return &ValidationError{Name: "importance", err: fmt.Errorf(`ent: validator failed for field "importance": %w`, err)}
+		}
+	}
+	if _, ok := tc.mutation.Urgency(); !ok {
+		return &ValidationError{Name: "urgency", err: errors.New(`ent: missing required field "urgency"`)}
+	}
+	if v, ok := tc.mutation.Urgency(); ok {
+		if err := task.UrgencyValidator(v); err != nil {
+			return &ValidationError{Name: "urgency", err: fmt.Errorf(`ent: validator failed for field "urgency": %w`, err)}
+		}
+	}
+	if _, ok := tc.mutation.CustomMult(); !ok {
+		return &ValidationError{Name: "custom_mult", err: errors.New(`ent: missing required field "custom_mult"`)}
+	}
+	if _, ok := tc.mutation.Lo(); !ok {
+		return &ValidationError{Name: "lo", err: errors.New(`ent: missing required field "lo"`)}
+	}
+	if _, ok := tc.mutation.Hi(); !ok {
+		return &ValidationError{Name: "hi", err: errors.New(`ent: missing required field "hi"`)}
 	}
 	if _, ok := tc.mutation.CreatorID(); !ok {
 		return &ValidationError{Name: "creator_id", err: errors.New(`ent: missing required field "creator_id"`)}
@@ -333,21 +392,45 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		})
 		_node.Estimated = value
 	}
-	if value, ok := tc.mutation.Complexity(); ok {
+	if value, ok := tc.mutation.Importance(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
 			Value:  value,
-			Column: task.FieldComplexity,
+			Column: task.FieldImportance,
 		})
-		_node.Complexity = value
+		_node.Importance = value
 	}
-	if value, ok := tc.mutation.Priority(); ok {
+	if value, ok := tc.mutation.Urgency(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
 			Value:  value,
-			Column: task.FieldPriority,
+			Column: task.FieldUrgency,
 		})
-		_node.Priority = value
+		_node.Urgency = value
+	}
+	if value, ok := tc.mutation.CustomMult(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldCustomMult,
+		})
+		_node.CustomMult = value
+	}
+	if value, ok := tc.mutation.Lo(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldLo,
+		})
+		_node.Lo = value
+	}
+	if value, ok := tc.mutation.Hi(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: task.FieldHi,
+		})
+		_node.Hi = value
 	}
 	if nodes := tc.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

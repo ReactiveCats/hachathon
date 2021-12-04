@@ -23,6 +23,66 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "get": {
+                "description": "Login",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "get": {
+                "description": "Signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Signup",
+                "operationId": "signup",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/task": {
             "get": {
                 "security": [
@@ -39,6 +99,38 @@ var doc = `{
                 ],
                 "summary": "Get all user tasks",
                 "operationId": "get_tasks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "estimated",
+                        "name": "estimated",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "complexity",
+                        "name": "complexity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "priority",
+                        "name": "priority",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order field (asc/desc)",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order field (e.g. deadline, estimated, complexity)",
+                        "name": "order_by",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -94,7 +186,7 @@ var doc = `{
                 "operationId": "get_task_by_id",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "task id",
                         "name": "task_id",
                         "in": "path",
@@ -132,6 +224,15 @@ var doc = `{
                         "name": "task_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "task object",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.TaskPutDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -180,25 +281,58 @@ var doc = `{
             "type": "object",
             "properties": {
                 "complexity": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deadline": {
                     "type": "string"
                 },
                 "description": {
                     "type": "string"
                 },
-                "hardDeadline": {
-                    "type": "string"
+                "estimated": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "priority": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.TaskPutDTO": {
+            "type": "object",
+            "properties": {
+                "complexity": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
+                },
+                "deadline": {
                     "type": "string"
                 },
-                "softDeadline": {
+                "description": {
                     "type": "string"
                 },
-                "status": {
-                    "type": "string"
+                "estimated": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
                 },
                 "title": {
                     "type": "string"

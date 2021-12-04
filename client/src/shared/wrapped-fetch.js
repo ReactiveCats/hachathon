@@ -1,3 +1,5 @@
+import { authService } from '../auth/services/auth-service';
+
 /**
  * Обертка над fetch
  * @description Добавляет заголовок `Content-Type` к запросу
@@ -7,7 +9,7 @@
  * @returns JSON полученный с сервера в виде объекта
  */
 export async function wrappedFetch(input, init) {
-  const { headers = {} } = init;
+  const { body = null, headers = {} } = init;
 
   if (headers instanceof Headers) {
     headers.append('Content-Type', 'application/json');
@@ -15,18 +17,27 @@ export async function wrappedFetch(input, init) {
     headers['Content-Type'] = 'application/json';
   }
 
+  const accessToken = authService.getAccessToken();
+
+  if (accessToken) {
+    headers['Authorization'] = 'Bearer ' + accessToken;
+  }
+
   const response = await fetch(input, {
     ...init,
+    body: body !== null ? JSON.stringify(body) : undefined,
     headers,
   });
 
+  const json = await response.json();
+
   if (!response.ok) {
-    if ('error' in response) {
-      throw response.error;
+    if ('error' in body) {
+      throw json.error;
     }
 
-    throw response;
+    throw json;
   }
 
-  return response.json();
+  return json;
 }

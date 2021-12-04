@@ -33,13 +33,25 @@ func UsersFromEnt(slice []*ent.User) []*User {
 type UserService interface {
 	JWTToken(user *User) (string, error)
 	DataFromJWT(tokenStr string) (int, error)
-	Signup(ctx context.Context, username, password string) (string, error)
-	Login(ctx context.Context, userID int) (string, error)
+	Signup(ctx context.Context, username string) (string, error)
+	Login(ctx context.Context, username string) (string, error)
 
 	ByID(ctx context.Context, dto GetUserDTO) (*User, error)
 }
 
 // maybe it's better to replace such little DTOs with just arguments
+
+type AccessToken struct {
+	AccessToken string `json:"accessToken"`
+}
+
+type LoginDTO struct {
+	Username string `json:"username" binding:"required"`
+}
+
+type SignupDTO struct {
+	Username string `json:"username" binding:"required"`
+}
 
 type GetUserDTO struct {
 	ID int

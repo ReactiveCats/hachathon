@@ -3,19 +3,42 @@ definitions:
   domain.Task:
     properties:
       complexity:
+        type: integer
+      created_at:
+        type: string
+      deadline:
         type: string
       description:
         type: string
-      hardDeadline:
-        type: string
+      estimated:
+        type: integer
+      icon:
+        type: integer
       id:
         type: integer
       priority:
+        type: integer
+      title:
         type: string
-      softDeadline:
+    type: object
+  domain.TaskPutDTO:
+    properties:
+      complexity:
+        maximum: 10
+        minimum: 0
+        type: integer
+      deadline:
         type: string
-      status:
+      description:
         type: string
+      estimated:
+        type: integer
+      icon:
+        type: integer
+      priority:
+        maximum: 10
+        minimum: 0
+        type: integer
       title:
         type: string
     type: object
@@ -26,10 +49,71 @@ info:
   title: HackathonAPI
   version: "0.1"
 paths:
+  /auth/login:
+    get:
+      description: Login
+      operationId: login
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - auth
+  /auth/signup:
+    get:
+      description: Signup
+      operationId: signup
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Signup
+      tags:
+      - auth
   /task:
     get:
       description: Get all user tasks
       operationId: get_tasks
+      parameters:
+      - description: estimated
+        in: query
+        name: estimated
+        type: string
+      - description: complexity
+        in: query
+        name: complexity
+        type: string
+      - description: priority
+        in: query
+        name: priority
+        type: string
+      - description: order field (asc/desc)
+        in: query
+        name: order
+        type: string
+      - description: order field (e.g. deadline, estimated, complexity)
+        in: query
+        name: order_by
+        type: string
       produces:
       - application/json
       responses:
@@ -87,7 +171,7 @@ paths:
         in: path
         name: task_id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -109,6 +193,12 @@ paths:
         name: task_id
         required: true
         type: string
+      - description: task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TaskPutDTO'
       produces:
       - application/json
       responses:

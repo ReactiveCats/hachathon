@@ -3,7 +3,6 @@
 package task
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -24,10 +23,16 @@ const (
 	FieldDeadline = "deadline"
 	// FieldEstimated holds the string denoting the estimated field in the database.
 	FieldEstimated = "estimated"
-	// FieldComplexity holds the string denoting the complexity field in the database.
-	FieldComplexity = "complexity"
-	// FieldPriority holds the string denoting the priority field in the database.
-	FieldPriority = "priority"
+	// FieldImportance holds the string denoting the importance field in the database.
+	FieldImportance = "importance"
+	// FieldUrgency holds the string denoting the urgency field in the database.
+	FieldUrgency = "urgency"
+	// FieldCustomMult holds the string denoting the custom_mult field in the database.
+	FieldCustomMult = "custom_mult"
+	// FieldLo holds the string denoting the lo field in the database.
+	FieldLo = "lo"
+	// FieldHi holds the string denoting the hi field in the database.
+	FieldHi = "hi"
 	// FieldCreatorID holds the string denoting the creator_id field in the database.
 	FieldCreatorID = "creator_id"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
@@ -52,8 +57,11 @@ var Columns = []string{
 	FieldDescription,
 	FieldDeadline,
 	FieldEstimated,
-	FieldComplexity,
-	FieldPriority,
+	FieldImportance,
+	FieldUrgency,
+	FieldCustomMult,
+	FieldLo,
+	FieldHi,
 	FieldCreatorID,
 }
 
@@ -72,58 +80,22 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultIcon holds the default value on creation for the "icon" field.
 	DefaultIcon int
+	// IconValidator is a validator for the "icon" field. It is called by the builders before save.
+	IconValidator func(int) error
+	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	TitleValidator func(string) error
+	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	DescriptionValidator func(string) error
+	// EstimatedValidator is a validator for the "estimated" field. It is called by the builders before save.
+	EstimatedValidator func(int) error
+	// DefaultImportance holds the default value on creation for the "importance" field.
+	DefaultImportance int8
+	// ImportanceValidator is a validator for the "importance" field. It is called by the builders before save.
+	ImportanceValidator func(int8) error
+	// DefaultUrgency holds the default value on creation for the "urgency" field.
+	DefaultUrgency int8
+	// UrgencyValidator is a validator for the "urgency" field. It is called by the builders before save.
+	UrgencyValidator func(int8) error
+	// DefaultCustomMult holds the default value on creation for the "custom_mult" field.
+	DefaultCustomMult float64
 )
-
-// Complexity defines the type for the "complexity" enum field.
-type Complexity string
-
-// ComplexityMid is the default value of the Complexity enum.
-const DefaultComplexity = ComplexityMid
-
-// Complexity values.
-const (
-	ComplexityLow  Complexity = "low"
-	ComplexityMid  Complexity = "mid"
-	ComplexityHigh Complexity = "high"
-)
-
-func (c Complexity) String() string {
-	return string(c)
-}
-
-// ComplexityValidator is a validator for the "complexity" field enum values. It is called by the builders before save.
-func ComplexityValidator(c Complexity) error {
-	switch c {
-	case ComplexityLow, ComplexityMid, ComplexityHigh:
-		return nil
-	default:
-		return fmt.Errorf("task: invalid enum value for complexity field: %q", c)
-	}
-}
-
-// Priority defines the type for the "priority" enum field.
-type Priority string
-
-// PriorityMid is the default value of the Priority enum.
-const DefaultPriority = PriorityMid
-
-// Priority values.
-const (
-	PriorityLow  Priority = "low"
-	PriorityMid  Priority = "mid"
-	PriorityHigh Priority = "high"
-)
-
-func (pr Priority) String() string {
-	return string(pr)
-}
-
-// PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
-func PriorityValidator(pr Priority) error {
-	switch pr {
-	case PriorityLow, PriorityMid, PriorityHigh:
-		return nil
-	default:
-		return fmt.Errorf("task: invalid enum value for priority field: %q", pr)
-	}
-}
