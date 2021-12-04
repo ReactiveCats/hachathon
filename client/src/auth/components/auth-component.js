@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Typography } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { Box } from '@mui/system';
 import {
   AUTH_SIGNUP,
@@ -24,7 +24,14 @@ const style = {
   p: 4,
 };
 
+const buttonGroupStyle = {
+  display: 'flex',
+  gap: 2,
+};
+
 export function Auth() {
+  const [mode, setMode] = useState('login');
+
   const router = useRouter();
 
   const { state, dispatch } = useAuthContext();
@@ -36,16 +43,51 @@ export function Auth() {
   }, [state]);
 
   const handleSubmit = (data) => {
-    dispatch({ type: AUTH_LOGIN, data });
+    if (mode === 'login') {
+      dispatch({ type: AUTH_LOGIN, data });
+    }
+
+    if (mode === 'signup') {
+      dispatch({ type: AUTH_SIGNUP, data });
+    }
   };
 
   return (
     <>
       <Box sx={style}>
-        <Typography variant="h6" component="span">
-          Authorization
-        </Typography>
-        <AuthForm onSubmit={handleSubmit}></AuthForm>
+        {mode === 'login' ? (
+          <>
+            <Typography variant="h6" component="span">
+              Log in
+            </Typography>
+            <AuthForm onSubmit={handleSubmit}>
+              <Box sx={buttonGroupStyle}>
+                <Button type="button" onClick={() => setMode('signup')}>
+                  Create account
+                </Button>
+                <Button type="submit" variant="contained">
+                  Login
+                </Button>
+              </Box>
+            </AuthForm>
+          </>
+        ) : (
+          <>
+            <Typography variant="h6" component="span">
+              Create account
+            </Typography>
+            <AuthForm onSubmit={handleSubmit}>
+              <Box sx={buttonGroupStyle}>
+                <Button type="button" onClick={() => setMode('login')}>
+                  Login
+                </Button>
+                <Button type="submit" variant="contained">
+                  Sign up
+                </Button>
+              </Box>
+            </AuthForm>
+          </>
+        )}
       </Box>
     </>
   );
