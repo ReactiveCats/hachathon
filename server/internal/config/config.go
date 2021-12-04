@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Database Database
-	Server   Server
-	Jwt      Jwt
+	Database        Database
+	Server          Server
+	Jwt             Jwt
+	DefaultAuthUser bool
 }
 
 type Database struct {
@@ -56,5 +57,6 @@ func New() (Config, error) {
 		Jwt: Jwt{
 			Secret: viper.GetString("jwt_secret"),
 		},
+		DefaultAuthUser: viper.GetBool("default_auth_user"),
 	}, nil
 }

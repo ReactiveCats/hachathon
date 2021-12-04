@@ -23,6 +23,66 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "get": {
+                "description": "Login",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "get": {
+                "description": "Signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Signup",
+                "operationId": "signup",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/task": {
             "get": {
                 "security": [
@@ -221,7 +281,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "complexity": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "created_at": {
                     "type": "string"
@@ -242,7 +302,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "priority": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
@@ -253,14 +313,9 @@ var doc = `{
             "type": "object",
             "properties": {
                 "complexity": {
-                    "type": "string",
-                    "enum": [
-                        "very_low",
-                        "low",
-                        "medium",
-                        "high",
-                        "very_high"
-                    ]
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
                 },
                 "deadline": {
                     "type": "string"
@@ -275,14 +330,9 @@ var doc = `{
                     "type": "integer"
                 },
                 "priority": {
-                    "type": "string",
-                    "enum": [
-                        "very_low",
-                        "low",
-                        "medium",
-                        "high",
-                        "very_high"
-                    ]
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
                 },
                 "title": {
                     "type": "string"

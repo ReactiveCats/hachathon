@@ -3,7 +3,7 @@ definitions:
   domain.Task:
     properties:
       complexity:
-        type: string
+        type: integer
       created_at:
         type: string
       deadline:
@@ -17,20 +17,16 @@ definitions:
       id:
         type: integer
       priority:
-        type: string
+        type: integer
       title:
         type: string
     type: object
   domain.TaskPutDTO:
     properties:
       complexity:
-        enum:
-        - very_low
-        - low
-        - medium
-        - high
-        - very_high
-        type: string
+        maximum: 10
+        minimum: 0
+        type: integer
       deadline:
         type: string
       description:
@@ -40,13 +36,9 @@ definitions:
       icon:
         type: integer
       priority:
-        enum:
-        - very_low
-        - low
-        - medium
-        - high
-        - very_high
-        type: string
+        maximum: 10
+        minimum: 0
+        type: integer
       title:
         type: string
     type: object
@@ -57,6 +49,46 @@ info:
   title: HackathonAPI
   version: "0.1"
 paths:
+  /auth/login:
+    get:
+      description: Login
+      operationId: login
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - auth
+  /auth/signup:
+    get:
+      description: Signup
+      operationId: signup
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Signup
+      tags:
+      - auth
   /task:
     get:
       description: Get all user tasks
