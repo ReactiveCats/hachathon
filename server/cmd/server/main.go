@@ -14,6 +14,8 @@
 // @tag.description  	Authorization endpoints
 // @tag.name 			tasks
 // @tag.description  	Tasks endpoints
+// @tag.name 			tags
+// @tag.description  	Tags endpoints
 
 package main
 

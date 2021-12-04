@@ -36,11 +36,13 @@ var doc = `{
                 "operationId": "login",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "username",
                         "name": "username",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.LoginDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -71,7 +73,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/domain.SignupDTO"
                         }
                     }
                 ],
@@ -81,6 +83,174 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
+                    }
+                }
+            }
+        },
+        "/tag": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all user's tags",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Get all user's tags",
+                "operationId": "get_tags",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Tag"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new tag",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Add new tag",
+                "operationId": "post_tag",
+                "parameters": [
+                    {
+                        "description": "tag object",
+                        "name": "tag",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateTagDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Tag"
+                        }
+                    }
+                }
+            }
+        },
+        "/tag/{tag_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get tag by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Get tag by id",
+                "operationId": "get_tag_by_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "tag id",
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Tag"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit tag",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Edit tag",
+                "operationId": "put_tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tag id",
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "tag object",
+                        "name": "tag",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.TagPutDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete tag",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Delete tag",
+                "operationId": "delete_tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tag id",
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
                     }
                 }
             }
@@ -160,6 +330,17 @@ var doc = `{
                 ],
                 "summary": "Add new task",
                 "operationId": "post_task",
+                "parameters": [
+                    {
+                        "description": "task object",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateTaskDTO"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -326,11 +507,20 @@ var doc = `{
         "domain.AnswerQuestionDTO": {
             "type": "object",
             "properties": {
-                "response": {
+                "compare_task_id": {
                     "type": "integer"
                 },
-                "task_id": {
+                "response": {
+                    "description": "-1,0,1",
                     "type": "integer"
+                }
+            }
+        },
+        "domain.CreateTagDTO": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -345,6 +535,56 @@ var doc = `{
                 }
             }
         },
+        "domain.CreateTaskDTO": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "deadline": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 256
+                },
+                "estimated": {
+                    "type": "integer",
+                    "maximum": 86400,
+                    "minimum": 0
+                },
+                "icon": {
+                    "type": "integer",
+                    "maximum": 16,
+                    "minimum": 0
+                },
+                "importance": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "urgency": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
+                }
+            }
+        },
+        "domain.LoginDTO": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Question": {
             "type": "object",
             "properties": {
@@ -352,6 +592,42 @@ var doc = `{
                     "type": "integer"
                 },
                 "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SignupDTO": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Tag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "mult": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.TagPutDTO": {
+            "type": "object",
+            "properties": {
+                "mult": {
+                    "type": "number"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -443,6 +719,10 @@ var doc = `{
         {
             "description": "Tasks endpoints",
             "name": "tasks"
+        },
+        {
+            "description": "Tags endpoints",
+            "name": "tags"
         }
     ]
 }`

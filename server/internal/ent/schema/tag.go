@@ -16,7 +16,8 @@ func (Tag) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("user_id"),
 		field.String("title"),
-		field.Float("mult"),
+		field.Float("mult").
+			Default(1),
 	}
 }
 

@@ -83,7 +83,7 @@ export function TaskList() {
             <Tooltip key={index} title="Click to edit" followCursor>
               <Box
                 sx={listItemBoxStyle}
-                aria-role="button"
+                ariaRole="button"
                 onClick={handleEdit(index)}
               >
                 <ListItem>

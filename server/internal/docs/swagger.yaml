@@ -2,10 +2,16 @@ basePath: /api
 definitions:
   domain.AnswerQuestionDTO:
     properties:
+      compare_task_id:
+        type: integer
       response:
+        description: -1,0,1
         type: integer
-      task_id:
-        type: integer
+    type: object
+  domain.CreateTagDTO:
+    properties:
+      title:
+        type: string
     type: object
   domain.CreateTaskAnswer:
     properties:
@@ -14,11 +20,70 @@ definitions:
       task:
         $ref: '#/definitions/domain.Task'
     type: object
+  domain.CreateTaskDTO:
+    properties:
+      deadline:
+        type: string
+      description:
+        maxLength: 256
+        type: string
+      estimated:
+        maximum: 86400
+        minimum: 0
+        type: integer
+      icon:
+        maximum: 16
+        minimum: 0
+        type: integer
+      importance:
+        maximum: 10
+        minimum: 0
+        type: integer
+      title:
+        maxLength: 64
+        type: string
+      urgency:
+        maximum: 10
+        minimum: 0
+        type: integer
+    required:
+    - title
+    type: object
+  domain.LoginDTO:
+    properties:
+      username:
+        type: string
+    required:
+    - username
+    type: object
   domain.Question:
     properties:
       compare_task_id:
         type: integer
       text:
+        type: string
+    type: object
+  domain.SignupDTO:
+    properties:
+      username:
+        type: string
+    required:
+    - username
+    type: object
+  domain.Tag:
+    properties:
+      id:
+        type: integer
+      mult:
+        type: number
+      title:
+        type: string
+    type: object
+  domain.TagPutDTO:
+    properties:
+      mult:
+        type: number
+      title:
         type: string
     type: object
   domain.Task:
@@ -82,10 +147,11 @@ paths:
       operationId: login
       parameters:
       - description: username
-        in: query
+        in: body
         name: username
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/domain.LoginDTO'
       produces:
       - application/json
       responses:
@@ -106,7 +172,7 @@ paths:
         name: username
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/domain.SignupDTO'
       produces:
       - application/json
       responses:
@@ -117,6 +183,112 @@ paths:
       summary: Signup
       tags:
       - auth
+  /tag:
+    get:
+      description: Get all user's tags
+      operationId: get_tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Tag'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all user's tags
+      tags:
+      - tags
+    post:
+      description: Add new tag
+      operationId: post_tag
+      parameters:
+      - description: tag object
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateTagDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Tag'
+      security:
+      - ApiKeyAuth: []
+      summary: Add new tag
+      tags:
+      - tags
+  /tag/{tag_id}:
+    delete:
+      description: Delete tag
+      operationId: delete_tag
+      parameters:
+      - description: tag id
+        in: path
+        name: tag_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Delete tag
+      tags:
+      - tags
+    get:
+      description: Get tag by id
+      operationId: get_tag_by_id
+      parameters:
+      - description: tag id
+        in: path
+        name: tag_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Tag'
+      security:
+      - ApiKeyAuth: []
+      summary: Get tag by id
+      tags:
+      - tags
+    put:
+      description: Edit tag
+      operationId: put_tag
+      parameters:
+      - description: tag id
+        in: path
+        name: tag_id
+        required: true
+        type: string
+      - description: tag object
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TagPutDTO'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Edit tag
+      tags:
+      - tags
   /task:
     get:
       description: Get all user tasks
@@ -159,6 +331,13 @@ paths:
     post:
       description: Add new task
       operationId: post_task
+      parameters:
+      - description: task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateTaskDTO'
       produces:
       - application/json
       responses:
@@ -280,3 +459,5 @@ tags:
   name: auth
 - description: Tasks endpoints
   name: tasks
+- description: Tags endpoints
+  name: tags

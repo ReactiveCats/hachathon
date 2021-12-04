@@ -6,20 +6,47 @@ import (
 	"time"
 )
 
+const (
+	Epsilon = 0.01
+)
+
 type Task struct {
-	ID          int       `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	Icon        int       `json:"icon"`
-	Title       string    `json:"title"`
-	Description string    `json:"description,omitempty"`
-	Deadline    time.Time `json:"deadline"`
-	Estimated   int       `json:"estimated,omitempty"`
-	Importance  int       `json:"importance"`
-	Urgency     int       `json:"urgency"`
-	CustomMult  float64   `json:"custom_mult"`
-	Lo          float64   `json:"lo"`
-	Hi          float64   `json:"hi"`
-	Creator     *User     `json:"-"`
+	ID            int       `json:"id"`
+	CreatedAt     time.Time `json:"createdAt"`
+	Icon          int       `json:"icon"`
+	Title         string    `json:"title"`
+	Description   string    `json:"description,omitempty"`
+	Deadline      time.Time `json:"deadline"`
+	Estimated     int       `json:"estimated,omitempty"`
+	Importance    int       `json:"importance"`
+	Urgency       int       `json:"urgency"`
+	CustomMult    float64   `json:"custom_mult"`
+	Lo            float64   `json:"lo"`
+	Hi            float64   `json:"hi"`
+	Creator       *User     `json:"-"`
+	FinalPriority *float64  `json:"priority,omitempty"`
+}
+
+type Tasks []*Task
+
+const MULTIPLIER = 0.2
+
+func (ts Tasks) Len() int {
+	return len(ts)
+}
+
+func (ts Tasks) Less(i, j int) bool {
+	return ts[i].P() < ts[j].P()
+}
+
+func (ts Tasks) Swap(i, j int) {
+	ts[i], ts[j] = ts[j], ts[i]
+}
+
+func (t *Task) P() float64 {
+	a := t.F() * t.CustomMult * (float64(t.Importance) * MULTIPLIER) * (float64(t.Urgency) * MULTIPLIER)
+	t.FinalPriority = &a
+	return a
 }
 
 func (t Task) F() float64 {
@@ -68,7 +95,7 @@ type TaskService interface {
 
 	Create(ctx context.Context, task CreateTaskDTO) (*Task, *Question, error)
 	AnswerQuestion(ctx context.Context, params AnswerQuestionDTO) (*Question, error)
-	AskQuestion(ctx context.Context, task *Task) (*Question, error)
+	GenerateQuestion(ctx context.Context, task *Task) (*Question, error)
 
 	Update(ctx context.Context, dto TaskPutDTO) (*Task, error)
 
@@ -82,13 +109,14 @@ type GetTaskDTO struct {
 	Urgency    *int    `json:"urgency" binding:"omitempty,max=10,min=0"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
 	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated importance urgency"`
+	Priority   *bool   `json:"priority,omitempty"`
 }
 
 type AnswerQuestionDTO struct {
 	UserID        int `json:"-"`
-	Response      int `json:"response"`
+	Response      int `json:"response" binding:"oneof=-1 0 1"` // -1,0,1
 	TaskID        int `json:"-"`
-	CompareTaskID int `json:"task_id"`
+	CompareTaskID int `json:"compare_task_id"`
 }
 
 type CreateTaskDTO struct {

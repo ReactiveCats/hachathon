@@ -8,7 +8,9 @@ import (
 type User struct {
 	ID int `json:"id" example:"1"`
 
-	Username string `json:"username"`
+	Username string  `json:"username"`
+	Tasks    []*Task `json:"-"`
+	Tags     []*Tag  `json:"tags"`
 } //@name User
 
 func UserFromEnt(usr *ent.User) *User {
@@ -19,6 +21,8 @@ func UserFromEnt(usr *ent.User) *User {
 	return &User{
 		ID:       usr.ID,
 		Username: usr.Username,
+		Tasks:    TasksFromEnt(usr.Edges.Tasks),
+		Tags:     TagsFromEnt(usr.Edges.Tags),
 	}
 }
 

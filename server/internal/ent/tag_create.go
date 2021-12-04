@@ -38,6 +38,14 @@ func (tc *TagCreate) SetMult(f float64) *TagCreate {
 	return tc
 }
 
+// SetNillableMult sets the "mult" field if the given value is not nil.
+func (tc *TagCreate) SetNillableMult(f *float64) *TagCreate {
+	if f != nil {
+		tc.SetMult(*f)
+	}
+	return tc
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (tc *TagCreate) SetUser(u *User) *TagCreate {
 	return tc.SetUserID(u.ID)
@@ -54,6 +62,7 @@ func (tc *TagCreate) Save(ctx context.Context) (*Tag, error) {
 		err  error
 		node *Tag
 	)
+	tc.defaults()
 	if len(tc.hooks) == 0 {
 		if err = tc.check(); err != nil {
 			return nil, err
@@ -108,6 +117,14 @@ func (tc *TagCreate) Exec(ctx context.Context) error {
 func (tc *TagCreate) ExecX(ctx context.Context) {
 	if err := tc.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (tc *TagCreate) defaults() {
+	if _, ok := tc.mutation.Mult(); !ok {
+		v := tag.DefaultMult
+		tc.mutation.SetMult(v)
 	}
 }
 
@@ -205,6 +222,7 @@ func (tcb *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
 	for i := range tcb.builders {
 		func(i int, root context.Context) {
 			builder := tcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TagMutation)
 				if !ok {

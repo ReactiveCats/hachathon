@@ -8,6 +8,7 @@ import (
 	"github.com/google/wire"
 	"server/internal/config"
 	"server/internal/domain"
+	"server/internal/domain/tag"
 	"server/internal/domain/task"
 	"server/internal/domain/user"
 )
@@ -21,6 +22,8 @@ func Up(ctx context.Context) (Dependencies, error) {
 		wire.Bind(new(domain.UserService), new(*user.Service)),
 		task.NewService,
 		wire.Bind(new(domain.TaskService), new(*task.Service)),
+		tag.NewService,
+		wire.Bind(new(domain.TagService), new(*tag.Service)),
 	)
 	return Dependencies{}, nil
 }

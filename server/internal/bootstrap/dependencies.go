@@ -13,16 +13,19 @@ type Dependencies struct {
 
 	UserService domain.UserService
 	TaskService domain.TaskService
+	TagService  domain.TagService
 }
 
 func NewDependencies(config config.Config, entClient *ent.Client,
 	user domain.UserService,
-	task domain.TaskService) Dependencies {
+	task domain.TaskService,
+	tag domain.TagService) Dependencies {
 	return Dependencies{
 		Config:      config,
 		EntClient:   entClient,
 		UserService: user,
 		TaskService: task,
+		TagService:  tag,
 	}
 }
 
