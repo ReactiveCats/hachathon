@@ -26,9 +26,11 @@ type User struct {
 type UserEdges struct {
 	// Tasks holds the value of the tasks edge.
 	Tasks []*Task `json:"tasks,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*Tag `json:"tags,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // TasksOrErr returns the Tasks value or an error if the edge
@@ -38,6 +40,15 @@ func (e UserEdges) TasksOrErr() ([]*Task, error) {
 		return e.Tasks, nil
 	}
 	return nil, &NotLoadedError{edge: "tasks"}
+}
+
+// TagsOrErr returns the Tags value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TagsOrErr() ([]*Tag, error) {
+	if e.loadedTypes[1] {
+		return e.Tags, nil
+	}
+	return nil, &NotLoadedError{edge: "tags"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -84,6 +95,11 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 // QueryTasks queries the "tasks" edge of the User entity.
 func (u *User) QueryTasks() *TaskQuery {
 	return (&UserClient{config: u.config}).QueryTasks(u)
+}
+
+// QueryTags queries the "tags" edge of the User entity.
+func (u *User) QueryTags() *TagQuery {
+	return (&UserClient{config: u.config}).QueryTags(u)
 }
 
 // Update returns a builder for updating this User.

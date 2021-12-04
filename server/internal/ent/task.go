@@ -29,12 +29,12 @@ type Task struct {
 	Deadline time.Time `json:"deadline,omitempty"`
 	// Estimated holds the value of the "estimated" field.
 	Estimated int `json:"estimated,omitempty"`
-	// Complexity holds the value of the "complexity" field.
-	Complexity int8 `json:"complexity,omitempty"`
-	// Priority holds the value of the "priority" field.
-	Priority int8 `json:"priority,omitempty"`
-	// F holds the value of the "f" field.
-	F float64 `json:"f,omitempty"`
+	// Importance holds the value of the "importance" field.
+	Importance int8 `json:"importance,omitempty"`
+	// Urgency holds the value of the "urgency" field.
+	Urgency int8 `json:"urgency,omitempty"`
+	// CustomMult holds the value of the "custom_mult" field.
+	CustomMult float64 `json:"custom_mult,omitempty"`
 	// Lo holds the value of the "lo" field.
 	Lo float64 `json:"lo,omitempty"`
 	// Hi holds the value of the "hi" field.
@@ -74,9 +74,9 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldF, task.FieldLo, task.FieldHi:
+		case task.FieldCustomMult, task.FieldLo, task.FieldHi:
 			values[i] = new(sql.NullFloat64)
-		case task.FieldID, task.FieldIcon, task.FieldEstimated, task.FieldComplexity, task.FieldPriority, task.FieldCreatorID:
+		case task.FieldID, task.FieldIcon, task.FieldEstimated, task.FieldImportance, task.FieldUrgency, task.FieldCreatorID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldTitle, task.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -139,23 +139,23 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.Estimated = int(value.Int64)
 			}
-		case task.FieldComplexity:
+		case task.FieldImportance:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field complexity", values[i])
+				return fmt.Errorf("unexpected type %T for field importance", values[i])
 			} else if value.Valid {
-				t.Complexity = int8(value.Int64)
+				t.Importance = int8(value.Int64)
 			}
-		case task.FieldPriority:
+		case task.FieldUrgency:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field priority", values[i])
+				return fmt.Errorf("unexpected type %T for field urgency", values[i])
 			} else if value.Valid {
-				t.Priority = int8(value.Int64)
+				t.Urgency = int8(value.Int64)
 			}
-		case task.FieldF:
+		case task.FieldCustomMult:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field f", values[i])
+				return fmt.Errorf("unexpected type %T for field custom_mult", values[i])
 			} else if value.Valid {
-				t.F = value.Float64
+				t.CustomMult = value.Float64
 			}
 		case task.FieldLo:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
@@ -220,12 +220,12 @@ func (t *Task) String() string {
 	builder.WriteString(t.Deadline.Format(time.ANSIC))
 	builder.WriteString(", estimated=")
 	builder.WriteString(fmt.Sprintf("%v", t.Estimated))
-	builder.WriteString(", complexity=")
-	builder.WriteString(fmt.Sprintf("%v", t.Complexity))
-	builder.WriteString(", priority=")
-	builder.WriteString(fmt.Sprintf("%v", t.Priority))
-	builder.WriteString(", f=")
-	builder.WriteString(fmt.Sprintf("%v", t.F))
+	builder.WriteString(", importance=")
+	builder.WriteString(fmt.Sprintf("%v", t.Importance))
+	builder.WriteString(", urgency=")
+	builder.WriteString(fmt.Sprintf("%v", t.Urgency))
+	builder.WriteString(", custom_mult=")
+	builder.WriteString(fmt.Sprintf("%v", t.CustomMult))
 	builder.WriteString(", lo=")
 	builder.WriteString(fmt.Sprintf("%v", t.Lo))
 	builder.WriteString(", hi=")
