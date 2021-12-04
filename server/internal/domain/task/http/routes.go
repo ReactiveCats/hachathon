@@ -18,6 +18,7 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 	r.GET("/:task_id", getTaskByID(service))
 	r.PUT("/:task_id", putTask(service))
 	r.POST("", postTask(service))
+	r.POST("/:task_id/question", answerQuestion(service))
 	r.DELETE("/:task_id", deleteTask(service))
 }
 
@@ -127,6 +128,48 @@ func getTaskByID(service domain.TaskService) func(ctx *gin.Context) {
 
 }
 
+// answerQuestion godoc
+// @Summary 	Answer question
+// @Description Answer question to make F more precise
+//// @Security 	ApiKeyAuth
+// @Tags 		tasks
+// @ID 			answer_task_question
+// @Param 		task_id 	path 	string						true 	"task id"
+// @Param 		answer 		body 	domain.AnswerQuestionDTO	true 	"answer question object"
+// @Produce  	json
+// @Success 	200 {object} domain.Question
+// @Router 		/task/{task_id}/question [post]
+func answerQuestion(service domain.TaskService) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		user := ctx.Value(platform.UserCtxKey).(*domain.User)
+
+		taskID, err := strconv.Atoi(ctx.Param("task_id"))
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.NotFound("Task is not found"))
+			return
+		}
+
+		var params = domain.AnswerQuestionDTO{
+			UserID:        user.ID,
+			CompareTaskID: taskID,
+		}
+
+		err = ctx.ShouldBind(&params)
+		if err != nil {
+			platform.GinErrResponse(ctx, platform.WrapUnprocessableEntity(err, "wrong task entity"))
+			return
+		}
+
+		question, err := service.AnswerQuestion(ctx.Request.Context(), params)
+		if err != nil {
+			platform.GinErrResponse(ctx, err)
+			return
+		}
+
+		platform.GinOkResponse(ctx, http.StatusOK, question)
+	}
+}
+
 // putTask godoc
 // @Summary 	Edit task
 // @Description Edit task
@@ -185,7 +228,7 @@ func putTask(service domain.TaskService) func(ctx *gin.Context) {
 // @Tags 		tasks
 // @ID 			post_task
 // @Produce  	json
-// @Success 	200 {object} domain.Task
+// @Success 	200 {object} domain.CreateTaskAnswer
 // @Router 		/task [post]
 func postTask(service domain.TaskService) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
@@ -215,13 +258,13 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 
 		taskDTO.UserID = user.ID
 
-		err = service.Create(ctx.Request.Context(), taskDTO)
+		task, question, err := service.Create(ctx.Request.Context(), taskDTO)
 		if err != nil {
 			platform.GinErrResponse(ctx, err)
 			return
 		}
 
-		platform.GinOkResponse(ctx, http.StatusCreated)
+		platform.GinOkResponse(ctx, http.StatusCreated, domain.CreateTaskAnswer{Task: task, Question: question})
 	}
 }
 

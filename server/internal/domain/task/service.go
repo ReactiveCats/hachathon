@@ -95,6 +95,41 @@ func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain
 	return task, nil
 }
 
+func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestionDTO) (*domain.Question, error) {
+	panic("implement me")
+}
+
+func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*domain.Task, *domain.Question, error) {
+	entTask, err := s.client.Create().
+		SetTitle(taskDTO.Title).
+		SetNillableIcon(taskDTO.Icon).
+		SetNillableDescription(taskDTO.Description).
+		SetPriority(int8(taskDTO.Priority)).
+		SetComplexity(int8(taskDTO.Complexity)).
+		SetNillableDeadline(taskDTO.Deadline).
+		SetNillableEstimated(taskDTO.Estimated).
+		SetCreatorID(taskDTO.UserID).
+		Save(ctx)
+	if err != nil {
+		if ent.IsConstraintError(err) {
+			return nil, nil, platform.NotFound("User not found")
+		}
+		return nil, nil, platform.WrapInternal(err)
+	}
+
+	task := domain.TaskFromEnt(entTask)
+	question, err := s.AskQuestion(ctx, task)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return task, question, nil
+}
+
+func (s Service) AskQuestion(ctx context.Context, task *domain.Task) (*domain.Question, error) {
+	panic("implement me")
+}
+
 func (s Service) Delete(ctx context.Context, taskID int) error {
 	n, err := s.client.Delete().
 		Where(taskent.ID(taskID)).
@@ -110,25 +145,5 @@ func (s Service) Delete(ctx context.Context, taskID int) error {
 		return platform.NotFound("Task is not found")
 	}
 
-	return nil
-}
-
-func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) error {
-	err := s.client.Create().
-		SetTitle(taskDTO.Title).
-		SetNillableIcon(taskDTO.Icon).
-		SetNillableDescription(taskDTO.Description).
-		SetPriority(int8(taskDTO.Priority)).
-		SetComplexity(int8(taskDTO.Complexity)).
-		SetNillableDeadline(taskDTO.Deadline).
-		SetNillableEstimated(taskDTO.Estimated).
-		SetCreatorID(taskDTO.UserID).
-		Exec(ctx)
-	if err != nil {
-		if ent.IsConstraintError(err) {
-			return platform.NotFound("User not found")
-		}
-		return platform.WrapInternal(err)
-	}
 	return nil
 }
