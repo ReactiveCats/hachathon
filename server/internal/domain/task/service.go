@@ -8,6 +8,7 @@ import (
 	taskent "server/internal/ent/task"
 	userent "server/internal/ent/user"
 	"server/internal/platform"
+	"time"
 )
 
 type Service struct {
@@ -120,7 +121,7 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) error
 		SetNillableDescription(taskDTO.Description).
 		SetNillablePriority((*taskent.Priority)(taskDTO.Priority)).
 		SetNillableComplexity((*taskent.Complexity)(taskDTO.Complexity)).
-		SetNillableDeadline(taskDTO.Deadline).
+		SetNillableDeadline((*time.Time)(taskDTO.Deadline)).
 		SetNillableEstimated(taskDTO.Estimated).
 		SetCreatorID(taskDTO.UserID).
 		Exec(ctx)
