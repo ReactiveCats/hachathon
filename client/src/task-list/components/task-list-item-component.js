@@ -8,6 +8,13 @@ import {
   LinearProgress,
 } from '@mui/material';
 import { getIconById } from '../../task-modal/mock';
+import {
+  TASK_MODAL_OPEN,
+  useTaskModalContext,
+} from '../../task-modal/context/task-modal-context';
+import {
+  useTaskListContext,
+} from '../context/task-list-context';
 
 const listItemBoxStyle = {
   bgcolor: 'lightgreen',
@@ -38,8 +45,10 @@ const listItemDescriptionBoxStyle = {
 };
 
 export function TaskListItem({ index, title, icon, description, importance }) {
+  const [state, dispatch] = useTaskListContext();
+  const [taskModalState, taskModalDispatch] = useTaskModalContext();
+  
   const [progress, setProgress] = useState(0);
-
   // Обновление прогресса каждую секунду
   useEffect(() => {
     const interval = setInterval(() => {

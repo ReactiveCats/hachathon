@@ -3,11 +3,6 @@ import {
   Button,
   Container,
   List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Tooltip,
-  LinearProgress,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -22,7 +17,11 @@ import {
   TASK_LIST_LOAD_ITEMS,
   useTaskListContext,
 } from '../context/task-list-context';
-import { getIconById, mockTask } from '../../task-modal/mock';
+
+const addButtonStyle = (theme) => ({
+  background: theme => theme.palette.gradientBlue.main,
+  height: '54px'
+})
 
 export function TaskList() {
   const [state, dispatch] = useTaskListContext();
@@ -71,7 +70,7 @@ export function TaskList() {
               },
             )}
           </List>
-          <Button variant="outlined" onClick={handleAddTask} fullWidth>
+          <Button variant="contained" onClick={handleAddTask} fullWidth sx={addButtonStyle}>
             Add task
           </Button>
         </Box>
