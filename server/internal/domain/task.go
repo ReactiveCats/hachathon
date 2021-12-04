@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const (
+	Epsilon = 0.01
+)
+
 type Task struct {
 	ID          int       `json:"id"`
 	CreatedAt   time.Time `json:"createdAt"`
@@ -68,7 +72,7 @@ type TaskService interface {
 
 	Create(ctx context.Context, task CreateTaskDTO) (*Task, *Question, error)
 	AnswerQuestion(ctx context.Context, params AnswerQuestionDTO) (*Question, error)
-	AskQuestion(ctx context.Context, task *Task) (*Question, error)
+	GenerateQuestion(ctx context.Context, task *Task) (*Question, error)
 
 	Update(ctx context.Context, dto TaskPutDTO) (*Task, error)
 
@@ -86,7 +90,7 @@ type GetTaskDTO struct {
 
 type AnswerQuestionDTO struct {
 	UserID        int `json:"-"`
-	Response      int `json:"response"`
+	Response      int `json:"response"` // -1,0,1
 	TaskID        int `json:"-"`
 	CompareTaskID int `json:"task_id"`
 }
