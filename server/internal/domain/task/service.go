@@ -154,7 +154,7 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 		return nil, platform.WrapInternal(err)
 	}
 	task2, err := s.client.Query().
-		Where(taskent.ID(params.TaskID)).
+		Where(taskent.ID(params.CompareTaskID)).
 		WithCreator().
 		First(ctx)
 	if err != nil {
@@ -163,7 +163,7 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 		}
 		return nil, platform.WrapInternal(err)
 	}
-	if task1.Hi == 0 || task2.Lo == 0 {
+	if task1.Hi == 0 || task1.Lo == 0 {
 		switch params.Response {
 		case 1:
 			task1.Lo = task2.CustomMult
@@ -197,6 +197,15 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 	if err != nil {
 		return nil, err
 	}
+
+	err = s.client.Update().
+		Where(taskent.ID(task1.ID)).
+		SetCustomMult(task1.CustomMult).
+		Exec(ctx)
+	if err != nil {
+		return nil, platform.WrapInternal(err)
+	}
+
 	return question, nil
 	/*type AnswerQuestionDTO struct {
 		UserID        int `json:"-"`
