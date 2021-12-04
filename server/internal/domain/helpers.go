@@ -8,29 +8,13 @@ import (
 
 type customTime time.Time
 
-const CtLayout = time.RFC3339
-const CtLayoutNoTime = "2006-01-02"
+const ctLayout = time.RFC3339
 
 func (ct *customTime) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), `"`)
-	arr := strings.Split(s, " ")
-	var nt time.Time
-	if len(arr) > 1 {
-		nt, err = time.Parse(CtLayout, s)
-	} else {
-		nt, err = time.Parse(CtLayoutNoTime, s)
-	}
+	nt, err := time.Parse(ctLayout, s)
 	*ct = customTime(nt)
 	return
-}
-
-func (ct *customTime) Scan(v interface{}) error {
-	vt, err := time.Parse(CtLayout, string(v.([]byte)))
-	if err != nil {
-		return err
-	}
-	*ct = customTime(vt)
-	return nil
 }
 
 func (ct customTime) MarshalJSON() ([]byte, error) {
@@ -39,7 +23,7 @@ func (ct customTime) MarshalJSON() ([]byte, error) {
 
 func (ct *customTime) String() string {
 	t := time.Time(*ct)
-	return fmt.Sprintf(t.Format(CtLayout))
+	return fmt.Sprintf(t.Format(ctLayout))
 }
 
 func (ct *customTime) Time() time.Time {

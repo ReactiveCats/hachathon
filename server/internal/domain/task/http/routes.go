@@ -190,6 +190,7 @@ func postTask(service domain.TaskService) func(ctx *gin.Context) {
 				return
 			case *time.ParseError:
 				platform.GinErrResponse(ctx, platform.UnprocessableEntity("Incorrect date format"))
+				return
 			default:
 				platform.GinErrResponse(ctx, platform.UnprocessableEntity(err.Error()))
 				return
