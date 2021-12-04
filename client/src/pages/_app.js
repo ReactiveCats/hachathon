@@ -19,13 +19,11 @@ function HackathonApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <AuthGuard>
             <TaskListProvider>
               <TaskModalProvider>
                 <Component {...pageProps} />
               </TaskModalProvider>
             </TaskListProvider>
-          </AuthGuard>
         </AuthProvider>
       </ThemeProvider>
     </CacheProvider>

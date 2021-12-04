@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import {
-  Button,
-  Container,
+  Button, Container,
   List,
   ListItem,
   ListItemIcon,
@@ -23,7 +22,10 @@ import {
 import { getIconById, mockTask } from '../../task-modal/mock';
 
 const listItemBoxStyle = {
-  borderRadius: 2,
+  bgcolor: 'lightgreen',
+  borderRadius: "8px 8px 0px 0px",
+  boxShadow: 8,
+  cursor: 'pointer',
 
   '&:hover': {
     transform: 'scale(1.02)',
@@ -78,41 +80,40 @@ export function TaskList() {
   return (
     <>
       <Container>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {state.items.map(
-              ({ title, icon, description, importance }, index) => {
-                const { component: IconComponent } = getIconById(icon);
-                const itemBgColor = {
-                  backgroundColor: (theme) =>
-                    importance >= 7
-                      ? theme.palette.taskBgHighImportant.main
-                      : importance >= 5
-                      ? theme.palette.taskBgMediumImportant.main
-                      : theme.palette.taskBgLowImportant.main,
-                };
+        <Box mt={5} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <List sx={{ display: 'flex', flexDirection: 'column', gap: 3, padding: 0 }}>
+            {state.items.map(({ title, icon, description }, index) => {
+              const { component: IconComponent } = getIconById(icon);
 
-                return (
-                  <Tooltip key={index} title="Click to edit" followCursor>
-                    <Box
-                      sx={{ ...listItemBoxStyle, ...itemBgColor }}
-                      ariaRole="button"
-                      onClick={handleEdit(index)}
-                    >
-                      <ListItem>
-                        <ListItemIcon>
-                          <IconComponent />
-                        </ListItemIcon>
-                        <ListItemText sx={listItemTextStyle} primary={title} />
-                      </ListItem>
-                      <Box sx={listItemDescriptionBoxStyle} component="p">
-                        {description}
-                      </Box>
+              const itemBgColor = {
+                backgroundColor: (theme) =>
+                  importance >= 7
+                    ? theme.palette.taskBgHighImportant.main
+                    : importance >= 5
+                    ? theme.palette.taskBgMediumImportant.main
+                    : theme.palette.taskBgLowImportant.main,
+              };
+
+              return (
+                <Tooltip key={index} title="Click to edit" followCursor>
+                  <Box
+                    sx={{...listItemBoxStyle, ...itemBgColor}}
+                    ariaRole="button"
+                    onClick={handleEdit(index)}
+                  >
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconComponent />
+                      </ListItemIcon>
+                      <ListItemText sx={listItemTextStyle} primary={title} />
+                    </ListItem>
+                    <Box sx={listItemDescriptionBoxStyle} component="p">
+                      {description}
                     </Box>
-                  </Tooltip>
-                );
-              },
-            )}
+                  </Box>
+                </Tooltip>
+              );
+            })}
           </List>
           <Button variant="outlined" onClick={handleAddTask} fullWidth>
             Add task
