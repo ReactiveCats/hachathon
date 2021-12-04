@@ -26,8 +26,8 @@ const taskFromData = (data) => ({
   ...data,
 });
 
-export function TaskModal() {
-  const { state, dispatch } = useTaskModalContext();
+export function TaskModal({ onSave }) {
+  const [state, dispatch] = useTaskModalContext();
 
   if (state.data === null) {
     return <></>;
@@ -40,6 +40,10 @@ export function TaskModal() {
   const handleSave = (data) => {
     if (!isEqual(data, state.data)) {
       dispatch({ type: TASK_MODAL_SAVE, data });
+
+      if (typeof onSave === 'function') {
+        onSave(data);
+      }
     }
 
     close();
