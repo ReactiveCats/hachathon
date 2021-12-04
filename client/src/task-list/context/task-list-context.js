@@ -16,7 +16,7 @@ export function useTaskListContext() {
 
 export const TASK_LIST_LOAD_ITEMS = 'task list load items';
 export const TASK_LIST_SET_ITEMS = 'task list set items';
-export const TASK_LIST_ADD_ITEM = 'task list add item';
+export const TASK_LIST_SAVE_ITEM = 'task list add item';
 const TASK_LIST_LOAD_ITEMS_SUCCESS = 'task list load items success';
 const TASK_LIST_LOAD_ITEMS_FAILURE = 'task list load items failure';
 
@@ -58,10 +58,21 @@ function taskListReducer(state, action) {
         loading: false,
         error: data,
       };
-    case TASK_LIST_ADD_ITEM:
+    case TASK_LIST_SAVE_ITEM:
+      if (!data.id) {
+        return {
+          ...state,
+          items: [...state.items, data],
+        };
+      }
+
+      const itemIndex = state.items.findIndex((item) => item.id === data.id);
+
+      const newItems = [...state.items].splice(itemIndex, 1, data);
+
       return {
         ...state,
-        items: [...state.items, data],
+        items: newItems,
       };
     default:
       throw new Error('Unsupported action type');
