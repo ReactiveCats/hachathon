@@ -95,10 +95,6 @@ func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain
 	return task, nil
 }
 
-func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestionDTO) (*domain.Question, error) {
-	panic("implement me")
-}
-
 func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*domain.Task, *domain.Question, error) {
 	entTask, err := s.client.Create().
 		SetTitle(taskDTO.Title).
@@ -124,6 +120,10 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 	}
 
 	return task, question, nil
+}
+
+func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestionDTO) (*domain.Question, error) {
+	panic("implement me")
 }
 
 func (s Service) AskQuestion(ctx context.Context, task *domain.Task) (*domain.Question, error) {
