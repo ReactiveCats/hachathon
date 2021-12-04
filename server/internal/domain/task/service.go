@@ -167,12 +167,13 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 
 	var constant float64
 
-	if task1.Hi == 0 || task1.Lo == 0 {
-		switch params.Response {
-		case 1:
-			constant += Epsilon
-			task1.Lo = task2.CustomMult
-			newHiTask, err := s.client.Query().
+	switch params.Response {
+	case 1:
+		constant += Epsilon
+		task1.Lo = task2.CustomMult
+		var newHiTask *ent.Task
+		if task1.Hi == 0 || task1.Lo == 0 {
+			newHiTask, err = s.client.Query().
 				Where(taskent.CreatorID(params.UserID)).
 				WithCreator().
 				Order(ent.Desc()).
@@ -180,12 +181,24 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 			if err != nil {
 				return nil, platform.NotFound("Task is not found")
 			}
-			task1.Hi = newHiTask.CustomMult
-			break
-		case -1:
-			constant -= Epsilon
-			task1.Hi = task2.CustomMult
-			newLoTask, err := s.client.Query().
+		} else {
+			newHiTask, err = s.client.Query().
+				Where(taskent.CreatorID(params.UserID), taskent.CustomMultLTE(task1.Hi)).
+				WithCreator().
+				Order(ent.Desc()).
+				First(ctx)
+			if err != nil {
+				return nil, platform.NotFound("Task is not found")
+			}
+		}
+		task1.Hi = newHiTask.CustomMult
+		break
+	case -1:
+		constant -= Epsilon
+		task1.Hi = task2.CustomMult
+		var newLoTask *ent.Task
+		if task1.Hi == 0 || task1.Lo == 0 {
+			newLoTask, err = s.client.Query().
 				Where(taskent.CreatorID(params.UserID)).
 				WithCreator().
 				Order(ent.Asc()).
@@ -193,9 +206,18 @@ func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestio
 			if err != nil {
 				return nil, platform.NotFound("Task is not found")
 			}
-			task1.Lo = newLoTask.CustomMult
-			break
+		} else {
+			newLoTask, err = s.client.Query().
+				Where(taskent.CreatorID(params.UserID), taskent.CustomMultLTE(task1.Hi)).
+				WithCreator().
+				Order(ent.Desc()).
+				First(ctx)
+			if err != nil {
+				return nil, platform.NotFound("Task is not found")
+			}
 		}
+		task1.Lo = newLoTask.CustomMult
+		break
 	}
 
 	task1.CustomMult = (task1.Hi + task1.Lo) / 2 * (1 + constant)
