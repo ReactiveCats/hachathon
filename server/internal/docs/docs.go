@@ -85,6 +85,166 @@ var doc = `{
                 }
             }
         },
+        "/tag": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all user's tags",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Get all user's tags",
+                "operationId": "get_tags",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Tag"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add new tag",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Add new tag",
+                "operationId": "post_tag",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Tag"
+                        }
+                    }
+                }
+            }
+        },
+        "/tag/{tag_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get tag by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Get tag by id",
+                "operationId": "get_tag_by_id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "tag id",
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Tag"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit tag",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Edit tag",
+                "operationId": "put_tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tag id",
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "tag object",
+                        "name": "tag",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.TagPutDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Tag"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete tag",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Delete tag",
+                "operationId": "delete_tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tag id",
+                        "name": "tag_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/task": {
             "get": {
                 "security": [
@@ -356,6 +516,31 @@ var doc = `{
                 }
             }
         },
+        "domain.Tag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "mult": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.TagPutDTO": {
+            "type": "object",
+            "properties": {
+                "mult": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Task": {
             "type": "object",
             "properties": {
@@ -443,6 +628,10 @@ var doc = `{
         {
             "description": "Tasks endpoints",
             "name": "tasks"
+        },
+        {
+            "description": "Tags endpoints",
+            "name": "tags"
         }
     ]
 }`

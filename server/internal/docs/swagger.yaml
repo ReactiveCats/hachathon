@@ -21,6 +21,22 @@ definitions:
       text:
         type: string
     type: object
+  domain.Tag:
+    properties:
+      id:
+        type: integer
+      mult:
+        type: number
+      title:
+        type: string
+    type: object
+  domain.TagPutDTO:
+    properties:
+      mult:
+        type: number
+      title:
+        type: string
+    type: object
   domain.Task:
     properties:
       createdAt:
@@ -117,6 +133,107 @@ paths:
       summary: Signup
       tags:
       - auth
+  /tag:
+    get:
+      description: Get all user's tags
+      operationId: get_tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Tag'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all user's tags
+      tags:
+      - tags
+    post:
+      description: Add new tag
+      operationId: post_tag
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Tag'
+      security:
+      - ApiKeyAuth: []
+      summary: Add new tag
+      tags:
+      - tags
+  /tag/{tag_id}:
+    delete:
+      description: Delete tag
+      operationId: delete_tag
+      parameters:
+      - description: tag id
+        in: path
+        name: tag_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Delete tag
+      tags:
+      - tags
+    get:
+      description: Get tag by id
+      operationId: get_tag_by_id
+      parameters:
+      - description: tag id
+        in: path
+        name: tag_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Tag'
+      security:
+      - ApiKeyAuth: []
+      summary: Get tag by id
+      tags:
+      - tags
+    put:
+      description: Edit tag
+      operationId: put_tag
+      parameters:
+      - description: tag id
+        in: path
+        name: tag_id
+        required: true
+        type: string
+      - description: tag object
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TagPutDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Tag'
+      security:
+      - ApiKeyAuth: []
+      summary: Edit tag
+      tags:
+      - tags
   /task:
     get:
       description: Get all user tasks
@@ -280,3 +397,5 @@ tags:
   name: auth
 - description: Tasks endpoints
   name: tasks
+- description: Tags endpoints
+  name: tags
