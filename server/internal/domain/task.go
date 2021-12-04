@@ -88,11 +88,11 @@ type AnswerQuestionDTO struct {
 
 type CreateTaskDTO struct {
 	UserID      int        `json:"-"`
-	Icon        *int       `json:"icon"`
-	Title       string     `json:"title" binding:"required"`
-	Description *string    `json:"description,omitempty"`
+	Icon        *int       `json:"icon" binding:"omitempty,max=16,min=0"`
+	Title       string     `json:"title" binding:"required,max=64"`
+	Description *string    `json:"description,omitempty" binding:"omitempty,max=256"`
 	Deadline    *time.Time `json:"deadline"`
-	Estimated   *int       `json:"estimated,omitempty"`
+	Estimated   *int       `json:"estimated,omitempty" binding:"omitempty,max=86400,min=0"`
 	Complexity  int        `json:"complexity" binding:"omitempty,max=10,min=0"`
 	Priority    int        `json:"priority" binding:"omitempty,max=10,min=0"`
 }
