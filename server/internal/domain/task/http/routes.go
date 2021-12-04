@@ -29,10 +29,10 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 // @Tags 		tasks
 // @ID 			get_tasks
 // @Param 		estimated 	query 	string		false 	"estimated"
-// @Param 		complexity 	query 	string		false 	"complexity"
-// @Param 		priority 	query 	string		false 	"priority"
+// @Param 		importance 	query 	string		false 	"importance"
+// @Param 		urgency 	query 	string		false 	"urgency"
 // @Param 		order 		query 	string		false 	"order field (asc/desc)"
-// @Param 		orderBy 	query 	string		false 	"order field (e.g. deadline, estimated, complexity)"
+// @Param 		orderBy 	query 	string		false 	"order field (e.g. deadline, estimated, importance)"
 // @Produce  	json
 // @Success 	200 {array} domain.Task
 // @Router 		/task [get]
@@ -53,24 +53,24 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 			dto.Estimated = &parsedEstimated
 		}
 
-		complexity, ok := ctx.GetQuery("complexity")
+		importance, ok := ctx.GetQuery("importance")
 		if ok {
-			parsedComplexity, err := strconv.Atoi(complexity)
+			parsedImportance, err := strconv.Atoi(importance)
 			if err != nil {
-				platform.GinErrResponse(ctx, platform.Conflict("invalid estimated (must be int)"))
+				platform.GinErrResponse(ctx, platform.Conflict("invalid importance (must be int)"))
 				return
 			}
-			dto.Complexity = &parsedComplexity
+			dto.Importance = &parsedImportance
 		}
 
-		priority, ok := ctx.GetQuery("priority")
+		urgency, ok := ctx.GetQuery("urgency")
 		if ok {
-			parsedPriority, err := strconv.Atoi(priority)
+			parsedUrgency, err := strconv.Atoi(urgency)
 			if err != nil {
-				platform.GinErrResponse(ctx, platform.Conflict("invalid estimated (must be int)"))
+				platform.GinErrResponse(ctx, platform.Conflict("invalid urgency (must be int)"))
 				return
 			}
-			dto.Priority = &parsedPriority
+			dto.Urgency = &parsedUrgency
 		}
 
 		order, ok := ctx.GetQuery("order")

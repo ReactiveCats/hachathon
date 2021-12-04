@@ -8,7 +8,6 @@ import (
 	taskent "server/internal/ent/task"
 	userent "server/internal/ent/user"
 	"server/internal/platform"
-	"time"
 )
 
 type Service struct {
@@ -78,8 +77,8 @@ func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain
 		SetNillableDescription(taskDTO.Description).
 		SetNillableDeadline(taskDTO.Deadline).
 		SetNillableEstimated(taskDTO.Estimated).
-		SetComplexity(int8(taskDTO.Complexity)).
-		SetPriority(int8(taskDTO.Complexity)).
+		SetUrgency(int8(taskDTO.Urgency)).
+		SetImportance(int8(taskDTO.Importance)).
 		Exec(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -101,12 +100,11 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 		SetTitle(taskDTO.Title).
 		SetNillableIcon(taskDTO.Icon).
 		SetNillableDescription(taskDTO.Description).
-		SetPriority(int8(taskDTO.Priority)).
-		SetComplexity(int8(taskDTO.Complexity)).
+		SetImportance(int8(taskDTO.Importance)).
+		SetUrgency(int8(taskDTO.Urgency)).
 		SetNillableDeadline(taskDTO.Deadline).
 		SetNillableEstimated(taskDTO.Estimated).
 		SetCreatorID(taskDTO.UserID).
-		SetF(0). // костыли, которые мы заслужили
 		SetLo(0).
 		SetHi(0).
 		Save(ctx)
@@ -122,29 +120,12 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 	f, lo, hi := CalculateF(task)
 	task.F = f
 
-	err = s.client.Update().
-		Where(taskent.ID(task.ID)).
-		SetF(f).
-		SetLo(lo).
-		SetHi(hi).
-		Exec(ctx)
-	if err != nil {
-		return nil, nil, platform.WrapInternal(err)
-	}
-
 	question, err := s.AskQuestion(ctx, task)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	return task, question, nil
-}
-
-func CalculateF(task *domain.Task) (f float64, lo float64, hi float64) {
-	timeLeft := task.Deadline.Unix() - time.Now().Unix()
-	f = float64(task.Estimated) / float64(timeLeft)
-
-	return f, 0, 0
 }
 
 func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestionDTO) (*domain.Question, error) {

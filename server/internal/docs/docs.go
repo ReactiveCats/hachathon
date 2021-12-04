@@ -24,7 +24,7 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/auth/login": {
-            "get": {
+            "post": {
                 "description": "Login",
                 "produces": [
                     "application/json"
@@ -54,7 +54,7 @@ var doc = `{
             }
         },
         "/auth/signup": {
-            "get": {
+            "post": {
                 "description": "Signup",
                 "produces": [
                     "application/json"
@@ -66,11 +66,13 @@ var doc = `{
                 "operationId": "signup",
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "username",
                         "name": "username",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -108,14 +110,14 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "complexity",
-                        "name": "complexity",
+                        "description": "importance",
+                        "name": "importance",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "priority",
-                        "name": "priority",
+                        "description": "urgency",
+                        "name": "urgency",
                         "in": "query"
                     },
                     {
@@ -126,8 +128,8 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "order field (e.g. deadline, estimated, complexity)",
-                        "name": "order_by",
+                        "description": "order field (e.g. deadline, estimated, importance)",
+                        "name": "orderBy",
                         "in": "query"
                     }
                 ],
@@ -162,7 +164,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/domain.CreateTaskAnswer"
                         }
                     }
                 }
@@ -274,17 +276,94 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/task/{task_id}/question": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Answer question to make F more precise",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Answer question",
+                "operationId": "answer_task_question",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "answer question object",
+                        "name": "answer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.AnswerQuestionDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Question"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "domain.AnswerQuestionDTO": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "integer"
+                },
+                "task_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.CreateTaskAnswer": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "$ref": "#/definitions/domain.Question"
+                },
+                "task": {
+                    "$ref": "#/definitions/domain.Task"
+                }
+            }
+        },
+        "domain.Question": {
+            "type": "object",
+            "properties": {
+                "compare_task_id": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Task": {
             "type": "object",
             "properties": {
-                "complexity": {
-                    "type": "integer"
-                },
-                "created_at": {
+                "createdAt": {
                     "type": "string"
+                },
+                "custom_mult": {
+                    "type": "number"
                 },
                 "deadline": {
                     "type": "string"
@@ -294,6 +373,9 @@ var doc = `{
                 },
                 "estimated": {
                     "type": "integer"
+                },
+                "hi": {
+                    "type": "number"
                 },
                 "icon": {
                     "type": "integer"
@@ -301,22 +383,23 @@ var doc = `{
                 "id": {
                     "type": "integer"
                 },
-                "priority": {
+                "importance": {
                     "type": "integer"
+                },
+                "lo": {
+                    "type": "number"
                 },
                 "title": {
                     "type": "string"
+                },
+                "urgency": {
+                    "type": "integer"
                 }
             }
         },
         "domain.TaskPutDTO": {
             "type": "object",
             "properties": {
-                "complexity": {
-                    "type": "integer",
-                    "maximum": 10,
-                    "minimum": 0
-                },
                 "deadline": {
                     "type": "string"
                 },
@@ -329,13 +412,18 @@ var doc = `{
                 "icon": {
                     "type": "integer"
                 },
-                "priority": {
+                "importance": {
                     "type": "integer",
                     "maximum": 10,
                     "minimum": 0
                 },
                 "title": {
                     "type": "string"
+                },
+                "urgency": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 0
                 }
             }
         }
@@ -343,7 +431,7 @@ var doc = `{
     "securityDefinitions": {
         "ApiKeyAuth": {
             "type": "apiKey",
-            "name": "Token",
+            "name": "Authorization",
             "in": "header"
         }
     },

@@ -14,12 +14,17 @@ type Task struct {
 	Description string    `json:"description,omitempty"`
 	Deadline    time.Time `json:"deadline"`
 	Estimated   int       `json:"estimated,omitempty"`
-	Complexity  int       `json:"complexity"`
-	Priority    int       `json:"priority"`
-	F           float64   `json:"f"`
+	Importance  int       `json:"importance"`
+	Urgency     int       `json:"urgency"`
+	CustomMult  float64   `json:"custom_mult"`
 	Lo          float64   `json:"lo"`
 	Hi          float64   `json:"hi"`
 	Creator     *User     `json:"-"`
+}
+
+func (t Task) F() float64 {
+	timeLeft := t.Deadline.Unix() - time.Now().Unix()
+	return float64(t.Estimated) / float64(timeLeft)
 }
 
 type Question struct {
@@ -40,9 +45,9 @@ func TaskFromEnt(task *ent.Task) *Task {
 		Description: task.Description,
 		Deadline:    task.Deadline,
 		Estimated:   task.Estimated,
-		Complexity:  int(task.Complexity),
-		Priority:    int(task.Priority),
-		F:           task.F,
+		Importance:  int(task.Importance),
+		Urgency:     int(task.Urgency),
+		CustomMult:  task.CustomMult,
 		Lo:          task.Lo,
 		Hi:          task.Hi,
 		Creator:     UserFromEnt(task.Edges.Creator),
@@ -73,10 +78,10 @@ type TaskService interface {
 type GetTaskDTO struct {
 	UserID     int     `json:"-"`
 	Estimated  *int    `json:"estimated,omitempty"`
-	Complexity *int    `json:"complexity" binding:"omitempty,max=10,min=0"`
-	Priority   *int    `json:"priority" binding:"omitempty,max=10,min=0"`
+	Importance *int    `json:"importance" binding:"omitempty,max=10,min=0"`
+	Urgency    *int    `json:"urgency" binding:"omitempty,max=10,min=0"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
-	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
+	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated importance urgency"`
 }
 
 type AnswerQuestionDTO struct {
@@ -93,8 +98,8 @@ type CreateTaskDTO struct {
 	Description *string    `json:"description,omitempty" binding:"omitempty,max=256"`
 	Deadline    *time.Time `json:"deadline"`
 	Estimated   *int       `json:"estimated,omitempty" binding:"omitempty,max=86400,min=0"`
-	Complexity  int        `json:"complexity" binding:"omitempty,max=10,min=0"`
-	Priority    int        `json:"priority" binding:"omitempty,max=10,min=0"`
+	Importance  int        `json:"importance" binding:"omitempty,max=10,min=0"`
+	Urgency     int        `json:"urgency" binding:"omitempty,max=10,min=0"`
 }
 
 type CreateTaskAnswer struct {
@@ -111,6 +116,6 @@ type TaskPutDTO struct {
 	DeadlineDateStr *string    `json:"deadline"`
 	Deadline        *time.Time `json:"-"`
 	Estimated       *int       `json:"estimated,omitempty" `
-	Complexity      int        `json:"complexity" binding:"max=10,min=0"`
-	Priority        int        `json:"priority" binding:"max=10,min=0"`
+	Importance      int        `json:"importance" binding:"max=10,min=0"`
+	Urgency         int        `json:"urgency" binding:"max=10,min=0"`
 }
