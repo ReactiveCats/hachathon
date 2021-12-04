@@ -16,6 +16,7 @@ type Task struct {
 	Estimated   int       `json:"estimated,omitempty"`
 	Complexity  int       `json:"complexity"`
 	Priority    int       `json:"priority"`
+	F           float64   `json:"f"`
 	Creator     *User     `json:"-"`
 }
 
@@ -39,6 +40,7 @@ func TaskFromEnt(task *ent.Task) *Task {
 		Estimated:   task.Estimated,
 		Complexity:  int(task.Complexity),
 		Priority:    int(task.Priority),
+		F:           task.F,
 		Creator:     UserFromEnt(task.Edges.Creator),
 	}
 }

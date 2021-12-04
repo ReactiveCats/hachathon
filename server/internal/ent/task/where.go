@@ -149,6 +149,13 @@ func Priority(v int8) predicate.Task {
 	})
 }
 
+// F applies equality check predicate on the "f" field. It's identical to FEQ.
+func F(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldF), v))
+	})
+}
+
 // CreatorID applies equality check predicate on the "creator_id" field. It's identical to CreatorIDEQ.
 func CreatorID(v int) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
@@ -873,6 +880,82 @@ func PriorityLT(v int8) predicate.Task {
 func PriorityLTE(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldPriority), v))
+	})
+}
+
+// FEQ applies the EQ predicate on the "f" field.
+func FEQ(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldF), v))
+	})
+}
+
+// FNEQ applies the NEQ predicate on the "f" field.
+func FNEQ(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldF), v))
+	})
+}
+
+// FIn applies the In predicate on the "f" field.
+func FIn(vs ...float64) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldF), v...))
+	})
+}
+
+// FNotIn applies the NotIn predicate on the "f" field.
+func FNotIn(vs ...float64) predicate.Task {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Task(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldF), v...))
+	})
+}
+
+// FGT applies the GT predicate on the "f" field.
+func FGT(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldF), v))
+	})
+}
+
+// FGTE applies the GTE predicate on the "f" field.
+func FGTE(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldF), v))
+	})
+}
+
+// FLT applies the LT predicate on the "f" field.
+func FLT(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldF), v))
+	})
+}
+
+// FLTE applies the LTE predicate on the "f" field.
+func FLTE(v float64) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldF), v))
 	})
 }
 

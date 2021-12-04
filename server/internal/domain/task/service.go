@@ -8,6 +8,7 @@ import (
 	taskent "server/internal/ent/task"
 	userent "server/internal/ent/user"
 	"server/internal/platform"
+	"time"
 )
 
 type Service struct {
@@ -105,6 +106,7 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 		SetNillableDeadline(taskDTO.Deadline).
 		SetNillableEstimated(taskDTO.Estimated).
 		SetCreatorID(taskDTO.UserID).
+		SetF(0). // костыли, которые мы заслужили
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -114,12 +116,31 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 	}
 
 	task := domain.TaskFromEnt(entTask)
+
+	f := CalculateF(task)
+	task.F = f
+
+	err = s.client.Update().
+		Where(taskent.ID(task.ID)).
+		SetF(f).
+		Exec(ctx)
+	if err != nil {
+		return nil, nil, platform.WrapInternal(err)
+	}
+
 	question, err := s.AskQuestion(ctx, task)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	return task, question, nil
+}
+
+func CalculateF(task *domain.Task) float64 {
+	timeLeft := task.Deadline.Unix() - time.Now().Unix()
+	f := float64(task.Estimated) / float64(timeLeft)
+
+	return f
 }
 
 func (s Service) AnswerQuestion(ctx context.Context, params domain.AnswerQuestionDTO) (*domain.Question, error) {
