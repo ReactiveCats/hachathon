@@ -19,7 +19,7 @@ import {
   TASK_LIST_LOAD_ITEMS,
   useTaskListContext,
 } from '../context/task-list-context';
-import { mockTask } from '../../task-modal/mock';
+import { getIconById, mockTask } from '../../task-modal/mock';
 
 const listItemBoxStyle = {
   bgcolor: 'lightgreen',
@@ -79,25 +79,29 @@ export function TaskList() {
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {state.items.map(({ title, description }, index) => (
-            <Tooltip key={index} title="Click to edit" followCursor>
-              <Box
-                sx={listItemBoxStyle}
-                ariaRole="button"
-                onClick={handleEdit(index)}
-              >
-                <ListItem>
-                  <ListItemIcon>
-                    <AccessTimeIcon />
-                  </ListItemIcon>
-                  <ListItemText sx={listItemTextStyle} primary={title} />
-                </ListItem>
-                <Box sx={listItemDescriptionBoxStyle} component="p">
-                  {description}
+          {state.items.map(({ title, icon, description }, index) => {
+            const { component: IconComponent } = getIconById(icon);
+
+            return (
+              <Tooltip key={index} title="Click to edit" followCursor>
+                <Box
+                  sx={listItemBoxStyle}
+                  ariaRole="button"
+                  onClick={handleEdit(index)}
+                >
+                  <ListItem>
+                    <ListItemIcon>
+                      <IconComponent />
+                    </ListItemIcon>
+                    <ListItemText sx={listItemTextStyle} primary={title} />
+                  </ListItem>
+                  <Box sx={listItemDescriptionBoxStyle} component="p">
+                    {description}
+                  </Box>
                 </Box>
-              </Box>
-            </Tooltip>
-          ))}
+              </Tooltip>
+            );
+          })}
         </List>
         <Button variant="outlined" onClick={handleAddTask} fullWidth>
           Add task
