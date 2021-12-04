@@ -123,8 +123,7 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) (*dom
 	entTask.Edges.Creator = creator
 	task := domain.TaskFromEnt(entTask)
 
-	f := task.F()
-	task.CustomMult = f
+	task.CustomMult = 1
 
 	question, err := s.GenerateQuestion(ctx, task)
 	if err != nil {
