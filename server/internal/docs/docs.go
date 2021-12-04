@@ -301,6 +301,12 @@ var doc = `{
                         "description": "order field (e.g. deadline, estimated, importance)",
                         "name": "orderBy",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "priority",
+                        "name": "priority",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -512,7 +518,12 @@ var doc = `{
                 },
                 "response": {
                     "description": "-1,0,1",
-                    "type": "integer"
+                    "type": "integer",
+                    "enum": [
+                        -1,
+                        0,
+                        1
+                    ]
                 }
             }
         },
@@ -663,6 +674,9 @@ var doc = `{
                     "type": "integer"
                 },
                 "lo": {
+                    "type": "number"
+                },
+                "priority": {
                     "type": "number"
                 },
                 "title": {

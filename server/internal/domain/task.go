@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"math"
 	"server/internal/ent"
 	"time"
 )
@@ -21,8 +22,8 @@ type Task struct {
 	Importance    int       `json:"importance"`
 	Urgency       int       `json:"urgency"`
 	CustomMult    float64   `json:"custom_mult"`
-	Lo            float64   `json:"lo"`
-	Hi            float64   `json:"hi"`
+	Lo            float64   `json:"-"`
+	Hi            float64   `json:"-"`
 	Creator       *User     `json:"-"`
 	FinalPriority *float64  `json:"priority,omitempty"`
 }
@@ -51,7 +52,8 @@ func (t *Task) P() float64 {
 
 func (t Task) F() float64 {
 	timeLeft := t.Deadline.Unix() - time.Now().Unix()
-	return float64(t.Estimated) / float64(timeLeft)
+	return (math.Log10((float64(t.Estimated)/float64(timeLeft))+0.015) + 2) / 2
+	//return math.Sqrt(float64(t.Estimated) / float64(timeLeft))
 }
 
 type Question struct {

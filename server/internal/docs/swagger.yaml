@@ -6,6 +6,10 @@ definitions:
         type: integer
       response:
         description: -1,0,1
+        enum:
+        - -1
+        - 0
+        - 1
         type: integer
     type: object
   domain.CreateTagDTO:
@@ -107,6 +111,8 @@ definitions:
       importance:
         type: integer
       lo:
+        type: number
+      priority:
         type: number
       title:
         type: string
@@ -314,6 +320,10 @@ paths:
         in: query
         name: orderBy
         type: string
+      - description: priority
+        in: query
+        name: priority
+        type: boolean
       produces:
       - application/json
       responses:
