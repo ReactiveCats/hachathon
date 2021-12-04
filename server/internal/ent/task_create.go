@@ -98,30 +98,14 @@ func (tc *TaskCreate) SetNillableEstimated(i *int) *TaskCreate {
 }
 
 // SetComplexity sets the "complexity" field.
-func (tc *TaskCreate) SetComplexity(t task.Complexity) *TaskCreate {
-	tc.mutation.SetComplexity(t)
-	return tc
-}
-
-// SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableComplexity(t *task.Complexity) *TaskCreate {
-	if t != nil {
-		tc.SetComplexity(*t)
-	}
+func (tc *TaskCreate) SetComplexity(i int8) *TaskCreate {
+	tc.mutation.SetComplexity(i)
 	return tc
 }
 
 // SetPriority sets the "priority" field.
-func (tc *TaskCreate) SetPriority(t task.Priority) *TaskCreate {
-	tc.mutation.SetPriority(t)
-	return tc
-}
-
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tc *TaskCreate) SetNillablePriority(t *task.Priority) *TaskCreate {
-	if t != nil {
-		tc.SetPriority(*t)
-	}
+func (tc *TaskCreate) SetPriority(i int8) *TaskCreate {
+	tc.mutation.SetPriority(i)
 	return tc
 }
 
@@ -214,14 +198,6 @@ func (tc *TaskCreate) defaults() {
 	if _, ok := tc.mutation.Icon(); !ok {
 		v := task.DefaultIcon
 		tc.mutation.SetIcon(v)
-	}
-	if _, ok := tc.mutation.Complexity(); !ok {
-		v := task.DefaultComplexity
-		tc.mutation.SetComplexity(v)
-	}
-	if _, ok := tc.mutation.Priority(); !ok {
-		v := task.DefaultPriority
-		tc.mutation.SetPriority(v)
 	}
 }
 
@@ -335,7 +311,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.Complexity(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldComplexity,
 		})
@@ -343,7 +319,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.Priority(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldPriority,
 		})

@@ -39,6 +39,38 @@ var doc = `{
                 ],
                 "summary": "Get all user tasks",
                 "operationId": "get_tasks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "estimated",
+                        "name": "estimated",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "complexity",
+                        "name": "complexity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "priority",
+                        "name": "priority",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order field (asc/desc)",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order field (e.g. deadline, estimated, complexity)",
+                        "name": "order_by",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

@@ -14,8 +14,8 @@ type Task struct {
 	Description string    `json:"description,omitempty"`
 	Deadline    time.Time `json:"deadline"`
 	Estimated   int       `json:"estimated,omitempty"`
-	Complexity  string    `json:"complexity"`
-	Priority    string    `json:"priority"`
+	Complexity  int       `json:"complexity"`
+	Priority    int       `json:"priority"`
 	Creator     *User     `json:"-"`
 }
 
@@ -32,8 +32,8 @@ func TaskFromEnt(task *ent.Task) *Task {
 		Description: task.Description,
 		Deadline:    task.Deadline,
 		Estimated:   task.Estimated,
-		Complexity:  string(task.Complexity),
-		Priority:    string(task.Priority),
+		Complexity:  int(task.Complexity),
+		Priority:    int(task.Priority),
 		Creator:     UserFromEnt(task.Edges.Creator),
 	}
 }
@@ -60,8 +60,8 @@ type TaskService interface {
 type GetTaskDTO struct {
 	UserID     int     `json:"-"`
 	Estimated  *int    `json:"estimated,omitempty"`
-	Complexity *string `json:"complexity" binding:"omitempty,oneof=very_low low medium high very_high"`
-	Priority   *string `json:"priority" binding:"omitempty,oneof=very_low low medium high very_high"`
+	Complexity *int    `json:"complexity" binding:"omitempty,max=10,min=0"`
+	Priority   *int    `json:"priority" binding:"omitempty,max=10,min=0"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
 	OrderBy    *string `json:"order_by" binding:"omitempty,oneof=created_at deadline estimated complexity priority"`
 }
@@ -73,8 +73,8 @@ type CreateTaskDTO struct {
 	Description *string    `json:"description,omitempty"`
 	Deadline    *time.Time `json:"deadline"`
 	Estimated   *int       `json:"estimated,omitempty"`
-	Complexity  *string    `json:"complexity" binding:"omitempty,oneof=very_low low medium high very_high"`
-	Priority    *string    `json:"priority" binding:"omitempty,oneof=very_low low medium high very_high"`
+	Complexity  int        `json:"complexity" binding:"omitempty,max=10,min=0"`
+	Priority    int        `json:"priority" binding:"omitempty,max=10,min=0"`
 }
 
 type TaskPutDTO struct {
@@ -86,6 +86,6 @@ type TaskPutDTO struct {
 	DeadlineDateStr *string    `json:"deadline"`
 	Deadline        *time.Time `json:"-"`
 	Estimated       *int       `json:"estimated,omitempty" `
-	Complexity      *string    `json:"complexity" binding:"oneof=very_low low medium high very_high"`
-	Priority        *string    `json:"priority" binding:"oneof=very_low low medium high very_high"`
+	Complexity      int        `json:"complexity" binding:"max=10,min=0"`
+	Priority        int        `json:"priority" binding:"max=10,min=0"`
 }

@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"server/internal/consts"
 	"time"
 )
 
@@ -22,24 +21,27 @@ func (Task) Fields() []ent.Field {
 		field.String("description").Optional(),
 		field.Time("deadline").Optional(),
 		field.Int("estimated").Optional(),
-		field.Enum("complexity").
-			Values(
-				consts.ComplexityVeryLow,
-				consts.ComplexityLow,
-				consts.ComplexityMid,
-				consts.ComplexityHigh,
-				consts.ComplexityVeryHigh,
-			).
-			Default(consts.ComplexityMid),
-		field.Enum("priority").
-			Values(
-				consts.PriorityVeryLow,
-				consts.PriorityLow,
-				consts.PriorityMid,
-				consts.PriorityHigh,
-				consts.PriorityVeryHigh,
-			).
-			Default(consts.PriorityMid),
+		//field.Enum("complexity").
+		//	Values(
+		//		consts.ComplexityVeryLow,
+		//		consts.ComplexityLow,
+		//		consts.ComplexityMid,
+		//		consts.ComplexityHigh,
+		//		consts.ComplexityVeryHigh,
+		//	).
+		//	Default(consts.ComplexityMid),
+		//field.Enum("priority").
+		//	Values(
+		//		consts.PriorityVeryLow,
+		//		consts.PriorityLow,
+		//		consts.PriorityMid,
+		//		consts.PriorityHigh,
+		//		consts.PriorityVeryHigh,
+		//	).
+		//	Default(consts.PriorityMid),
+
+		field.Int8("complexity").Min(0).Max(11).Default(5),
+		field.Int8("priority").Min(0).Max(11).Default(5),
 		field.Int("creator_id"),
 	}
 }

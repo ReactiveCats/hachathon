@@ -3,7 +3,6 @@
 package task
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -72,62 +71,8 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultIcon holds the default value on creation for the "icon" field.
 	DefaultIcon int
+	// ComplexityValidator is a validator for the "complexity" field. It is called by the builders before save.
+	ComplexityValidator func(int8) error
+	// PriorityValidator is a validator for the "priority" field. It is called by the builders before save.
+	PriorityValidator func(int8) error
 )
-
-// Complexity defines the type for the "complexity" enum field.
-type Complexity string
-
-// ComplexityMedium is the default value of the Complexity enum.
-const DefaultComplexity = ComplexityMedium
-
-// Complexity values.
-const (
-	ComplexityVeryLow  Complexity = "very_low"
-	ComplexityLow      Complexity = "low"
-	ComplexityMedium   Complexity = "medium"
-	ComplexityHigh     Complexity = "high"
-	ComplexityVeryHigh Complexity = "very_high"
-)
-
-func (c Complexity) String() string {
-	return string(c)
-}
-
-// ComplexityValidator is a validator for the "complexity" field enum values. It is called by the builders before save.
-func ComplexityValidator(c Complexity) error {
-	switch c {
-	case ComplexityVeryLow, ComplexityLow, ComplexityMedium, ComplexityHigh, ComplexityVeryHigh:
-		return nil
-	default:
-		return fmt.Errorf("task: invalid enum value for complexity field: %q", c)
-	}
-}
-
-// Priority defines the type for the "priority" enum field.
-type Priority string
-
-// PriorityMedium is the default value of the Priority enum.
-const DefaultPriority = PriorityMedium
-
-// Priority values.
-const (
-	PriorityVeryLow  Priority = "very_low"
-	PriorityLow      Priority = "low"
-	PriorityMedium   Priority = "medium"
-	PriorityHigh     Priority = "high"
-	PriorityVeryHigh Priority = "very_high"
-)
-
-func (pr Priority) String() string {
-	return string(pr)
-}
-
-// PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
-func PriorityValidator(pr Priority) error {
-	switch pr {
-	case PriorityVeryLow, PriorityLow, PriorityMedium, PriorityHigh, PriorityVeryHigh:
-		return nil
-	default:
-		return fmt.Errorf("task: invalid enum value for priority field: %q", pr)
-	}
-}

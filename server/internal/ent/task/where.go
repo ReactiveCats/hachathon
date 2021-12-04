@@ -135,6 +135,20 @@ func Estimated(v int) predicate.Task {
 	})
 }
 
+// Complexity applies equality check predicate on the "complexity" field. It's identical to ComplexityEQ.
+func Complexity(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldComplexity), v))
+	})
+}
+
+// Priority applies equality check predicate on the "priority" field. It's identical to PriorityEQ.
+func Priority(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPriority), v))
+	})
+}
+
 // CreatorID applies equality check predicate on the "creator_id" field. It's identical to CreatorIDEQ.
 func CreatorID(v int) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
@@ -711,21 +725,21 @@ func EstimatedNotNil() predicate.Task {
 }
 
 // ComplexityEQ applies the EQ predicate on the "complexity" field.
-func ComplexityEQ(v Complexity) predicate.Task {
+func ComplexityEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldComplexity), v))
 	})
 }
 
 // ComplexityNEQ applies the NEQ predicate on the "complexity" field.
-func ComplexityNEQ(v Complexity) predicate.Task {
+func ComplexityNEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldComplexity), v))
 	})
 }
 
 // ComplexityIn applies the In predicate on the "complexity" field.
-func ComplexityIn(vs ...Complexity) predicate.Task {
+func ComplexityIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -742,7 +756,7 @@ func ComplexityIn(vs ...Complexity) predicate.Task {
 }
 
 // ComplexityNotIn applies the NotIn predicate on the "complexity" field.
-func ComplexityNotIn(vs ...Complexity) predicate.Task {
+func ComplexityNotIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -758,22 +772,50 @@ func ComplexityNotIn(vs ...Complexity) predicate.Task {
 	})
 }
 
+// ComplexityGT applies the GT predicate on the "complexity" field.
+func ComplexityGT(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldComplexity), v))
+	})
+}
+
+// ComplexityGTE applies the GTE predicate on the "complexity" field.
+func ComplexityGTE(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldComplexity), v))
+	})
+}
+
+// ComplexityLT applies the LT predicate on the "complexity" field.
+func ComplexityLT(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldComplexity), v))
+	})
+}
+
+// ComplexityLTE applies the LTE predicate on the "complexity" field.
+func ComplexityLTE(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldComplexity), v))
+	})
+}
+
 // PriorityEQ applies the EQ predicate on the "priority" field.
-func PriorityEQ(v Priority) predicate.Task {
+func PriorityEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPriority), v))
 	})
 }
 
 // PriorityNEQ applies the NEQ predicate on the "priority" field.
-func PriorityNEQ(v Priority) predicate.Task {
+func PriorityNEQ(v int8) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldPriority), v))
 	})
 }
 
 // PriorityIn applies the In predicate on the "priority" field.
-func PriorityIn(vs ...Priority) predicate.Task {
+func PriorityIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -790,7 +832,7 @@ func PriorityIn(vs ...Priority) predicate.Task {
 }
 
 // PriorityNotIn applies the NotIn predicate on the "priority" field.
-func PriorityNotIn(vs ...Priority) predicate.Task {
+func PriorityNotIn(vs ...int8) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -803,6 +845,34 @@ func PriorityNotIn(vs ...Priority) predicate.Task {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldPriority), v...))
+	})
+}
+
+// PriorityGT applies the GT predicate on the "priority" field.
+func PriorityGT(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPriority), v))
+	})
+}
+
+// PriorityGTE applies the GTE predicate on the "priority" field.
+func PriorityGTE(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPriority), v))
+	})
+}
+
+// PriorityLT applies the LT predicate on the "priority" field.
+func PriorityLT(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPriority), v))
+	})
+}
+
+// PriorityLTE applies the LTE predicate on the "priority" field.
+func PriorityLTE(v int8) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPriority), v))
 	})
 }
 

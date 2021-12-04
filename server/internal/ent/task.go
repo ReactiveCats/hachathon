@@ -30,9 +30,9 @@ type Task struct {
 	// Estimated holds the value of the "estimated" field.
 	Estimated int `json:"estimated,omitempty"`
 	// Complexity holds the value of the "complexity" field.
-	Complexity task.Complexity `json:"complexity,omitempty"`
+	Complexity int8 `json:"complexity,omitempty"`
 	// Priority holds the value of the "priority" field.
-	Priority task.Priority `json:"priority,omitempty"`
+	Priority int8 `json:"priority,omitempty"`
 	// CreatorID holds the value of the "creator_id" field.
 	CreatorID int `json:"creator_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -68,9 +68,9 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldID, task.FieldIcon, task.FieldEstimated, task.FieldCreatorID:
+		case task.FieldID, task.FieldIcon, task.FieldEstimated, task.FieldComplexity, task.FieldPriority, task.FieldCreatorID:
 			values[i] = new(sql.NullInt64)
-		case task.FieldTitle, task.FieldDescription, task.FieldComplexity, task.FieldPriority:
+		case task.FieldTitle, task.FieldDescription:
 			values[i] = new(sql.NullString)
 		case task.FieldCreatedAt, task.FieldDeadline:
 			values[i] = new(sql.NullTime)
@@ -132,16 +132,16 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 				t.Estimated = int(value.Int64)
 			}
 		case task.FieldComplexity:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field complexity", values[i])
 			} else if value.Valid {
-				t.Complexity = task.Complexity(value.String)
+				t.Complexity = int8(value.Int64)
 			}
 		case task.FieldPriority:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field priority", values[i])
 			} else if value.Valid {
-				t.Priority = task.Priority(value.String)
+				t.Priority = int8(value.Int64)
 			}
 		case task.FieldCreatorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

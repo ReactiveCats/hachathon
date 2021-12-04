@@ -61,6 +61,27 @@ paths:
     get:
       description: Get all user tasks
       operationId: get_tasks
+      parameters:
+      - description: estimated
+        in: query
+        name: estimated
+        type: string
+      - description: complexity
+        in: query
+        name: complexity
+        type: string
+      - description: priority
+        in: query
+        name: priority
+        type: string
+      - description: order field (asc/desc)
+        in: query
+        name: order
+        type: string
+      - description: order field (e.g. deadline, estimated, complexity)
+        in: query
+        name: order_by
+        type: string
       produces:
       - application/json
       responses:

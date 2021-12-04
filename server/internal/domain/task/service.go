@@ -43,10 +43,10 @@ func (s Service) Fetch(ctx context.Context, dto domain.GetTaskDTO) ([]*domain.Ta
 		query.Where(taskent.Estimated(*dto.Estimated))
 	}
 	if dto.Complexity != nil {
-		query.Where(taskent.ComplexityEQ(taskent.Complexity(*dto.Complexity)))
+		query.Where(taskent.ComplexityEQ(int8(*dto.Complexity)))
 	}
 	if dto.Priority != nil {
-		query.Where(taskent.PriorityEQ(taskent.Priority(*dto.Priority)))
+		query.Where(taskent.PriorityEQ(int8(*dto.Priority)))
 	}
 	if dto.OrderBy != nil && dto.Order != nil {
 		if *dto.Order == "asc" {
@@ -77,8 +77,8 @@ func (s Service) Update(ctx context.Context, taskDTO domain.TaskPutDTO) (*domain
 		SetNillableDescription(taskDTO.Description).
 		SetNillableDeadline(taskDTO.Deadline).
 		SetNillableEstimated(taskDTO.Estimated).
-		SetNillableComplexity((*taskent.Complexity)(taskDTO.Complexity)).
-		SetNillablePriority((*taskent.Priority)(taskDTO.Complexity)).
+		SetComplexity(int8(taskDTO.Complexity)).
+		SetPriority(int8(taskDTO.Complexity)).
 		Exec(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -118,8 +118,8 @@ func (s Service) Create(ctx context.Context, taskDTO domain.CreateTaskDTO) error
 		SetTitle(taskDTO.Title).
 		SetNillableIcon(taskDTO.Icon).
 		SetNillableDescription(taskDTO.Description).
-		SetNillablePriority((*taskent.Priority)(taskDTO.Priority)).
-		SetNillableComplexity((*taskent.Complexity)(taskDTO.Complexity)).
+		SetPriority(int8(taskDTO.Priority)).
+		SetComplexity(int8(taskDTO.Complexity)).
 		SetNillableDeadline(taskDTO.Deadline).
 		SetNillableEstimated(taskDTO.Estimated).
 		SetCreatorID(taskDTO.UserID).

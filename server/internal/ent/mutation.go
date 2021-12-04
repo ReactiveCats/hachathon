@@ -41,8 +41,10 @@ type TaskMutation struct {
 	deadline       *time.Time
 	estimated      *int
 	addestimated   *int
-	complexity     *task.Complexity
-	priority       *task.Priority
+	complexity     *int8
+	addcomplexity  *int8
+	priority       *int8
+	addpriority    *int8
 	clearedFields  map[string]struct{}
 	creator        *int
 	clearedcreator bool
@@ -427,12 +429,13 @@ func (m *TaskMutation) ResetEstimated() {
 }
 
 // SetComplexity sets the "complexity" field.
-func (m *TaskMutation) SetComplexity(t task.Complexity) {
-	m.complexity = &t
+func (m *TaskMutation) SetComplexity(i int8) {
+	m.complexity = &i
+	m.addcomplexity = nil
 }
 
 // Complexity returns the value of the "complexity" field in the mutation.
-func (m *TaskMutation) Complexity() (r task.Complexity, exists bool) {
+func (m *TaskMutation) Complexity() (r int8, exists bool) {
 	v := m.complexity
 	if v == nil {
 		return
@@ -443,7 +446,7 @@ func (m *TaskMutation) Complexity() (r task.Complexity, exists bool) {
 // OldComplexity returns the old "complexity" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldComplexity(ctx context.Context) (v task.Complexity, err error) {
+func (m *TaskMutation) OldComplexity(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldComplexity is only allowed on UpdateOne operations")
 	}
@@ -457,18 +460,38 @@ func (m *TaskMutation) OldComplexity(ctx context.Context) (v task.Complexity, er
 	return oldValue.Complexity, nil
 }
 
+// AddComplexity adds i to the "complexity" field.
+func (m *TaskMutation) AddComplexity(i int8) {
+	if m.addcomplexity != nil {
+		*m.addcomplexity += i
+	} else {
+		m.addcomplexity = &i
+	}
+}
+
+// AddedComplexity returns the value that was added to the "complexity" field in this mutation.
+func (m *TaskMutation) AddedComplexity() (r int8, exists bool) {
+	v := m.addcomplexity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
 // ResetComplexity resets all changes to the "complexity" field.
 func (m *TaskMutation) ResetComplexity() {
 	m.complexity = nil
+	m.addcomplexity = nil
 }
 
 // SetPriority sets the "priority" field.
-func (m *TaskMutation) SetPriority(t task.Priority) {
-	m.priority = &t
+func (m *TaskMutation) SetPriority(i int8) {
+	m.priority = &i
+	m.addpriority = nil
 }
 
 // Priority returns the value of the "priority" field in the mutation.
-func (m *TaskMutation) Priority() (r task.Priority, exists bool) {
+func (m *TaskMutation) Priority() (r int8, exists bool) {
 	v := m.priority
 	if v == nil {
 		return
@@ -479,7 +502,7 @@ func (m *TaskMutation) Priority() (r task.Priority, exists bool) {
 // OldPriority returns the old "priority" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldPriority(ctx context.Context) (v task.Priority, err error) {
+func (m *TaskMutation) OldPriority(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPriority is only allowed on UpdateOne operations")
 	}
@@ -493,9 +516,28 @@ func (m *TaskMutation) OldPriority(ctx context.Context) (v task.Priority, err er
 	return oldValue.Priority, nil
 }
 
+// AddPriority adds i to the "priority" field.
+func (m *TaskMutation) AddPriority(i int8) {
+	if m.addpriority != nil {
+		*m.addpriority += i
+	} else {
+		m.addpriority = &i
+	}
+}
+
+// AddedPriority returns the value that was added to the "priority" field in this mutation.
+func (m *TaskMutation) AddedPriority() (r int8, exists bool) {
+	v := m.addpriority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
 // ResetPriority resets all changes to the "priority" field.
 func (m *TaskMutation) ResetPriority() {
 	m.priority = nil
+	m.addpriority = nil
 }
 
 // SetCreatorID sets the "creator_id" field.
@@ -712,14 +754,14 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		m.SetEstimated(v)
 		return nil
 	case task.FieldComplexity:
-		v, ok := value.(task.Complexity)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetComplexity(v)
 		return nil
 	case task.FieldPriority:
-		v, ok := value.(task.Priority)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -746,6 +788,12 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.addestimated != nil {
 		fields = append(fields, task.FieldEstimated)
 	}
+	if m.addcomplexity != nil {
+		fields = append(fields, task.FieldComplexity)
+	}
+	if m.addpriority != nil {
+		fields = append(fields, task.FieldPriority)
+	}
 	return fields
 }
 
@@ -758,6 +806,10 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedIcon()
 	case task.FieldEstimated:
 		return m.AddedEstimated()
+	case task.FieldComplexity:
+		return m.AddedComplexity()
+	case task.FieldPriority:
+		return m.AddedPriority()
 	}
 	return nil, false
 }
@@ -780,6 +832,20 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddEstimated(v)
+		return nil
+	case task.FieldComplexity:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddComplexity(v)
+		return nil
+	case task.FieldPriority:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPriority(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)

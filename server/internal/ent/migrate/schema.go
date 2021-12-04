@@ -17,8 +17,8 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "estimated", Type: field.TypeInt, Nullable: true},
-		{Name: "complexity", Type: field.TypeEnum, Enums: []string{"very_low", "low", "medium", "high", "very_high"}, Default: "medium"},
-		{Name: "priority", Type: field.TypeEnum, Enums: []string{"very_low", "low", "medium", "high", "very_high"}, Default: "medium"},
+		{Name: "complexity", Type: field.TypeInt8},
+		{Name: "priority", Type: field.TypeInt8},
 		{Name: "creator_id", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.

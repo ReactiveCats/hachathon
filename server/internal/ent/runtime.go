@@ -22,4 +22,40 @@ func init() {
 	taskDescIcon := taskFields[1].Descriptor()
 	// task.DefaultIcon holds the default value on creation for the icon field.
 	task.DefaultIcon = taskDescIcon.Default.(int)
+	// taskDescComplexity is the schema descriptor for complexity field.
+	taskDescComplexity := taskFields[6].Descriptor()
+	// task.ComplexityValidator is a validator for the "complexity" field. It is called by the builders before save.
+	task.ComplexityValidator = func() func(int8) error {
+		validators := taskDescComplexity.Validators
+		fns := [...]func(int8) error{
+			validators[0].(func(int8) error),
+			validators[1].(func(int8) error),
+		}
+		return func(complexity int8) error {
+			for _, fn := range fns {
+				if err := fn(complexity); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// taskDescPriority is the schema descriptor for priority field.
+	taskDescPriority := taskFields[7].Descriptor()
+	// task.PriorityValidator is a validator for the "priority" field. It is called by the builders before save.
+	task.PriorityValidator = func() func(int8) error {
+		validators := taskDescPriority.Validators
+		fns := [...]func(int8) error{
+			validators[0].(func(int8) error),
+			validators[1].(func(int8) error),
+		}
+		return func(priority int8) error {
+			for _, fn := range fns {
+				if err := fn(priority); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 }

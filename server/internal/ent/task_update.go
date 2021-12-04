@@ -138,30 +138,28 @@ func (tu *TaskUpdate) ClearEstimated() *TaskUpdate {
 }
 
 // SetComplexity sets the "complexity" field.
-func (tu *TaskUpdate) SetComplexity(t task.Complexity) *TaskUpdate {
-	tu.mutation.SetComplexity(t)
+func (tu *TaskUpdate) SetComplexity(i int8) *TaskUpdate {
+	tu.mutation.ResetComplexity()
+	tu.mutation.SetComplexity(i)
 	return tu
 }
 
-// SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableComplexity(t *task.Complexity) *TaskUpdate {
-	if t != nil {
-		tu.SetComplexity(*t)
-	}
+// AddComplexity adds i to the "complexity" field.
+func (tu *TaskUpdate) AddComplexity(i int8) *TaskUpdate {
+	tu.mutation.AddComplexity(i)
 	return tu
 }
 
 // SetPriority sets the "priority" field.
-func (tu *TaskUpdate) SetPriority(t task.Priority) *TaskUpdate {
-	tu.mutation.SetPriority(t)
+func (tu *TaskUpdate) SetPriority(i int8) *TaskUpdate {
+	tu.mutation.ResetPriority()
+	tu.mutation.SetPriority(i)
 	return tu
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillablePriority(t *task.Priority) *TaskUpdate {
-	if t != nil {
-		tu.SetPriority(*t)
-	}
+// AddPriority adds i to the "priority" field.
+func (tu *TaskUpdate) AddPriority(i int8) *TaskUpdate {
+	tu.mutation.AddPriority(i)
 	return tu
 }
 
@@ -359,14 +357,28 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.Complexity(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldComplexity,
+		})
+	}
+	if value, ok := tu.mutation.AddedComplexity(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldComplexity,
 		})
 	}
 	if value, ok := tu.mutation.Priority(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldPriority,
+		})
+	}
+	if value, ok := tu.mutation.AddedPriority(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldPriority,
 		})
@@ -534,30 +546,28 @@ func (tuo *TaskUpdateOne) ClearEstimated() *TaskUpdateOne {
 }
 
 // SetComplexity sets the "complexity" field.
-func (tuo *TaskUpdateOne) SetComplexity(t task.Complexity) *TaskUpdateOne {
-	tuo.mutation.SetComplexity(t)
+func (tuo *TaskUpdateOne) SetComplexity(i int8) *TaskUpdateOne {
+	tuo.mutation.ResetComplexity()
+	tuo.mutation.SetComplexity(i)
 	return tuo
 }
 
-// SetNillableComplexity sets the "complexity" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableComplexity(t *task.Complexity) *TaskUpdateOne {
-	if t != nil {
-		tuo.SetComplexity(*t)
-	}
+// AddComplexity adds i to the "complexity" field.
+func (tuo *TaskUpdateOne) AddComplexity(i int8) *TaskUpdateOne {
+	tuo.mutation.AddComplexity(i)
 	return tuo
 }
 
 // SetPriority sets the "priority" field.
-func (tuo *TaskUpdateOne) SetPriority(t task.Priority) *TaskUpdateOne {
-	tuo.mutation.SetPriority(t)
+func (tuo *TaskUpdateOne) SetPriority(i int8) *TaskUpdateOne {
+	tuo.mutation.ResetPriority()
+	tuo.mutation.SetPriority(i)
 	return tuo
 }
 
-// SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillablePriority(t *task.Priority) *TaskUpdateOne {
-	if t != nil {
-		tuo.SetPriority(*t)
-	}
+// AddPriority adds i to the "priority" field.
+func (tuo *TaskUpdateOne) AddPriority(i int8) *TaskUpdateOne {
+	tuo.mutation.AddPriority(i)
 	return tuo
 }
 
@@ -779,14 +789,28 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.Complexity(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldComplexity,
+		})
+	}
+	if value, ok := tuo.mutation.AddedComplexity(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldComplexity,
 		})
 	}
 	if value, ok := tuo.mutation.Priority(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
+			Type:   field.TypeInt8,
+			Value:  value,
+			Column: task.FieldPriority,
+		})
+	}
+	if value, ok := tuo.mutation.AddedPriority(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt8,
 			Value:  value,
 			Column: task.FieldPriority,
 		})

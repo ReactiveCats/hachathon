@@ -27,6 +27,11 @@ func RegisterRoutes(r *gin.RouterGroup, service domain.TaskService) {
 //// @Security 	ApiKeyAuth
 // @Tags 		tasks
 // @ID 			get_tasks
+// @Param 		estimated 	query 	string		false 	"estimated"
+// @Param 		complexity 	query 	string		false 	"complexity"
+// @Param 		priority 	query 	string		false 	"priority"
+// @Param 		order 		query 	string		false 	"order field (asc/desc)"
+// @Param 		order_by 	query 	string		false 	"order field (e.g. deadline, estimated, complexity)"
 // @Produce  	json
 // @Success 	200 {array} domain.Task
 // @Router 		/task [get]
@@ -37,11 +42,11 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 			UserID: user.ID,
 		}
 
-		estimated, ok := ctx.Get("estimated")
+		estimated, ok := ctx.GetQuery("estimated")
 		if ok {
-			parsedEstimated, err := strconv.Atoi(estimated.(string))
+			parsedEstimated, err := strconv.Atoi(estimated)
 			if err != nil {
-				platform.GinErrResponse(ctx, platform.Conflict("Invalid data"))
+				platform.GinErrResponse(ctx, platform.Conflict("invalid estimated (must be int)"))
 				return
 			}
 			dto.Estimated = &parsedEstimated
@@ -49,12 +54,22 @@ func getTasks(service domain.TaskService) func(ctx *gin.Context) {
 
 		complexity, ok := ctx.GetQuery("complexity")
 		if ok {
-			dto.Complexity = &complexity
+			parsedComplexity, err := strconv.Atoi(complexity)
+			if err != nil {
+				platform.GinErrResponse(ctx, platform.Conflict("invalid estimated (must be int)"))
+				return
+			}
+			dto.Complexity = &parsedComplexity
 		}
 
 		priority, ok := ctx.GetQuery("priority")
 		if ok {
-			dto.Priority = &priority
+			parsedPriority, err := strconv.Atoi(priority)
+			if err != nil {
+				platform.GinErrResponse(ctx, platform.Conflict("invalid estimated (must be int)"))
+				return
+			}
+			dto.Priority = &parsedPriority
 		}
 
 		order, ok := ctx.GetQuery("order")
