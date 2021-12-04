@@ -1,7 +1,7 @@
 import { wrappedFetch } from '../../shared/wrapped-fetch';
 
 class AuthService {
-  ACCESS_TOKEN_STORAGE_KEY = 'accessToken';
+  static ACCESS_TOKEN_STORAGE_KEY = 'accessToken';
 
   login(user) {
     return wrappedFetch('/api/auth/login', {
@@ -18,15 +18,18 @@ class AuthService {
   }
 
   saveAccessToken(accessToken) {
-    window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, accessToken);
+    window.localStorage.setItem(
+      AuthService.ACCESS_TOKEN_STORAGE_KEY,
+      accessToken,
+    );
   }
 
   getAccessToken() {
-    return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+    return window.localStorage.getItem(AuthService.ACCESS_TOKEN_STORAGE_KEY);
   }
 
   removeAccessToken() {
-    window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    window.localStorage.removeItem(AuthService.ACCESS_TOKEN_STORAGE_KEY);
   }
 }
 

@@ -6,6 +6,7 @@ import { theme } from '../shared/theme';
 import { createEmotionCache } from '../shared/create-emotion-cache';
 import { AuthProvider } from '../auth/context/auth-context';
 import { TaskModalProvider } from '../task-modal/context/task-modal-context';
+import { TaskListProvider } from '../task-list/context/task-list-context';
 
 function HackathonApp({ Component, pageProps }) {
   return (
@@ -17,9 +18,11 @@ function HackathonApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <TaskModalProvider>
-            <Component {...pageProps} />
-          </TaskModalProvider>
+          <TaskListProvider>
+            <TaskModalProvider>
+              <Component {...pageProps} />
+            </TaskModalProvider>
+          </TaskListProvider>
         </AuthProvider>
       </ThemeProvider>
     </CacheProvider>

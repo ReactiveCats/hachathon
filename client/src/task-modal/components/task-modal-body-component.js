@@ -39,7 +39,6 @@ export function TaskModalBody({ task, onClose, onSave }) {
               label="Description"
               variant="outlined"
               {...register('description', {
-                required: true,
                 value: task.description,
               })}
             />
