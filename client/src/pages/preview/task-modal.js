@@ -7,7 +7,7 @@ import {
 import { mockTask } from '../../task-modal/mock';
 
 function TaskModalPreviewPage() {
-  const { state, dispatch } = useTaskModalContext();
+  const [state, dispatch] = useTaskModalContext();
 
   const handleClick = () => {
     dispatch({ type: TASK_MODAL_OPEN, data: mockTask({ title: 'Preview' }) });

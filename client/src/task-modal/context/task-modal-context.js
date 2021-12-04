@@ -72,7 +72,7 @@ export function TaskModalProvider({ children }) {
   );
 
   return (
-    <TaskModalContext.Provider value={{ state, dispatch: dispatchWithEffects }}>
+    <TaskModalContext.Provider value={[state, dispatchWithEffects]}>
       {children}
     </TaskModalContext.Provider>
   );

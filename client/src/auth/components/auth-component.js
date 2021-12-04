@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { AUTH_LOGIN, useAuthContext } from '../context/auth-context';
@@ -19,7 +20,15 @@ const style = {
 };
 
 export function Auth() {
+  const router = useRouter();
+
   const { state, dispatch } = useAuthContext();
+
+  useEffect(() => {
+    if (state.authorized) {
+      router.back();
+    }
+  }, []);
 
   const handleSubmit = (data) => {
     dispatch({ type: AUTH_LOGIN, data });
