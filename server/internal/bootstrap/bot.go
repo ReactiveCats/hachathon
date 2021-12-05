@@ -65,7 +65,7 @@ func (b TelegramBOT) NewFSM(bot *telebot.Bot, message *telebot.Message) *fsm.Bot
 
 	botFSM.RegisterMenu("-",
 		fsm.NewTransition(func(ctx *fsm.Context) (fsm.Arguments, error) {
-			bot.Reply(message, "Вітаю! Я має такі команди:\n"+
+			bot.Reply(message, "Вітаю! Я маю такі команди:\n"+
 				"/new_task - створити нове завдання\n"+
 				"/tasks - подивитися існуючи завдання")
 			return fsm.Arguments{}, nil
@@ -87,6 +87,11 @@ func (b TelegramBOT) NewFSM(bot *telebot.Bot, message *telebot.Message) *fsm.Bot
 				Priority: &priority,
 			})
 			if err != nil {
+				return fsm.Arguments{}, err
+			}
+
+			if len(tasks) == 0 {
+				bot.Reply(message, "Поки що завдань немає, але все попереду!")
 				return fsm.Arguments{}, err
 			}
 
@@ -178,12 +183,10 @@ func (b TelegramBOT) NewFSM(bot *telebot.Bot, message *telebot.Message) *fsm.Bot
 }
 
 func (b TelegramBOT) auth(user *telebot.User) *domain.User {
-	//username := user.Username
-	//if username == "" {
-	//	username = strconv.Itoa(user.ID)
-	//}
-
-	username := "test"
+	username := user.Username
+	if username == "" {
+		username = strconv.Itoa(user.ID)
+	}
 
 	_, _ = b.deps.UserService.Signup(context.Background(), user.Username)
 
