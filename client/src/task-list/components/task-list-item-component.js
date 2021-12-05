@@ -39,9 +39,12 @@ const listItemTextStyle = {
 const listItemDescriptionBoxStyle = {
   fontSize: 'body1',
   paddingX: 2,
-  paddingBottom: 2,
-  margin: 0,
+  marginBottom: 2,
   marginTop: '-8px',
+  display: '-webkit-box',
+  '-webkit-line-clamp': '3',
+  '-webkit-box-orient': 'vertical',
+  overflow: 'hidden',
 };
 
 const progressStyles = (theme) => ({
