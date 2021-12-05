@@ -41,6 +41,7 @@ type UserService interface {
 	Login(ctx context.Context, username string) (string, error)
 
 	ByID(ctx context.Context, dto GetUserDTO) (*User, error)
+	ByUsername(ctx context.Context, username string) (*User, error)
 }
 
 // maybe it's better to replace such little DTOs with just arguments

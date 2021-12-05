@@ -88,3 +88,15 @@ func (s Service) ByID(ctx context.Context, dto domain.GetUserDTO) (*domain.User,
 
 	return domain.UserFromEnt(usr), nil
 }
+
+func (s Service) ByUsername(ctx context.Context, username string) (*domain.User, error) {
+	usr, err := s.client.Query().
+		Where(userent.Username(username)).
+		WithTasks().
+		Only(ctx)
+	if err != nil {
+		return nil, platform.WrapInternal(err)
+	}
+
+	return domain.UserFromEnt(usr), nil
+}

@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	Database        Database
-	Server          Server
-	Jwt             Jwt
-	DefaultAuthUser bool
+	Database         Database
+	Server           Server
+	Jwt              Jwt
+	DefaultAuthUser  bool
+	TelegramTokenBot string
 }
 
 type Database struct {
@@ -57,6 +58,7 @@ func New() (Config, error) {
 		Jwt: Jwt{
 			Secret: viper.GetString("jwt_secret"),
 		},
-		DefaultAuthUser: viper.GetBool("default_auth_user"),
+		DefaultAuthUser:  viper.GetBool("default_auth_user"),
+		TelegramTokenBot: viper.GetString("telegram_bot_token"),
 	}, nil
 }

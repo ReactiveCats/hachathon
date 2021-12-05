@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"server/internal/bootstrap"
 )
@@ -34,6 +35,15 @@ func main() {
 	}
 
 	server := bootstrap.NewServer(deps)
+	go func() {
+		bot, err := bootstrap.NewTGBot(deps)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		bot.Start()
+	}()
+
 	err = server.Start()
 	if err != nil {
 		panic(err)
