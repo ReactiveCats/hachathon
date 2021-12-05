@@ -1,9 +1,5 @@
 import { useEffect } from 'react';
-import {
-  Button,
-  Container,
-  List,
-} from '@mui/material';
+import { Button, Container, List, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { TaskModal } from '../../task-modal/components/task-modal-component';
@@ -19,9 +15,9 @@ import {
 } from '../context/task-list-context';
 
 const addButtonStyle = (theme) => ({
-  background: theme => theme.palette.gradientBlue.main,
-  height: '54px'
-})
+  background: (theme) => theme.palette.gradientBlue.main,
+  height: '54px',
+});
 
 export function TaskList() {
   const [state, dispatch] = useTaskListContext();
@@ -56,6 +52,9 @@ export function TaskList() {
               padding: 0,
             }}
           >
+            {state.items.length === 0 ? (
+              <Typography align="center" variant="h5">Create Your First Task</Typography>
+            ) : null}
             {state.items.map(
               ({ title, icon, description, importance }, index) => {
                 return (
@@ -70,7 +69,12 @@ export function TaskList() {
               },
             )}
           </List>
-          <Button variant="contained" onClick={handleAddTask} fullWidth sx={addButtonStyle}>
+          <Button
+            variant="contained"
+            onClick={handleAddTask}
+            fullWidth
+            sx={addButtonStyle}
+          >
             Add task
           </Button>
         </Box>
