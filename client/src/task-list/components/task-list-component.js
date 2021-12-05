@@ -57,7 +57,7 @@ export function TaskList() {
             }}
           >
             {state.items.map(
-              ({ title, icon, description, importance }, index) => {
+              ({ title, icon, description, importance, estimated }, index) => {
                 return (
                   <TaskListItem
                     index={index}
@@ -65,6 +65,7 @@ export function TaskList() {
                     icon={icon}
                     description={description}
                     importance={importance}
+                    estimated={estimated}
                   />
                 );
               },

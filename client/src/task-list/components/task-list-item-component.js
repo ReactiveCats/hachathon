@@ -44,18 +44,38 @@ const listItemDescriptionBoxStyle = {
   marginTop: '-8px',
 };
 
-export function TaskListItem({ index, title, icon, description, importance }) {
+const progressStyles = (theme) => ({
+  height: '5px',
+  backgroundColor: theme.palette.accent.green,
+  position: 'relative',
+  '& span': {
+    backgroundColor: theme.palette.accent.red
+  },
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    height: '5px',
+    right: 0,
+    backgroundColor: theme.palette.accent.yellow,
+    width: 'var(--estimatedWidth)',
+    zIndex: -1
+  }
+})
+
+export function TaskListItem({ index, title, icon, description, importance, estimated = 0, deadline = 'Sun, 5 Dec 2021 15:00:00' }) {
   const [state, dispatch] = useTaskListContext();
   const [taskModalState, taskModalDispatch] = useTaskModalContext();
-  
+
+  const [estimatedLineWidth, setEstimatedLineWidth] = useState(null)
   const [progress, setProgress] = useState(0);
   // Обновление прогресса каждую секунду
   useEffect(() => {
+    const period = new Date(deadline) - new Date('Sat, 4 Dec 2021 23:40:00');
+    console.log(estimated, period);
+    setEstimatedLineWidth((estimated * 1000 / period) * 100)
     const interval = setInterval(() => {
       // TODO: remove hardcoded deadline
-      const deadline = 'Sun, 5 Dec 2021 15:00:00';
 
-      const period = new Date(deadline) - new Date('Sat, 4 Dec 2021 23:40:00');
       const now = new Date(Date.now()) - new Date('Sat, 4 Dec 2021 23:40:00');
 
       const currentProgress = now <= period ? (now / period) * 100 : 100;
@@ -63,7 +83,7 @@ export function TaskListItem({ index, title, icon, description, importance }) {
       if (currentProgress === 100) clearInterval(interval);
     }, 1000);
     return () => clearInterval(interval);
-  });
+  },[deadline, estimated]);
 
   const handleEdit = (index) => () => {
     taskModalDispatch({
@@ -101,7 +121,9 @@ export function TaskListItem({ index, title, icon, description, importance }) {
         <Box sx={listItemDescriptionBoxStyle} component="p">
           {description}
         </Box>
-        <LinearProgress variant="determinate" value={progress} />
+        {deadline &&
+          <LinearProgress variant="determinate" value={progress} style={{'--estimatedWidth': `${estimatedLineWidth}%`}} sx={progressStyles} />
+        }
       </Box>
     </Tooltip>
   );
