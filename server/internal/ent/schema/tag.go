@@ -28,5 +28,6 @@ func (Tag) Edges() []ent.Edge {
 			Ref("tags").
 			Field("user_id").Required().
 			Unique(),
+		edge.To("tasks", Task.Type),
 	}
 }

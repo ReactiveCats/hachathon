@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-const (
-	Epsilon = 0.01
-)
-
 type Task struct {
 	ID            int       `json:"id"`
 	CreatedAt     time.Time `json:"createdAt"`
@@ -110,7 +106,7 @@ type GetTaskDTO struct {
 	Importance *int    `json:"importance" binding:"omitempty,max=10,min=0"`
 	Urgency    *int    `json:"urgency" binding:"omitempty,max=10,min=0"`
 	Order      *string `json:"order" binding:"omitempty,oneof=desc asc"`
-	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated importance urgency"`
+	OrderBy    *string `json:"orderBy" binding:"omitempty,oneof=created_at deadline estimated importance urgency tag_id"`
 	Priority   *bool   `json:"priority,omitempty"`
 }
 

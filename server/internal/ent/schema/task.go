@@ -29,6 +29,7 @@ func (Task) Fields() []ent.Field {
 		field.Float("lo"),
 		field.Float("hi"),
 
+		field.Int("tag_id").Optional(),
 		field.Int("creator_id"),
 	}
 }
@@ -39,6 +40,10 @@ func (Task) Edges() []ent.Edge {
 		edge.From("creator", User.Type).
 			Ref("tasks").
 			Field("creator_id").Required().
+			Unique(),
+		edge.From("tagg", Tag.Type).
+			Ref("tasks").
+			Field("tag_id").
 			Unique(),
 	}
 }
