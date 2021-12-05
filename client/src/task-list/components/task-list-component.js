@@ -16,8 +16,31 @@ import {
 
 const addButtonStyle = (theme) => ({
   background: (theme) => theme.palette.gradientBlue.main,
-  height: '54px',
+  height: '54px'
 });
+
+const listStyle = (theme) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 3,
+  padding: 3,
+  maxHeight: 'calc(100vh - 550px)',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  '&::-webkit-scrollbar': {
+    width: '3px'
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.3)',
+    borderRadius: '10px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: 'darkgrey',
+  },
+  [theme.breakpoints.down('sm')]: {
+    maxHeight: 'calc(100vh - 430px)',
+  }
+})
 
 export function TaskList() {
   const [state, dispatch] = useTaskListContext();
@@ -43,14 +66,10 @@ export function TaskList() {
   return (
     <>
       <Container>
-        <Box mt={5} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box mt={5} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <List
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3,
-              padding: 0,
-            }}
+            style={state.items.length > 1 ? {minHeight: '200px'} : {minHeight: '0'}}
+            sx={listStyle}
           >
             {state.items.length === 0 ? (
               <Typography align="center" variant="h5">Create Your First Task</Typography>
@@ -70,14 +89,16 @@ export function TaskList() {
               },
             )}
           </List>
-          <Button
-            variant="contained"
-            onClick={handleAddTask}
-            fullWidth
-            sx={addButtonStyle}
-          >
-            Add task
-          </Button>
+          <Box sx={{ paddingLeft: 3, paddingRight: 3 }}>
+            <Button
+              variant="contained"
+              onClick={handleAddTask}
+              fullWidth
+              sx={addButtonStyle}
+            >
+              Add task
+            </Button>
+          </Box>
         </Box>
       </Container>
       <TaskModal onSave={handleSave}></TaskModal>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { keyframes } from "@emotion/react";
 import {
   Box,
   ListItem,
@@ -15,6 +16,7 @@ import {
 import {
   useTaskListContext,
 } from '../context/task-list-context';
+import { theme } from '../../shared/theme';
 
 const listItemBoxStyle = {
   bgcolor: 'lightgreen',
@@ -28,6 +30,13 @@ const listItemBoxStyle = {
 
   transition: 'ease-in-out transform 0.2s',
 };
+
+const listItemStyle = (theme) => ({
+  minHeight: '72px',
+  [theme.breakpoints.down('sm')]: {
+    minHeight: '48px',
+  }
+})
 
 const listItemTextStyle = {
   // Заголовок
@@ -47,6 +56,15 @@ const listItemDescriptionBoxStyle = {
   overflow: 'hidden',
 };
 
+const estimatedTimeLineEffect = keyframes`
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+`;
+
 const progressStyles = (theme) => ({
   height: '5px',
   backgroundColor: theme.palette.accent.green,
@@ -59,13 +77,29 @@ const progressStyles = (theme) => ({
     position: 'absolute',
     height: '5px',
     right: 0,
+    animation: `${estimatedTimeLineEffect} 1s ease`,
     backgroundColor: theme.palette.accent.yellow,
     width: 'var(--estimatedWidth)',
     zIndex: -1
   }
 })
 
-export function TaskListItem({ index, title, icon, description, importance, estimated = 0, deadline = 'Sun, 5 Dec 2021 15:00:00' }) {
+const taskShowEffect = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const animatedTask = {
+  animation: `${taskShowEffect} .5s ease`
+};
+
+export function TaskListItem({ index, title, icon, description, importance, estimated = 0, deadline = 'Sun, 5 Dec 2021 12:00:00' }) {
   const [state, dispatch] = useTaskListContext();
   const [taskModalState, taskModalDispatch] = useTaskModalContext();
 
@@ -73,13 +107,13 @@ export function TaskListItem({ index, title, icon, description, importance, esti
   const [progress, setProgress] = useState(0);
   // Обновление прогресса каждую секунду
   useEffect(() => {
-    const period = new Date(deadline) - new Date('Sat, 4 Dec 2021 23:40:00');
+    const period = new Date(deadline) - new Date('Fri, 3 Dec 2021 19:0:00');
     console.log(estimated, period);
     setEstimatedLineWidth((estimated * 1000 / period) * 100)
     const interval = setInterval(() => {
       // TODO: remove hardcoded deadline
 
-      const now = new Date(Date.now()) - new Date('Sat, 4 Dec 2021 23:40:00');
+      const now = new Date(Date.now()) - new Date('Fri, 3 Dec 2021 19:00:00');
 
       const currentProgress = now <= period ? (now / period) * 100 : 100;
       setProgress(currentProgress);
@@ -111,19 +145,21 @@ export function TaskListItem({ index, title, icon, description, importance, esti
   return (
     <Tooltip key={index} title="Click to edit" followCursor>
       <Box
-        sx={{ ...listItemBoxStyle, ...itemBgColor }}
+        sx={{ ...listItemBoxStyle, ...itemBgColor, ...animatedTask }}
         ariaRole="button"
         onClick={handleEdit(index)}
       >
-        <ListItem>
+        <ListItem sx={listItemStyle}>
           <ListItemIcon>
             <IconComponent />
           </ListItemIcon>
           <ListItemText sx={listItemTextStyle} primary={title} />
         </ListItem>
-        <Box sx={listItemDescriptionBoxStyle} component="p">
-          {description}
-        </Box>
+        {description &&
+          <Box sx={listItemDescriptionBoxStyle} component="p">
+            {description}
+          </Box>
+        }
         {deadline &&
           <LinearProgress variant="determinate" value={progress} style={{'--estimatedWidth': `${estimatedLineWidth}%`}} sx={progressStyles} />
         }
