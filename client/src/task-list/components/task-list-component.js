@@ -1,15 +1,9 @@
 import { useEffect } from 'react';
-import {
-  Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Tooltip,
-} from '@mui/material';
+import { Button, Container, List, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { TaskModal } from '../../task-modal/components/task-modal-component';
+import { TaskListItem } from './task-list-item-component';
 import {
   TASK_MODAL_OPEN,
   useTaskModalContext,
@@ -19,33 +13,34 @@ import {
   TASK_LIST_LOAD_ITEMS,
   useTaskListContext,
 } from '../context/task-list-context';
-import { getIconById, mockTask } from '../../task-modal/mock';
 
-const listItemBoxStyle = {
-  bgcolor: 'lightgreen',
-  borderRadius: 2,
+const addButtonStyle = (theme) => ({
+  background: (theme) => theme.palette.gradientBlue.main,
+  height: '54px'
+});
 
-  '&:hover': {
-    transform: 'scale(1.02)',
+const listStyle = (theme) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 3,
+  padding: 3,
+  maxHeight: 'calc(100vh - 550px)',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  '&::-webkit-scrollbar': {
+    width: '3px'
   },
-
-  transition: 'ease-in-out transform 0.2s',
-};
-
-const listItemTextStyle = {
-  // Заголовок
-  span: { fontSize: 'h5.fontSize', marginLeft: '-24px' },
-  // Описание
-  p: {},
-};
-
-const listItemDescriptionBoxStyle = {
-  fontSize: 'body1',
-  paddingX: 2,
-  paddingBottom: 2,
-  margin: 0,
-  marginTop: '-8px',
-};
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'inset 0 0 6px rgba(0, 0, 0, 0.3)',
+    borderRadius: '10px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: 'darkgrey',
+  },
+  [theme.breakpoints.down('sm')]: {
+    maxHeight: 'calc(100vh - 430px)',
+  }
+})
 
 export function TaskList() {
   const [state, dispatch] = useTaskListContext();
@@ -64,49 +59,48 @@ export function TaskList() {
     });
   };
 
-  const handleEdit = (index) => () => {
-    taskModalDispatch({
-      type: TASK_MODAL_OPEN,
-      data: state.items[index],
-    });
-  };
-
   const handleSave = (data) => {
     dispatch({ type: TASK_LIST_SAVE_ITEM, data });
   };
 
   return (
     <>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {state.items.map(({ title, icon, description }, index) => {
-            const { component: IconComponent } = getIconById(icon);
-
-            return (
-              <Tooltip key={index} title="Click to edit" followCursor>
-                <Box
-                  sx={listItemBoxStyle}
-                  ariaRole="button"
-                  onClick={handleEdit(index)}
-                >
-                  <ListItem>
-                    <ListItemIcon>
-                      <IconComponent />
-                    </ListItemIcon>
-                    <ListItemText sx={listItemTextStyle} primary={title} />
-                  </ListItem>
-                  <Box sx={listItemDescriptionBoxStyle} component="p">
-                    {description}
-                  </Box>
-                </Box>
-              </Tooltip>
-            );
-          })}
-        </List>
-        <Button variant="outlined" onClick={handleAddTask} fullWidth>
-          Add task
-        </Button>
-      </Box>
+      <Container>
+        <Box mt={5} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <List
+            style={state.items.length > 1 ? {minHeight: '200px'} : {minHeight: '0'}}
+            sx={listStyle}
+          >
+            {state.items.length === 0 ? (
+              <Typography align="center" variant="h5">Create Your First Task</Typography>
+            ) : null}
+            {state.items.map(
+              ({ title, icon, description, importance, estimated }, index) => {
+                return (
+                  <TaskListItem
+                    index={index}
+                    title={title}
+                    icon={icon}
+                    description={description}
+                    importance={importance}
+                    estimated={estimated}
+                  />
+                );
+              },
+            )}
+          </List>
+          <Box sx={{ paddingLeft: 3, paddingRight: 3 }}>
+            <Button
+              variant="contained"
+              onClick={handleAddTask}
+              fullWidth
+              sx={addButtonStyle}
+            >
+              Add task
+            </Button>
+          </Box>
+        </Box>
+      </Container>
       <TaskModal onSave={handleSave}></TaskModal>
     </>
   );
