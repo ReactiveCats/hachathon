@@ -73,6 +73,10 @@ func (s Service) Fetch(ctx context.Context, dto domain.GetTaskDTO) ([]*domain.Ta
 		}
 		tasks := (domain.Tasks)(domain.TasksFromEnt(taskents))
 		sort.Sort(sort.Reverse(tasks))
+		if len(tasks) == 1 {
+			tasks[0].P()
+		}
+
 		return tasks, nil
 	}
 	return domain.TasksFromEnt(taskents), nil

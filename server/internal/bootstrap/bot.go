@@ -35,7 +35,7 @@ var argsMap = map[int64][]string{}
 func (b TelegramBOT) Start() {
 	b.Bot.Handle(telebot.OnText, func(m *telebot.Message) {
 		state, ok := states[m.Chat.ID]
-		if !ok || m.Text == "/start" {
+		if !ok || m.Text == "/start" || m.Text == "/tasks" {
 			state = "-"
 		}
 		args, ok := argsMap[m.Chat.ID]
